@@ -13,14 +13,22 @@ return new class extends Migration
     {
         Schema::create('institutes', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email');
-            $table->string('password');
+            $table->string('institute_name');
+            $table->string('address');
+            $table->string('director_name');
+            $table->string('director_email');
+            $table->string('director_phone');
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamps();
         });
     }
-
+//     'instituteName'
+// 'address'
+// 'directorName'
+// 'directorEmail'
+// 'phone'
+// 'status'
+    
     /**
      * Reverse the migrations.
      */
@@ -29,3 +37,4 @@ return new class extends Migration
         Schema::dropIfExists('institutes');
     }
 };
+// $2y$12$MGUKRihIe1HCL1CKvl6da.QsRA7Hd/J9W540JOHYl8SEN5nUUqzh.

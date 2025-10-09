@@ -40,17 +40,16 @@ return [
         'driver' => 'session',
         'provider' => 'users',
     ],
-
-    'admin' => [
-        'driver' => 'session',
-        'provider' => 'admin', // ✅ changed from 'admins'
-    ],
-
     'super_admin' => [
         'driver' => 'session',
-        'provider' => 'super_admin', // ✅ changed from 'super_admins'
+        'provider' => 'super_admin',
+    ],
+    'admin' => [
+        'driver' => 'session',
+        'provider' => 'admin',
     ],
 ],
+
 
 
     /*
@@ -74,18 +73,17 @@ return [
     'users' => [
         'driver' => 'eloquent',
         'model' => App\Models\User::class,
-    ],
-
-    'admin' => [
-        'driver' => 'eloquent',
-        'model' => App\Models\Admin::class,
-    ],
-
+        ],
     'super_admin' => [
         'driver' => 'eloquent',
         'model' => App\Models\SuperAdmin::class,
     ],
-],  
+    'admin' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\Admin::class,
+    ],
+],
+
 
 
     /*

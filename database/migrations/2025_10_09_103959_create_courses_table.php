@@ -11,14 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('admins', function (Blueprint $table) {
+        Schema::create('courses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('institute_id')->constrained('institutes')->cascadeOnDelete();
-            $table->string('name');
-            $table->string('email');
-            $table->string('password');
-            $table->string('role')->default('admin');
-            $table->string('status');
+            $table->string('courseName');
+            $table->string('courseDuration');
             $table->timestamps();
         });
     }
@@ -28,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('admins');
+        Schema::dropIfExists('courses');
     }
 };

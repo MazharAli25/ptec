@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\institute;
 use App\Models\SuperAdmin;
 use Illuminate\Http\Request;
 
@@ -62,7 +63,5 @@ class SuperAdminController extends Controller
     {
         //
     }
-    public function addInstitute(){
-        return view('SuperAdmin.add_institute');
-    }
+    
 }

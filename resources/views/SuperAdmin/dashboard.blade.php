@@ -1,2 +1,2 @@
-@include('layouts.superAdmin');
+@extends('layouts.superAdmin');
 @section('page-title', 'Dashboard')

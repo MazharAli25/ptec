@@ -1,3 +1,3 @@
 <div>
-    <!-- Because you are alive, everything is possible. - Thich Nhat Hanh -->
+    <h1>WELCOME TO ADMIN DASHBOARD</h1>
 </div>

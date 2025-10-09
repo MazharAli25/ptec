@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin;
+use App\Models\Institute;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
@@ -20,7 +22,9 @@ class AdminController extends Controller
      */
     public function create()
     {
-        //
+        $insts= Institute::get();
+        $admins= Admin::get();
+        return view('SuperAdmin.add_admin', compact(['insts', 'admins']));
     }
 
     /**
@@ -28,7 +32,23 @@ class AdminController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated= $request->validate([
+            'institute_id'=> 'required',
+            'name'=> 'required',
+            'password'=> 'required',
+            'email'=> 'required',
+            'status'=> 'required',
+        ]);
+
+        Admin::create([
+            'institute_id'=> $validated['institute_id'],
+            'name'=> $validated['name'],
+            'email'=> $validated['email'],
+            'password'=> Hash::make($validated['password']),
+            'status'=> $validated['status'],
+        ]);
+
+        return redirect()->route('admin.create')->with('success', 'Admin created successfully');
     }
 
     /**

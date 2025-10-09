@@ -32,28 +32,27 @@ class AuthenticatedSessionController extends Controller
             'password' => ['required'],
         ]);
 
-        // 🔍 Check Super Admins first
+        // 🔹 SUPER ADMIN
         $superAdmin = SuperAdmin::where('email', $request->email)->first();
-
         if ($superAdmin && Hash::check($request->password, $superAdmin->password)) {
-            // Auth::login($superAdmin);
+
             Auth::guard('super_admin')->login($superAdmin);
-            // dd(Auth::guard('super_admin')->check(), Auth::guard('admin')->check(), Auth::guard('web')->check());
+            
             $request->session()->regenerate();
-            return redirect()->intended('super-admin/dashboard');
+            return redirect()->route('super_admin.dashboard');
         }
 
+        // 🔹 ADMIN
         $admin = Admin::where('email', $request->email)->first();
-
         if ($admin && Hash::check($request->password, $admin->password)) {
+
             Auth::guard('admin')->login($admin);
+
             $request->session()->regenerate();
-            return redirect()->intended('/admin/dashboard');
+            return redirect()->route('admin.dashboard');
         }
 
-        return back()->withErrors([
-            'email' => 'Invalid email or password.',
-        ]);
+        return back()->withErrors(['email' => 'Invalid email or password.']);
     }
 
     /**
