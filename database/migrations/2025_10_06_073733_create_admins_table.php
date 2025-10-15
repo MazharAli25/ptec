@@ -16,9 +16,10 @@ return new class extends Migration
             $table->foreignId('institute_id')->constrained('institutes')->cascadeOnDelete();
             $table->string('name');
             $table->string('email');
+            $table->string('phone');
             $table->string('password');
             $table->string('role')->default('admin');
-            $table->string('status');
+            $table->enum('status',['active', 'unactive']);
             $table->timestamps();
         });
     }

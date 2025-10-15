@@ -52,11 +52,11 @@
 
                 <!-- Director Information -->
                 <div class="space-y-4">
-                    <h2 class="text-lg font-semibold text-gray-700 border-b pb-2">Director Information</h2>
+                    <h2 class="text-lg font-semibold text-gray-700 border-b pb-2">Admin Information</h2>
 
                     <div>
                         <label for="directorName" class="block text-sm font-medium text-gray-700 mb-1">
-                            Director Name
+                            Admin Name
                         </label>
                         <input type="text" id="directorName" name="directorName"
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -75,11 +75,22 @@
 
                         <div>
                             <label for="directorEmail" class="block text-sm font-medium text-gray-700 mb-1">
-                                Director Email
+                                Admin Email
                             </label>
                             <input type="email" id="directorEmail" name="directorEmail"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 placeholder="Enter director email">
+                        </div>
+                    </div>
+
+                    <div class="grid  grid-cols-1 gap-4"> 
+                        <div>
+                            <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
+                                Admin Password
+                            </label>
+                            <input type="password" id="password" name="password"
+                                class="w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                placeholder="Enter Admin Password">
                         </div>
                     </div>
 
@@ -91,7 +102,7 @@
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             name="status">
                             <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
+                            <option value="unactive">unactive</option>
                         </select>
                     </div>
                 </div>

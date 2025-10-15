@@ -10,11 +10,7 @@ class Institute extends Model
 
     protected $fillable = [
         'institute_name',
-        'address',
-        'director_name',
-        'director_email',
-        'director_phone',
-        'status',
+        'address'
     ];
 
     /**

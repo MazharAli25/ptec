@@ -12,7 +12,8 @@ class SessionController extends Controller
      */
     public function index()
     {
-        
+        $sessions= mysession::get();
+        return view('SuperAdmin.viewSessions', compact('sessions'));
     }
 
     /**

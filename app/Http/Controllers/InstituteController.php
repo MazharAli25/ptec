@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\institute;
+use App\Models\Admin;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 
 class InstituteController extends Controller
@@ -12,8 +14,8 @@ class InstituteController extends Controller
      */
     public function index()
     {
-        $insts = Institute::get();
-        return view('SuperAdmin.add_institute', compact('insts'));
+        // $insts= institute::get();
+        // return view('SuperAdmin.viewInstitutes', compact('insts'));
     }
 
     /**
@@ -21,7 +23,8 @@ class InstituteController extends Controller
      */
     public function create()
     {
-        //
+        $insts = Institute::get();
+        return view('SuperAdmin.add_institute', compact('insts'));
     }
 
     /**
@@ -35,16 +38,22 @@ class InstituteController extends Controller
             'directorName'=> 'required',
             'directorEmail'=> 'required',
             'phone'=> 'required',
+            'password'=> 'required',
             'status'=> 'nullable',
         ]);
 
-        Institute::create([
+        $institute=Institute::create([
             'institute_name'=> $validated['instituteName'],
             'address'=>$validated['address'],
-            'director_name'=>$validated['directorName'],
-            'director_email'=>$validated['directorEmail'],
-            'director_phone'=>$validated['phone'],
-            'status'=>$validated['status']
+        ]);
+
+        Admin::create([
+            'institute_id'=> $institute->id,
+            'name'=> $validated['directorName'],
+            'email'=> $validated['directorEmail'],
+            'phone'=> $validated['phone'],
+            'password'=> Hash::make($validated['password']),
+            'status'=> $validated['status'],
         ]);
 
         return redirect()->route('institute.index')->with('success', 'Institute added successfully!');

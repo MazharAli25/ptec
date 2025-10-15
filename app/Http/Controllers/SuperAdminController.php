@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\institute;
+use App\Models\Admin;
 use App\Models\SuperAdmin;
 use Illuminate\Http\Request;
 
@@ -62,6 +63,11 @@ class SuperAdminController extends Controller
     public function destroy(SuperAdmin $superAdmin)
     {
         //
+    }
+
+    public function viewAdmins(){
+        $admins= Admin::get();
+        return view('SuperAdmin.viewAdmins', compact('admins'));
     }
     
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\InstituteController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -30,6 +31,7 @@ Route::prefix('super-admin')
         Route::resource('/institute', InstituteController::class);
         Route::resource('/session', SessionController::class);
         Route::resource('/course', CourseController::class);
+        Route::get('/view-admins', [SuperAdminController::class, 'viewAdmins'])->name('viewAdmins');
     });
 
 
@@ -45,6 +47,8 @@ Route::middleware(['web', 'admin'])->group(function () {
             'destroy' => 'admin.destroy',
             'show' => 'admin.show',
         ]);
+
+        Route::resource('student', StudentController::class);
     });
 
 

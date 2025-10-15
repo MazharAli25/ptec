@@ -12,7 +12,8 @@ class CourseController extends Controller
      */
     public function index()
     {
-        //
+        $courses= Course::get();
+        return view('SuperAdmin.viewCourses', compact('courses'));
     }
 
     /**

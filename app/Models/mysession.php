@@ -11,4 +11,9 @@ class mysession extends Model
         'sessionStart',
         'sessionEnd'
     ];
+
+    protected $casts = [
+        'sessionStart' => 'date',
+        'sessionEnd' => 'date',
+    ];
 }

@@ -15,9 +15,10 @@ class Admin extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'phone',
         'password',
         'status',
-        'institute_id', // ✅ foreign key to institutes table
+        'institute_id',
     ];
 
     protected $hidden = [
@@ -30,7 +31,6 @@ class Admin extends Authenticatable
      */
     public function institute()
     {
-        // ✅ foreign key = institute_id, local key = id
         return $this->belongsTo(Institute::class, 'institute_id', 'id');
     }
 }

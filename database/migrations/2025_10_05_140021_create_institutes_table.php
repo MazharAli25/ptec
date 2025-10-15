@@ -15,10 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('institute_name');
             $table->string('address');
-            $table->string('director_name');
-            $table->string('director_email');
-            $table->string('director_phone');
-            $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamps();
         });
     }

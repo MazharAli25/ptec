@@ -37,7 +37,7 @@
             <div class="px-4 py-6">
                 <ul class="space-y-2">
 
-                    <!-- Management Dropdown -->
+                    <!-- Institute Dropdown -->
                     <li>
                         <button onclick="toggleDropdown('management-dropdown')"
                             class="w-full flex items-center justify-between p-2 hover:bg-[#2d2e2d] rounded">
@@ -45,18 +45,18 @@
                             <i id="management-dropdown-icon" class="fa-solid fa-angle-down transition-transform"></i>
                         </button>
                         <ul id="management-dropdown"
-    class="ml-4 mt-1 space-y-1 {{ (request()->routeIs('institute.*') || request()->routeIs('admin.*')) ? '' : 'hidden' }}">
+                            class="ml-4 mt-1 space-y-1 {{ request()->routeIs('institute.*') || request()->routeIs('admin.*') || request()->routeIs('viewAdmins') ? '' : 'hidden' }} ? '' : 'hidden'  }} ">
 
                             <li
                                 class="p-2 hover:bg-[#2d2e2d] rounded text-sm active:bg-[#2d2e2d] 
-                                {{ request()->routeIs('institute.index') ? 'bg-[#2d2e2d]' : 'hover:bg-[#2d2e2d]' }}">
-                                <a href="{{ route('institute.index') }}">Add Institute</a>
+                                {{ request()->routeIs('institute.create') ? 'bg-[#2d2e2d]' : 'hover:bg-[#2d2e2d]' }}">
+                                <a href="{{ route('institute.create') }}">Add Institute</a>
                             </li>
 
                             <li
                                 class="p-2 hover:bg-[#2d2e2d] rounded text-sm active:bg-[#2d2e2d] 
-                                {{ request()->routeIs('admin.create') ? 'bg-[#2d2e2d]' : 'hover:bg-[#2d2e2d]' }}">
-                                <a href="{{ route('admin.create') }}">Add Admin</a>
+                                {{ request()->routeIs('viewAdmins') ? 'bg-[#2d2e2d]' : 'hover:bg-[#2d2e2d]' }}">
+                                <a href="{{ route('viewAdmins') }}">View Admins</a>
                             </li>
                         </ul>
                     </li>
@@ -71,7 +71,8 @@
                         </button>
                         <ul id="fee-dropdown" class="ml-4 mt-1 space-y-1 hidden">
                             <li class="p-2 hover:bg-[#2d2e2d] rounded text-sm"> <a href="">Certificate for
-                                    Approval</a> </li>
+                                Approval</a> 
+                            </li>
                         </ul>
                     </li>
 
@@ -85,7 +86,13 @@
                         <li
                             class="p-2 hover:bg-[#2d2e2d] rounded text-sm 
                         {{ request()->routeIs('course.create') ? 'bg-[#2d2e2d]' : 'hover:bg-[#2d2e2d]' }}">
-                            <a href="{{ route('course.create') }}">Add Courses</a></li>
+                            <a href="{{ route('course.create') }}">Add Courses</a>
+                        </li>
+                        <li
+                            class="p-2 hover:bg-[#2d2e2d] rounded text-sm 
+                        {{ request()->routeIs('course.index') ? 'bg-[#2d2e2d]' : 'hover:bg-[#2d2e2d]' }}">
+                            <a href="{{ route('course.index') }}">View Courses</a>
+                        </li>
                     </ul>
                     </li>
 
@@ -99,8 +106,35 @@
                         <li
                             class="p-2 hover:bg-[#2d2e2d] rounded text-sm 
                         {{ request()->routeIs('session.create') ? 'bg-[#2d2e2d]' : 'hover:bg-[#2d2e2d]' }}">
-                            <a href="{{ route('session.create') }}">Add Session</a></li>
+                            <a href="{{ route('session.create') }}">Add Session</a>
+                        </li>
+                        <li
+                            class="p-2 hover:bg-[#2d2e2d] rounded text-sm 
+                        {{ request()->routeIs('session.index') ? 'bg-[#2d2e2d]' : 'hover:bg-[#2d2e2d]' }}">
+                            <a href="{{ route('session.index') }}">View Sessions</a>
+                        </li>
                     </ul>
+                    
+                    <button onclick="toggleDropdown('student-dropdown')"
+                        class="w-full flex items-center justify-between p-2 hover:bg-[#2d2e2d] rounded">
+                        <a href="">Student</a>
+                        <i id="student-dropdown-icon" class="fa-solid fa-angle-down transition-transform"></i>
+                    </button>
+                    <ul id="student-dropdown"
+                        class="ml-4 mt-1 space-y-1 {{ request()->routeIs('student.*') ? '' : 'hidden' }}">
+                        <li
+                            class="p-2 hover:bg-[#2d2e2d] rounded text-sm 
+                        {{ request()->routeIs('student.index') ? 'bg-[#2d2e2d]' : 'hover:bg-[#2d2e2d]' }}">
+                            <a href="{{ route('student.index') }}">Registered Students</a>
+                        </li>
+                    </ul>
+
+                    <li>
+                        <form action="{{ route('logout') }}" method="POST">
+                            @csrf
+                            <button class="text-white" type="submit">Logout</button>
+
+                        </form>
                     </li>
                 </ul>
             </div>
@@ -132,7 +166,9 @@
             transform: rotate(180deg);
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous">
+    </script>
 </body>
 
 </html>
