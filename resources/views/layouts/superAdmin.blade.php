@@ -9,6 +9,8 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <title> @yield('page-title') | Institute Portal Dashboard</title>
     <link rel="stylesheet" href="{{ asset('css/output.css') }}">
+    {{-- <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script> --}}
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         function toggleDropdown(id) {

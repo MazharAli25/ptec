@@ -27,6 +27,7 @@
         <div class="bg-white rounded-lg form-shadow p-6">
 
             <div class="border border-gray-200 rounded-lg overflow-hidden">
+
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-100">
                         <tr>
@@ -55,7 +56,7 @@
                                     {{ $course['courseDuration'] }}</td>
                                 <td class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     <!-- Edit Link -->
-                                    <a href="#"
+                                    <a href="{{ route('course.edit', $course->id) }}"
                                         class="inline-flex items-center px-2 py-1.5 bg-blue-500 text-white text-sm font-medium rounded hover:bg-blue-600 transition-colors">
                                         <i class="fas fa-edit text-base"></i>
                                     </a>
@@ -80,6 +81,4 @@
 
         </div>
     </div>
-    </div>
-
 @endsection

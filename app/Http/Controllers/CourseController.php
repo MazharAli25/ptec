@@ -56,7 +56,8 @@ class CourseController extends Controller
      */
     public function edit(Course $course)
     {
-        //
+        $course= $course;
+        return view('SuperAdmin.editCourses', compact('course'));
     }
 
     /**
@@ -64,7 +65,17 @@ class CourseController extends Controller
      */
     public function update(Request $request, Course $course)
     {
-        //
+        $validated = $request->validate([
+            'edit_courseName'=> ['required', 'string'],
+            'edit_courseDuration'=> ['required', 'string'],
+        ]);
+
+        $course->update([
+            'courseName'=> $validated['edit_courseName'],
+            'courseDuration'=> $validated['edit_courseDuration'],
+        ]);
+        
+        return redirect()->route('course.index')->with('success', 'course updated successfully');
     }
 
     /**

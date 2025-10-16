@@ -32,6 +32,7 @@ Route::prefix('super-admin')
         Route::resource('/session', SessionController::class);
         Route::resource('/course', CourseController::class);
         Route::get('/view-admins', [SuperAdminController::class, 'viewAdmins'])->name('viewAdmins');
+        Route::get('/print-certificate', [SuperAdminController::class, 'printcer'])->name('printcer');
     });
 
 

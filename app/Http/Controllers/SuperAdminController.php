@@ -69,5 +69,9 @@ class SuperAdminController extends Controller
         $admins= Admin::get();
         return view('SuperAdmin.viewAdmins', compact('admins'));
     }
+
+    public function printcer(){
+        return view('SuperAdmin.printCertificate');
+    }
     
 }

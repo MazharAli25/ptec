@@ -10,6 +10,8 @@ class Course extends Model
 
     protected $fillable=[
         'courseName',
-        'courseDuration'
+        'courseDuration',
+        'edit_courseName',
+        'edit_courseDuration',
     ];
 }
