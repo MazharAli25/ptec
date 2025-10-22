@@ -60,12 +60,6 @@
                                         <i class="fas fa-edit text-base"></i>
                                     </a>
 
-                                    <!-- View Link -->
-                                    <a href="#"
-                                        class="inline-flex items-center px-2 py-1.5 bg-green-500 text-white text-sm font-medium rounded hover:bg-green-600 transition-colors">
-                                        <i class="fas fa-eye text-base"></i>
-                                    </a>
-
                                     <!-- Delete Link -->
                                     <a href="#"
                                         class="inline-flex items-center px-2 py-1.5 bg-red-500 text-white text-sm font-medium rounded hover:bg-red-600 transition-colors">

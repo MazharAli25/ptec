@@ -31,7 +31,7 @@ class CourseController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'courseName'=> ['required', 'string'],
+            'courseName'=> ['required', 'string', 'unique:courses,courseName'],
             'courseDuration'=> ['required', 'string'],
         ]);
 

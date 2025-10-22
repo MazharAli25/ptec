@@ -14,4 +14,9 @@ class Course extends Model
         'edit_courseName',
         'edit_courseDuration',
     ];
+
+    public function diplomawiseCourses()
+    {
+        return $this->hasMany(DiplomawiseCourses::class, 'courseID');
+    }
 }

@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('institutes', function (Blueprint $table) {
             $table->id();
-            $table->string('institute_name');
-            $table->string('address');
+            $table->string('institute_name')->unique();  // added unique here and the migration:fresh isn't runned
+            $table->string('address')->nullable();
             $table->timestamps();
         });
     }

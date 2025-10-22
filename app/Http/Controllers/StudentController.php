@@ -20,11 +20,20 @@ class StudentController extends Controller
         return view('SuperAdmin.registeredStudents', compact('students'));
     }
 
+    public function adminIndex(){
+        $students= Student::get();
+        return view('Admin.registeredStudents', compact('students'));
+    }
+
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
+        session()->forget('student_id');
+        $nextStudentId = Student::max('id') + 1;
+        session(['student_id' => $nextStudentId]);
+
         $admin = Auth::guard('admin')->user();
         $insts= Institute::where('id', $admin->institute_id)->get();
         $courses= Course::get();
@@ -38,25 +47,38 @@ class StudentController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'photo' => ['required'],
+            'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
             'institute_id' => ['required'],
             'name' => ['required'],
             'fatherName' => ['required'],
-            'email' => ['required', 'unique:students,email'],
-            'cnic' => ['required', 'regex:/^[0-9]{5}-[0-9]{6}-[0-9]{1}$/', 'unique:students,cnic'],
-            'phone' => ['required', 'unique:students,phone'],
+            'dob'=>['nullable', 'date'],
+            // Custom email validation for specific domains like gmail, yahoo, hotmail
+            'email' => ['required', 'unique:students,email', function ($attribute, $value, $fail) {
+                if (!preg_match('/@(gmail|yahoo|hotmail)\.com$/', $value)) {
+                    $fail('The email must be a Gmail, Yahoo, or Hotmail address.');
+                }
+            },],
+
+            'cnic' => ['required', 'regex:/^[0-9]{5}-[0-9]{7}-[0-9]{1}$/', 'unique:students,cnic'],
+            'phone' => ['required', 'unique:students,phone', 'max:11'],
             'gender' => ['required'],
             'course_id' => ['required'],
             'session_id'=>['required'],
-            'address' => ['required'],
+            'address' => ['nullable'],
         ]);
 
+        $photoPath = null;
+        if ($request->hasFile('photo')) {
+            $photoPath = $request->file('photo')->store('photos', 'public');
+        }
+
         Student::create([
-            'image'=> $validated['photo'],
+            'image'=> $photoPath,
             'instituteId'=> $validated['institute_id'],
             'name'=> $validated['name'],
             'fatherName'=> $validated['fatherName'],
             'email'=> $validated['email'],
+            'dob'=>$validated['dob'],
             'cnic'=> $validated['cnic'],
             'phone'=> $validated['phone'],
             'gender'=>$validated['gender'],
@@ -99,4 +121,10 @@ class StudentController extends Controller
     {
         //
     }
+
+    public function assignCourse()
+    {
+        
+    }
+
 }

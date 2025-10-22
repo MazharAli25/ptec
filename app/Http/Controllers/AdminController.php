@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Admin;
 use App\Models\Institute;
+use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -22,8 +23,8 @@ class AdminController extends Controller
      */
     public function create()
     {
-        $insts= Institute::get();
-        $admins= Admin::get();
+        $insts = Institute::get();
+        $admins = Admin::get();
         return view('SuperAdmin.add_admin', compact(['insts', 'admins']));
     }
 
@@ -32,20 +33,22 @@ class AdminController extends Controller
      */
     public function store(Request $request)
     {
-        $validated= $request->validate([
-            'institute_id'=> 'required',
-            'name'=> 'required',
-            'password'=> 'required',
-            'email'=> 'required',
-            'status'=> 'required',
+        $validated = $request->validate([
+            'institute_id' => 'required',
+            'name' => 'required',
+            'password' => 'required',
+            'email' => 'required',
+            'phone' => ['required', 'unique:students,phone'],
+            'status' => 'required',
         ]);
 
         Admin::create([
-            'institute_id'=> $validated['institute_id'],
-            'name'=> $validated['name'],
-            'email'=> $validated['email'],
-            'password'=> Hash::make($validated['password']),
-            'status'=> $validated['status'],
+            'institute_id' => $validated['institute_id'],
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'phone'=> $validated['phone'],
+            'password' => Hash::make($validated['password']),
+            'status' => $validated['status'],
         ]);
 
         return redirect()->route('admin.create')->with('success', 'Admin created successfully');
@@ -81,5 +84,29 @@ class AdminController extends Controller
     public function destroy(Admin $admin)
     {
         //
+    }
+
+
+    public function requestCertificate(Request $request)
+    {
+        $query = \App\Models\Student::query();
+
+        if ($request->filled('name')) {
+            $query->where('name', 'like', "%{$request->name}%");
+        }
+
+        if ($request->filled('fatherName')) {
+            $query->where('fatherName', 'like', "%{$request->fatherName}%");
+        }
+
+        if ($request->filled('email')) {
+            $query->where('email', 'like', "%{$request->email}%");
+        }
+        
+        $reqStudents = $request->hasAny(['name', 'fatherName', 'email'])
+            ? $query->get()
+            : collect();
+
+        return view('Admin.requestCertificate', compact('reqStudents'));
     }
 }

@@ -13,8 +13,7 @@ return new class extends Migration
     {
         Schema::create('mysessions', function (Blueprint $table) {
             $table->id();
-            $table->date('sessionStart');
-            $table->date('sessionEnd');
+            $table->string('session');
             $table->timestamps();
         });
     }

@@ -12,18 +12,19 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('students', function (Blueprint $table) {
-            $table->id();
-            $table->string('image');
+            $table->id()->primary();
+            $table->string('image')->nullable();
             $table->foreignId('instituteId')->constrained('institutes');
             $table->foreignId('courseId')->constrained('courses');
             $table->string('name');
             $table->string('fatherName');
-            $table->integer('phone')->unique();
+            $table->string('phone', 15)->unique();
             $table->string('cnic', 15)->unique();
+            $table->string('dob')->unique()->nullable();
             $table->string('email')->unique();
             $table->enum('gender',['Male', 'Female', 'Others']);
             $table->string('sessionId');
-            $table->string('address');
+            $table->string('address')->nullable();
             $table->timestamps();
         });
     }

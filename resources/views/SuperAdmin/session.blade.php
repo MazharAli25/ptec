@@ -26,27 +26,18 @@
 
         <!-- Form Section -->   
         <div class="bg-white rounded-lg form-shadow p-6 mb-8 flex justify-center">
-            <form class="flex flex-col w-[70%]" method="POST" action="{{ route('session.store') }}">
+            <form class="flex flex-col w-[100%]" method="POST" action="{{ route('session.store') }}">
                 @csrf
                 <div class="space-y-4">
                     <h2 class="text-lg font-semibold text-gray-700 border-b pb-2">Session Information</h2>
-                    <div  class="flex flex-col-2 justify-evenly">
+                    <div  class="flex flex-col-3 justify-center gap-8">
                         <div>
-                            <label for="sessionStart" class="block text-sm font-medium text-gray-700 mb-1">
-                                Session Starts at
+                            <label for="session" class="block text-sm font-medium text-gray-700 mb-1">
+                               Add Session
                             </label>
-                            <input type="date" id="sessionStart"  name="sessionStart"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                placeholder="Enter institute name">
-                        </div>
-    
-                        <div>
-                            <label for="sessionEnd" class="block text-sm font-medium text-gray-700 mb-1">
-                                Session ends at
-                            </label>
-                            <input type="date" id="sessionEnd"  name="sessionEnd"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                placeholder="Enter institute name">
+                            <input type="text" id="session"  name="session"
+                                class="px-4 py-2 border w-[100%] border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Enter Session">
                         </div>
 
                     </div>
@@ -56,11 +47,11 @@
                 <div class="md:col-span-2 flex justify-center mt-8">
                     <button type="submit"
                         class="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors flex items-center">
-                        <i class="fas fa-plus mr-2"></i> Add Session
+                     Save Session
                     </button>
                 </div>
             </form>
-        </div>
+        </div>  
 
         <!-- Table Section (Placeholder for future data) -->
         <div class="bg-white rounded-lg form-shadow p-6">
@@ -72,13 +63,13 @@
 
             <div class="border border-gray-200 rounded-lg overflow-hidden">
                 <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
+                    <thead class="bg-gray-200">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Session Starts At</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Session Ends At</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th class="px-6 py-3 text-left text-[14px] font-semibold text-gray-800 uppercase tracking-wider">
+                                ID</th>
+                            <th class="px-6 py-3 text-left text-[14px] font-semibold text-gray-800 uppercase tracking-wider">
+                                Session</th>
+                            <th class="px-6 py-3 text-center text-[14px] font-semibold text-gray-800 uppercase tracking-wider ">
                                 Actions</th>
                         </tr>
                     </thead>
@@ -86,30 +77,21 @@
                         <!-- Empty state for now -->
                         @foreach ($sessions as $session)
                             <tr>
-                                <td class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    {{ $session['sessionStart'] }}</td>
-                                <td class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    {{ $session['sessionEnd'] }}</td>
-                                <td class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    <!-- Edit Link -->
-                                    <a href="#"
-                                        class="inline-flex items-center px-3 py-1.5 bg-blue-500 text-white text-sm font-medium rounded hover:bg-blue-600 transition-colors">
-                                        <i class="fas fa-edit mr-1.5 text-xs"></i>
-                                        Edit
-                                    </a>
-
-                                    <!-- View Link -->
-                                    <a href="#"
-                                        class="inline-flex items-center px-3 py-1.5 bg-green-500 text-white text-sm font-medium rounded hover:bg-green-600 transition-colors">
-                                        <i class="fas fa-eye mr-1.5 text-xs"></i>
-                                        View
+                                <td class="px-6 py-3 text-left text-[14px] font-medium text-gray-600 tracking-wider">
+                                    {{ $session['id'] }}</td>
+                                <td class="px-6 py-3 text-left text-[14px] font-medium text-gray-600 tracking-wider">
+                                    {{ $session['session'] }}</td>
+                                <td
+                                    class="px-6 py-3 w-[35%] text-center text-[14px] font-medium text-gray-600 tracking-wider">
+                                  <a href="#"
+                                        class="inline-flex items-center px-2 py-1.5 bg-blue-500 text-white text-sm font-medium rounded hover:bg-blue-600 transition-colors">
+                                        <i class="fas fa-edit text-base"></i>
                                     </a>
 
                                     <!-- Delete Link -->
                                     <a href="#"
-                                        class="inline-flex items-center px-3 py-1.5 bg-red-500 text-white text-sm font-medium rounded hover:bg-red-600 transition-colors">
-                                        <i class="fas fa-trash mr-1.5 text-xs"></i>
-                                        Delete
+                                        class="inline-flex items-center px-2 py-1.5 bg-red-500 text-white text-sm font-medium rounded hover:bg-red-600 transition-colors">
+                                        <i class="fas fa-trash text-base"></i>
                                     </a>
                                 </td>
                             </tr>

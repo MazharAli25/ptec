@@ -31,13 +31,18 @@ class SessionController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'sessionStart'=> ['required', 'date'],
-            'sessionEnd'=> ['required', 'date'],
+            'session'=> ['required'],
         ]);
 
+        $existingAssignment = mysession::where('session', $validated['session'])
+            ->exists();
+
+        if ($existingAssignment) {
+            return redirect()->back()->with('error', 'This session is already created.');
+        }
+
         mysession::create([
-            'sessionStart'=> $validated['sessionStart'],
-            'sessionEnd'=> $validated['sessionEnd'],
+            'session'=> $validated['session'],
         ]);
         
         return redirect()->route('session.create')->with('success', 'session created successfully');

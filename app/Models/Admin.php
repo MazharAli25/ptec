@@ -9,7 +9,6 @@ class Admin extends Authenticatable
 {
     use Notifiable;
 
-    // ✅ Correct table name (make sure it matches your DB)
     protected $table = 'admins';
 
     protected $fillable = [
@@ -26,10 +25,7 @@ class Admin extends Authenticatable
         'remember_token',
     ];
 
-    /**
-     * ✅ Each Admin belongs to one Institute.
-     */
-    public function institute()
+    public function institute() 
     {
         return $this->belongsTo(Institute::class, 'institute_id', 'id');
     }

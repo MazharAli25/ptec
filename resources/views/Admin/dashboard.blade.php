@@ -7,7 +7,7 @@
             <main class="flex-1 flex flex-col md:ml-64">
                 <!-- TOP NAV -->
     
-                <x-superAdmin-header />
+                <x-admin-header />
 
                 <div class="min-h-screen bg-gray-100 p-6">
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -24,7 +24,7 @@ class InstituteController extends Controller
     public function create()
     {
         $insts = Institute::get();
-        return view('SuperAdmin.add_institute', compact('insts'));
+        return view('SuperAdmin.institute.add_institute', compact('insts'));
     }
 
     /**
@@ -34,11 +34,7 @@ class InstituteController extends Controller
     {
         $validated = $request->validate([
             'instituteName'=> 'required',
-            'address'=> 'required',
-            'directorName'=> 'required',
-            'directorEmail'=> 'required',
-            'phone'=> 'required',
-            'password'=> 'required',
+            'address'=> 'nullable',
             'status'=> 'nullable',
         ]);
 
@@ -47,16 +43,7 @@ class InstituteController extends Controller
             'address'=>$validated['address'],
         ]);
 
-        Admin::create([
-            'institute_id'=> $institute->id,
-            'name'=> $validated['directorName'],
-            'email'=> $validated['directorEmail'],
-            'phone'=> $validated['phone'],
-            'password'=> Hash::make($validated['password']),
-            'status'=> $validated['status'],
-        ]);
-
-        return redirect()->route('institute.index')->with('success', 'Institute added successfully!');
+        return redirect()->route('institute.create')->with('success', 'Institute added successfully!');
 
 
     }
@@ -66,7 +53,7 @@ class InstituteController extends Controller
      */
     public function show(institute $institute)
     {
-        //
+        
     }
 
     /**
@@ -74,7 +61,9 @@ class InstituteController extends Controller
      */
     public function edit(institute $institute)
     {
-        //
+        $institute= $institute;
+        return view('SuperAdmin.institute.editInstitute', compact('institute'));
+       
     }
 
     /**
@@ -82,7 +71,17 @@ class InstituteController extends Controller
      */
     public function update(Request $request, institute $institute)
     {
-        //
+        $validated = $request->validate([
+            'name'=> ['required', 'string'],
+            'address'=> ['nullable', 'string'],
+        ]);
+
+        $institute->update([
+            'institute_name'=> $validated['name'],
+            'address'=> $validated['address'],
+        ]);
+        
+        return redirect()->route('institute.create')->with('success', 'Institute updated successfully');
     }
 
     /**
@@ -90,6 +89,7 @@ class InstituteController extends Controller
      */
     public function destroy(institute $institute)
     {
-        //
+        $institute->delete();
+        return redirect()->route('institute.create')->with('success', 'Institute deleted successfully');
     }
 }

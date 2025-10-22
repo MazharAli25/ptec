@@ -22,7 +22,7 @@
         </a>
 
         <!-- Courses -->
-        <div x-data="{ open: {{ request()->routeIs('student.*') ? 'true' : 'false' }} }" class="relative">
+        <div x-data="{ open: {{ request()->routeIs('student.*') || request()->routeIs('admin.*') || request()->routeIs('studentDiploma.*') ? 'true' : 'false' }} }" class="relative">
             <button @click="open = !open"
                 class="flex items-center justify-between w-full px-3 py-2 rounded-lg hover:bg-green-100 transition">
                 <div class="flex items-center gap-3">
@@ -47,6 +47,27 @@
                     class="flex items-center w-full gap-3 text-[15px] px-4 py-2 rounded-none text-[#666a85] font-medium hover:bg-green-100 hover:text-green-700 transition no-underline
                     {{ request()->routeIs('student.create') ? 'bg-green-100 text-green-700 font-semibold' : '' }}">
                     Add Student
+                </a>
+            </div>
+            <div x-show="open" x-transition
+                class="mt-1 space-y-1overflow-hidden">
+                <a href="{{ route('admin.requestCertificate') }}"
+                    class="flex items-center w-full gap-3 text-[15px] px-4 py-2 rounded-none text-[#666a85] font-medium hover:bg-green-100 hover:text-green-700 transition no-underline
+                    {{ request()->routeIs('admin.requestCertificate') ? 'bg-green-100 text-green-700 font-semibold' : '' }}">
+                    Request Certificates
+                </a>
+            </div>
+            <div x-show="open" x-transition
+                class="mt-1 space-y-1overflow-hidden">
+                <a href="{{ route('admin.studentList') }}"
+                    class="flex items-center w-full gap-3 text-[15px] px-4 py-2 rounded-none text-[#666a85] font-medium hover:bg-green-100 hover:text-green-700 transition no-underline
+                    {{ request()->routeIs('admin.studentList') ? 'bg-green-100 text-green-700 font-semibold' : '' }}">
+                    Students List
+                </a>
+                <a href="{{ route('studentDiploma.create') }}"
+                    class="flex items-center w-full gap-3 text-[15px] px-4 py-2 rounded-none text-[#666a85] font-medium hover:bg-green-100 hover:text-green-700 transition no-underline
+                    {{ request()->routeIs('studentDiploma.create') ? 'bg-green-100 text-green-700 font-semibold' : '' }}">
+                    Assign Diploma
                 </a>
             </div>
         </div>

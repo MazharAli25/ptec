@@ -1,179 +1,237 @@
 @extends('layouts.admin')
 
-@section('page-title', 'Add Student')
+@section('page-title', 'Student Registration Form')
 
 @section('main-content')
-    <div class="w-[80vw] bg-gray-50 flex justify-center items-center px-6 py-10 ml-[19vw]">
-        <div class="bg-white shadow-xl rounded-2xl w-full max-w-6xl p-10 border border-gray-200">
-            <h2 class="text-3xl font-semibold text-green-600 mb-8 text-center">
-                Add New Student
-            </h2>
+    <div class="ml-[18vw] min-h-screen bg-gray-50 flex justify-center py-10 px-6">
 
-            <form action="{{ route('student.store') }}" method="POST" enctype="multipart/form-data" class="space-y-8">
-                @csrf
+        <div class="bg-white w-[90%] max-w-6xl rounded-2xl shadow-md border border-gray-200 p-10 relative">
 
-                <!-- Picture + Info Section -->
-                <div class="flex flex-col md:flex-row items-center gap-8">
-
-                    <!-- Image Upload & Preview -->
-                    <div class="flex flex-col items-center w-full md:w-1/3">
-                        <div class="w-40 h-40 rounded-full overflow-hidden bg-gray-100 border-4 border-green-500 mb-4">
-                            <img id="previewImage" src=""
-                                class="object-cover w-full h-full transition-all duration-300">
-                        </div>
-
-                        <input type="file" name="photo" id="photoInput" accept="image/*" value="{{ old('photo') }}"
-                            class="block w-full text-sm text-gray-700 border border-gray-300 rounded-lg cursor-pointer focus:ring-green-500 focus:border-green-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-600 file:text-white hover:file:bg-green-700 transition">
-                        <p class="text-xs text-gray-500 mt-2 text-center">Allowed formats: JPG, PNG, JPEG (Max 2MB)</p>
+            <!-- Header -->
+            <div class="flex flex-col md:flex-row items-center justify-between mb-10">
+                <form action="{{ route('student.store') }}" method="POST" enctype="multipart/form-data">
+                    <!-- Upload Image -->
+                    <div class="flex flex-col items-center mb-6 md:mb-0">
+                        <label for="photo"
+                            class="flex flex-col items-center justify-center w-40 h-40 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition relative overflow-hidden">
+                            <img id="photoPreview" src="" alt="Preview"
+                                class="absolute inset-0 w-full h-full object-cover hidden rounded-lg" />
+                            <div id="uploadPlaceholder" class="flex flex-col items-center justify-center text-center">
+                                <svg class="w-10 h-10 text-gray-400 mb-2" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M7 16V4m10 12V4m-9 8l2 2 4-4m5 6H5" />
+                                </svg>
+                                <p class="text-sm text-gray-500">Upload std image</p>
+                            </div>
+                            <input id="photo" type="file" name="photo" class="hidden" accept="image/*" />
+                        </label>
                     </div>
 
-                    <!-- Student Info -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full md:w-2/3">
+                    <!-- Title -->
+                    <h2
+                        class="absolute top-[20vh] left-[200px] inline-block text-2xl font-bold text-gray-800 text-center md:text-right w-[60%]">
+                        Student Registration Form
+                    </h2>
+            </div>
 
-                        <!-- Select Institute (Full Width) -->
-                        <div class="md:col-span-2">
-                            <label for="institute" class="block text-sm font-medium text-gray-700">Select Institute</label>
-                            <select name="institute_id" id="institute"
-                                class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500 bg-white">
-                                <option value="">-- Choose an Institute --</option>
-                                @foreach ($insts as $institute)
-                                    <option value="{{ $institute->id }}" value="{{ $institute->id }}" {{ old('institute_id') == $institute->id ? 'selected' : '' }}>{{ $institute->institute_name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+            <!-- Form -->
 
-                        <!-- Name -->
-                        <div>
-                            <label for="name" class="block text-sm font-medium text-gray-700">Full Name</label>
-                            <input type="text" name="name" value="{{ old('name') }}" id="name"
-                                class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500"
-                                placeholder="Enter full name" required>
-                        </div>
-                        {{-- Father Name --}}
-                        <div>
-                            <label for="fatherName" class="block text-sm font-medium text-gray-700">Father Name</label>
-                            <input type="text" name="fatherName" value="{{ old('fatherName') }}" id="fatherName"
-                                class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500"
-                                placeholder="Enter father name" required>
-                        </div>
+            @csrf
 
-                        <!-- Email -->
-                        <div>
-                            <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                            <input type="email" name="email" value="{{ old('email') }}" id="email"
-                                class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500"
-                                placeholder="Enter email address" required>
-                        </div>
+            <!-- Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-                        <!-- Phone -->
-                        <div>
-                            <label for="phone" class="block text-sm font-medium text-gray-700">Phone</label>
-                            <input type="text" name="phone" value="{{ old('phone') }}" id="phone"
-                                class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500"
-                                placeholder="Enter phone number" maxlength="8" required>
-                        </div>
-
-                        <!-- CNIC -->
-                        <div class="mb-4">
-                            <label for="cnic" class="block text-sm font-medium text-gray-700 mb-1">
-                                CNIC Number
-                            </label>
-
-                            <input
-                                type="text" id="cnic" name="cnic" value="{{ old('cnic') }}" placeholder="12345-6789012-3" value="{{ old('cnic') }}"
-                                class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 @error('cnic') border-red-500 @enderror" pattern="[0-9]{5}-[0-9]{6}-[0-9]{1}"
-                                title="Enter CNIC in format 12345-6789012-3" maxlength="14" required
-                            >
-
-                            @error('cnic')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <!-- Gender -->
-                        <div>
-                            <label for="gender" class="block text-sm font-medium text-gray-700">Gender</label>
-                            <select name="gender" id="gender"
-                                class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500">
-                                <option value="">Select Gender</option>
-                                <option value="male" {{ old('gender') ? 'selected' : '' }}>Male</option>
-                                <option value="female" {{ old('gender') ? 'selected' : '' }}>Female</option>
-                                <option value="other" {{ old('gender') ? 'selected' : '' }}>Other</option>
-                            </select>
-                        </div>
-
-                        <!-- Course -->
-                        <div>
-                            <label for="course" class="block text-sm font-medium text-gray-700">Course</label>
-
-                            <select name="course_id" id="course"
-                                class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500 bg-white">
-                                <option value="">-- Choose an Institute --</option>
-                                @foreach ($courses as $course)
-                                    <option value="{{ $course->id }}" {{ old('course_id') == $course->id ? 'selected' : '' }}>{{ $course->courseName }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <!-- Session -->
-                        <div>
-                            <label for="session" class="block text-sm font-medium text-gray-700">Session</label>
-                            <select name="session_id" id="session"
-                                class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500">
-                                <option value="">Select Session</option>
-                                @foreach ($sessions as $session)
-                                <option value="{{ $session->id }}" {{ old('session_id' ?? '') == $session->id ? 'selected' : '' }}>
-                                    {{ $session->sessionStart->format('d/m/Y') }}
-                                    to
-                                    {{ $session->sessionEnd->format('d/m/Y') }}
-                                </option>
-                            @endforeach
-                            </select>
-                        </div>
-                    </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Student ID</label>
+                    <input type="text" name="id" placeholder="Upcoming Student ID"
+                        value="{{ session('student_id') ?? 'Not Set' }}" readonly
+                        class="mt-1 w-full border rounded-lg px-4 py-2 
+                            focus:ring-green-500 focus:border-green-500 
+                            {{ $errors->has('id') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}">
+                </div>
+                <!-- Name -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Name</label>
+                    <input type="text" name="name" placeholder="Enter full name" value="{{ old('name') }}"
+                        class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500 {{ $errors->has('name') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}">
+                    @error('name')
+                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
+                <!-- Father Name -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Father Name</label>
+                    <input type="text" name="fatherName" placeholder="Enter father name" value="{{ old('fatherName') }}"
+                        class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500 {{ $errors->has('fatherName') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}">
+                    @error('fatherName')
+                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Date of Birth -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Date of Birth</label>
+                    <input type="date" name="dob" min="1900-01-01" max="3000-12-31" value="{{ old('dob') }}"
+                        class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500 {{ $errors->has('dob') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}">
+                    @error('dob')
+                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- CNIC -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">CNIC</label>
+                    <input type="text" name="cnic" placeholder="Enter your CNIC" value="{{ old('cnic') }}"
+                        id="cnic"
+                        class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500 {{ $errors->has('cnic') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}"
+                        maxlength="15">
+                    @error('cnic')
+                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Email -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Email</label>
+                    <input type="email" name="email" placeholder="Enter email address" value="{{ old('email') }}"
+                        class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500 {{ $errors->has('email') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}">
+                    @error('email')
+                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+
+                <!-- Course -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Course</label>
+                    <select name="course_id"
+                        class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 bg-white focus:ring-green-500 focus:border-green-500 {{ $errors->has('course_id') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}">
+                        <option value="">Select a course</option>
+                        @foreach ($courses as $course)
+                            <option value="{{ $course->id }}" {{ old('course_id') == $course->id ? 'selected' : '' }}>
+                                {{ $course->courseName }}</option>
+                        @endforeach
+                    </select>
+                    @error('course_id')
+                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Session -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Session</label>
+                    <select name="session_id"
+                        class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 bg-white focus:ring-green-500 focus:border-green-500 {{ $errors->has('session_id') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}">
+                        <option value="">Select session</option>
+                        @foreach ($sessions as $session)
+                            <option value="{{ $session->id }}" {{ old('session_id') == $session->id ? 'selected' : '' }}>
+                                {{ $session->session }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('session_id')
+                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Institute -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Institute</label>
+                    <select name="institute_id"
+                        class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 bg-white focus:ring-green-500 focus:border-green-500 {{ $errors->has('institute_id') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}">
+                        <option value="">Select institute</option>
+                        @foreach ($insts as $institute)
+                            <option value="{{ $institute->id }}"
+                                {{ old('institute_id') == $institute->id ? 'selected' : '' }}>
+                                {{ $institute->institute_name }}</option>
+                        @endforeach
+                    </select>
+                    @error('institute_id')
+                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Contact -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Contact</label>
+                    <input type="text" name="phone" placeholder="Contact number" value="{{ old('phone') }}"
+                        maxlength="11"
+                        class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500 {{ $errors->has('phone') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}">
+                    @error('phone')
+                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Course -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Gender</label>
+                    <select name="gender"
+                        class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 bg-white focus:ring-green-500 focus:border-green-500 {{ $errors->has('gender') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}">
+                        <option value="">Select a Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Others">Others</option>
+                    </select>
+                    @error('gender')
+                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
                 <!-- Address -->
                 <div>
-                    <label for="address" class="block text-sm font-medium text-gray-700">Address</label>
-                    <textarea name="address" id="address" rows="3"
-                        class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-green-500 focus:border-green-500"
-                        placeholder="Enter student's address">{{ old('address') }}</textarea>
+                    <label class="block text-sm font-medium text-gray-700">Address</label>
+                    <input type="text" name="address" placeholder="Address" value="{{ old('address') }}"
+                        class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500 {{ $errors->has('address') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}">
+                    @error('address')
+                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
+            </div>
 
-                <!-- Submit -->
-                <div class="flex justify-center">
-                    <button type="submit"
-                        class="bg-green-600 text-white px-10 py-2 rounded-lg font-semibold text-lg hover:bg-green-700 transition-all duration-300 shadow-md">
-                        Save Student
-                    </button>
-                </div>
+
+            <!-- Submit Button -->
+            <div class="flex justify-center mt-8">
+                <button type="submit"
+                    class="bg-green-600 text-white px-10 py-2 rounded-lg font-semibold hover:bg-green-700 transition">
+                    Save Student
+                </button>
+            </div>
             </form>
         </div>
     </div>
 
-
     <script>
-        const photoInput = document.getElementById('photoInput');
-        const previewImage = document.getElementById('previewImage');
+        const input = document.getElementById('photo');
+        const preview = document.getElementById('photoPreview');
+        const placeholder = document.getElementById('uploadPlaceholder');
 
-        photoInput.addEventListener('change', function(event) {
+        input.addEventListener('change', (event) => {
             const file = event.target.files[0];
             if (file) {
-                previewImage.src = URL.createObjectURL(file);
+                preview.src = URL.createObjectURL(file);
+                preview.classList.remove('hidden');
+                placeholder.classList.add('hidden');
+            } else {
+                preview.classList.add('hidden');
+                placeholder.classList.remove('hidden');
             }
         });
+        const cnicInput = document.getElementById('cnic');
 
-        document.getElementById('cnic').addEventListener('input', function (e) {
-            let value = e.target.value.replace(/[^0-9]/g, ''); // keep only digits
+        cnicInput.addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            value = value.slice(0, 13);
 
-            // Format as XXXXX-XXXXXX-X
-            if (value.length > 5 && value.length <= 11) {
-                value = value.slice(0, 5) + '-' + value.slice(5);
-            } else if (value.length > 11) {
-                value = value.slice(0, 5) + '-' + value.slice(5, 11) + '-' + value.slice(11, 12);
+            let formatted = value;
+
+            if (value.length > 5 && value.length <= 12) {
+                formatted = value.slice(0, 5) + '-' + value.slice(5);
+            } else if (value.length > 12) {
+                formatted = value.slice(0, 5) + '-' + value.slice(5, 12) + '-' + value.slice(12);
             }
-            e.target.value = value;
+
+            e.target.value = formatted;
         });
     </script>
 @endsection

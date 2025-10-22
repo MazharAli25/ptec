@@ -30,17 +30,17 @@
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-100">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs text-[25px] text-gray-800 uppercase tracking-wider">
+                            <th class="px-6 py-3 text-left font-semibold text-[14px] text-gray-800 uppercase tracking-wider">
                                 Admin Institute</th>
-                            <th class="px-6 py-3 text-left text-xs text-[25px] text-gray-800 uppercase tracking-wider">
+                            <th class="px-6 py-3 text-left font-semibold text-[14px] text-gray-800 uppercase tracking-wider">
                                 Admin Name</th>
-                            <th class="px-6 py-3 text-left text-xs text-[25px] text-gray-800 uppercase tracking-wider">
+                            <th class="px-6 py-3 text-left font-semibold text-[14px] text-gray-800 uppercase tracking-wider">
                                 Email</th>
-                            <th class="px-6 py-3 text-left text-xs text-[25px] text-gray-800 uppercase tracking-wider">
+                            <th class="px-6 py-3 text-left font-semibold text-[14px] text-gray-800 uppercase tracking-wider">
                                 Phone</th>
-                            <th class="px-6 py-3 text-left text-xs text-[25px] text-gray-800 uppercase tracking-wider">
+                            <th class="px-6 py-3 text-left font-semibold text-[14px] text-gray-800 uppercase tracking-wider">
                                 Status</th>
-                            <th class="px-6 py-3 text-left text-xs text-[25px] text-gray-800 uppercase tracking-wider">
+                            <th class="px-6 py-3 text-center font-semibold text-[14px] text-gray-800 uppercase tracking-wider">
                                 Actions</th>
                         </tr>
                     </thead>
@@ -58,17 +58,11 @@
                                     {{ $admin['phone'] }}</td>
                                 <td class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     {{ $admin['status'] }}</td>
-                                <td class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <td class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     <!-- Edit Link -->
                                     <a href="#"
                                         class="inline-flex items-center px-2 py-1.5 bg-blue-500 text-white text-sm font-medium rounded hover:bg-blue-600 transition-colors">
                                         <i class="fas fa-edit text-base"></i>
-                                    </a>
-
-                                    <!-- View Link -->
-                                    <a href="#"
-                                        class="inline-flex items-center px-2 py-1.5 bg-green-500 text-white text-sm font-medium rounded hover:bg-green-600 transition-colors">
-                                        <i class="fas fa-eye text-base"></i>
                                     </a>
 
                                     <!-- Delete Link -->

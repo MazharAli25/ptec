@@ -13,12 +13,11 @@ class Institute extends Model
         'address'
     ];
 
-    /**
-     * ✅ One institute can have many admins.
-     */
-    public function admins()
-    {
-        // ✅ foreign key = institute_id in admins table
-        return $this->hasMany(Admin::class, 'institute_id', 'id');
+    public function admins() {
+        return $this->hasMany(Admin::class);
+    }
+
+    public function students() {
+        return $this->hasMany(Student::class);
     }
 }

@@ -1,5 +1,5 @@
 @extends('layouts.superAdmin')
-@section('page-title', 'Add studentitute')
+@section('page-title', 'Students List')
 
 @section('main-content')
 
@@ -28,17 +28,17 @@
 
             <div class="border border-gray-200 rounded-lg overflow-hidden">
                 <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-100">
+                    <thead class="bg-gray-200">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs text-[25px] text-gray-800 uppercase tracking-wider">
+                            <th class="px-6 py-3 text-left text-[14px] text-gray-800 uppercase tracking-wider">
                                 Student Name</th>
-                            <th class="px-6 py-3 text-left text-xs text-[25px] text-gray-800 uppercase tracking-wider">
+                            <th class="px-6 py-3 text-left text-[14px] text-gray-800 uppercase tracking-wider">
                                 Father Name</th>
-                            <th class="px-6 py-3 text-left text-xs text-[25px] text-gray-800 uppercase tracking-wider">
+                            <th class="px-6 py-3 text-left text-[14px] text-gray-800 uppercase tracking-wider">
                                 Phone</th>
-                            <th class="px-6 py-3 text-left text-xs text-[25px] text-gray-800 uppercase tracking-wider">
+                            <th class="px-6 py-3 text-left text-[14px] text-gray-800 uppercase tracking-wider">
                                 Email</th>
-                            <th class="px-6 py-3 text-left text-xs text-[25px] text-gray-800 uppercase tracking-wider">
+                            <th class="px-6 py-3 text-center text-[14px] text-gray-800 uppercase tracking-wider">
                                 Actions</th>
                         </tr>
                     </thead>
@@ -46,15 +46,15 @@
                         <!-- Empty state for now -->
                         @foreach ($students as $student)
                             <tr>
-                                <td class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <td class="px-6 py-3 text-left text-[14px] font-medium text-gray-600 tracking-wider">
                                     {{ $student['name'] }}</td>
-                                <td class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <td class="px-6 py-3 text-left text-[14px] font-medium text-gray-600 tracking-wider">
                                     {{ $student['fatherName'] }}</td>
-                                <td class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <td class="px-6 py-3 text-left text-[14px] font-medium text-gray-600 tracking-wider">
                                     {{ $student['phone'] }}</td>
-                                <td class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <td class="px-6 py-3 text-left text-[14px] font-medium text-gray-600 tracking-wider">
                                     {{ $student['email'] }}</td>
-                                <td class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <td class="px-6 py-3 text-center text-[14px] font-medium text-gray-600 tracking-wider">
                                     <!-- Edit Link -->
                                     <a href="#"
                                         class="inline-flex items-center px-2 py-1.5 bg-blue-500 text-white text-sm font-medium rounded hover:bg-blue-600 transition-colors">
