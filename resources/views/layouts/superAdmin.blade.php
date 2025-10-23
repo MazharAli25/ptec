@@ -149,6 +149,7 @@
                     </li>
                 </ul>
 
+                {{-- SESSION --}}
                 <button onclick="toggleDropdown('session-dropdown')"
                     class="w-full flex items-center justify-between p-2 hover:bg-[#2d2e2d] rounded">
                     <a href="" class="text-[18px]">Session</a>
@@ -160,6 +161,26 @@
                         class="p-2 hover:bg-[#2d2e2d] rounded text-sm 
                         {{ request()->routeIs('session.create') ? 'bg-[#2d2e2d]' : 'hover:bg-[#2d2e2d]' }}">
                         <a href="{{ route('session.create') }}" class="block">Add Session</a>
+                    </li>
+                    {{-- <li
+                            class="p-2 hover:bg-[#2d2e2d] rounded text-sm 
+                        {{ request()->routeIs('session.index') ? 'bg-[#2d2e2d]' : 'hover:bg-[#2d2e2d]' }}">
+                            <a href="{{ route('session.index') }}">View Sessions</a>
+                        </li> --}}
+                </ul>
+
+                {{-- EXAMINATION CRITERIA --}}
+                <button onclick="toggleDropdown('examination-dropdown')"
+                    class="w-full flex items-center justify-between p-2 hover:bg-[#2d2e2d] rounded">
+                    <a href="" class="text-[18px]">Examintation</a>
+                    <i id="examination-dropdown-icon" class="fa-solid fa-angle-down transition-transform"></i>
+                </button>
+                <ul id="examination-dropdown"
+                    class="ml-4 mt-1 space-y-1 {{ request()->routeIs('examination-criteria.*') ? '' : 'hidden' }}">
+                    <li
+                        class="p-2 hover:bg-[#2d2e2d] rounded text-sm 
+                        {{ request()->routeIs('examination-criteria.create') ? 'bg-[#2d2e2d]' : 'hover:bg-[#2d2e2d]' }}">
+                        <a href="{{ route('examination-criteria.create') }}" class="block">Examination Marks</a>
                     </li>
                     {{-- <li
                             class="p-2 hover:bg-[#2d2e2d] rounded text-sm 
@@ -196,7 +217,7 @@
                     </li>
                 </ul>
 
-                <button onclick="toggleDropdown('grade-dropdown')"
+                {{-- <button onclick="toggleDropdown('grade-dropdown')"
                     class="w-full flex items-center justify-between p-2 hover:bg-[#2d2e2d] rounded">
                     <a href="" class="text-[18px]">Grade</a>
                     <i id="grade-dropdown-icon" class="fa-solid fa-angle-down transition-transform"></i>
@@ -208,9 +229,9 @@
                         {{ request()->routeIs('grade.create') ? 'bg-[#2d2e2d]' : 'hover:bg-[#2d2e2d]' }}">
                         <a href="{{ route('grade.create') }}" class="block">Add grade</a>
                     </li>
-                </ul>
+                </ul> --}}
 
-                <button onclick="toggleDropdown('marks-dropdown')"
+                {{-- <button onclick="toggleDropdown('marks-dropdown')"
                     class="w-full flex items-center justify-between p-2 hover:bg-[#2d2e2d] rounded">
                     <a href="" class="text-[18px]">Marks</a>
                     <i id="marks-dropdown-icon" class="fa-solid fa-angle-down transition-transform"></i>
@@ -222,7 +243,7 @@
                         {{ request()->routeIs('marks.create') ? 'bg-[#2d2e2d]' : 'hover:bg-[#2d2e2d]' }}">
                         <a href="{{ route('marks.create') }}" class="block">Add Marks</a>
                     </li>
-                </ul>
+                </ul> --}}
 
 
 

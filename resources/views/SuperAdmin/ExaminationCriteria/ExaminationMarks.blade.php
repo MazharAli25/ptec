@@ -1,0 +1,127 @@
+@extends('layouts.superAdmin')
+@section('page-title', 'Examination Marks')
+
+@section('main-content')
+
+    <x-err></x-err>
+    <x-success></x-success>
+    @if ($errors->any())
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 ml-[20vw]">
+            <strong>Whoops! Something went wrong:</strong>
+            <ul class="mt-2 list-disc list-inside text-sm text-red-600">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <!-- Main Content -->
+    <div class="flex-1 p-8 ml-[19vw]">
+        <div class="mb-6">
+            <h1 class="text-3xl font-bold text-gray-800">Exam Marks</h1>
+            <p class="text-gray-600 mt-2">Fill in the details to assign exam marks</p>
+        </div>
+
+        <!-- Form Section -->
+        <div class="bg-white rounded-lg form-shadow p-6 mb-8">
+            <form method="POST" action="{{ route('diplomawiseCourse.store') }}" class="w-full">
+                @csrf
+
+                <!-- Title -->
+                <h2 class="text-lg font-semibold text-gray-700 border-b pb-2 mb-6">
+                    Assign Exam Marks
+                </h2>
+
+                <!-- Top Inputs: Diploma & Semester -->
+                <div class="flex flex-wrap justify-between items-center gap-6 w-full mb-6">
+                    <!-- Diploma -->
+                    <div class="flex-1 min-w-[250px]">
+                        <label for="theoryMarks" class="block text-sm font-medium text-gray-700 mb-1">
+                            Total Marks
+                        </label>
+                        <input type="text" name="theoryMarks" id="theoryMarks" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Enter Theory Marks" value="{{ old('theoryMarks') }}">
+                        @error('theorylMarks')
+                            <p class="text-red-500 text-sm font-semibold mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- Practical Marks --}}
+                    <div class="flex-1 min-w-[250px]">
+                        <label for="practicallMarks" class="block text-sm font-medium text-gray-700 mb-1">
+                            Practical Marks
+                        </label>
+                        <input type="text" name="practicallMarks" id="practicallMarks" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Enter Practical Marks" value="{{ old('practicallMarks') }}">
+                        @error('practicallMarks')
+                            <p class="text-red-500 text-sm font-semibold mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+
+                <!-- Course Selection Table -->
+                <div class="border border-gray-200 rounded-lg overflow-hidden mb-8">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-200">
+                            <tr>
+                                <th
+                                    class="px-6 py-3 text-left text-sm font-semibold text-gray-800 uppercase tracking-wider w-12">
+                                    <input type="checkbox" id="selectAll" class="cursor-pointer">
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-left text-sm font-semibold text-gray-800 uppercase tracking-wider">
+                                    Course Name
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-left text-sm font-semibold text-gray-800 uppercase tracking-wider">
+                                    Course Code
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @foreach ($courses as $course)
+                                <tr>
+                                    <td class="px-6 py-3 text-center">
+                                        <input type="checkbox" name="courseIDs[]" value="{{ $course->id }}"
+                                            class="course-checkbox cursor-pointer">
+                                    </td>
+                                    <td class="px-6 py-3 text-gray-700 text-sm font-medium">
+                                        {{ $course->course->courseName }}
+                                    </td>
+                                    <td class="px-6 py-3 text-gray-700 text-sm">
+                                        {{ $course->courseCode ?? '—' }}
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="flex justify-center mt-8">
+                    <button type="submit"
+                        class="px-8 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all">
+                        Assign Selected Courses
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const selectAll = document.getElementById("selectAll");
+            const checkboxes = document.querySelectorAll(".course-checkbox");
+
+            selectAll.addEventListener("change", function() {
+                checkboxes.forEach(cb => cb.checked = this.checked);
+            });
+        });
+    </script>
+
+@endsection

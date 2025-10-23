@@ -103,9 +103,10 @@ class DiplomawiseCoursesController extends Controller
         }
 
         // Build success message
-        $message = '✅ Selected courses assigned successfully.';
+      $message = '<span class="font-semibold"> Selected courses assigned successfully.</span>';
+
         if (!empty($duplicates)) {
-            $message .= '/n <br>⚠️ These courses were already assigned and skipped: <strong>'
+            $message .= '<br><span class="text-yellow-600"> These courses were already assigned in the selected session and skipped:</span> <br> <strong class="text-yellow-600">'
                 . implode(', ', $duplicates) . '</strong>';
         }
 

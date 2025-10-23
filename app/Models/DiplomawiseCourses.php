@@ -31,5 +31,9 @@ class DiplomawiseCourses extends Model
         return $this->belongsTo(StudentCourse::class, 'DiplomawiseCourseID');
     }
 
+    public function examinationCriteria()
+    {
+        return $this->hasOne(ExaminationCriteria::class, 'DiplomawiseCourseID', 'ID');
+    }
 
 }
