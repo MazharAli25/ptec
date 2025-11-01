@@ -25,7 +25,7 @@
 
         <!-- Form Section -->
         <div class="bg-white rounded-lg form-shadow p-6 mb-8">
-            <form method="POST" action="{{ route('diplomawiseCourse.store') }}" class="w-full">
+            <form method="POST" action="{{ route('examination-criteria.store') }}" class="w-full">
                 @csrf
 
                 <!-- Title -->
@@ -38,9 +38,9 @@
                     <!-- Diploma -->
                     <div class="flex-1 min-w-[250px]">
                         <label for="theoryMarks" class="block text-sm font-medium text-gray-700 mb-1">
-                            Total Marks
+                            Theory Marks
                         </label>
-                        <input type="text" name="theoryMarks" id="theoryMarks" 
+                        <input type="number" name="theoryMarks" id="theoryMarks" 
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             placeholder="Enter Theory Marks" value="{{ old('theoryMarks') }}">
                         @error('theorylMarks')
@@ -53,7 +53,7 @@
                         <label for="practicallMarks" class="block text-sm font-medium text-gray-700 mb-1">
                             Practical Marks
                         </label>
-                        <input type="text" name="practicallMarks" id="practicallMarks" 
+                        <input type="number" name="practicalMarks" id="practicallMarks" 
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             placeholder="Enter Practical Marks" value="{{ old('practicallMarks') }}">
                         @error('practicallMarks')
@@ -63,8 +63,9 @@
                 </div>
 
                 <!-- Course Selection Table -->
+                <h2 class="font-medium text-gray-700">Select Courses From Here (below are the courses which are assigned to diplomas):</h2>
                 <div class="border border-gray-200 rounded-lg overflow-hidden mb-8">
-                    <table class="min-w-full divide-y divide-gray-200">
+                    <table class="min-w-full divide-y divide-gray-200 examination-marks-table">
                         <thead class="bg-gray-200">
                             <tr>
                                 <th
@@ -77,7 +78,7 @@
                                 </th>
                                 <th
                                     class="px-6 py-3 text-left text-sm font-semibold text-gray-800 uppercase tracking-wider">
-                                    Course Code
+                                    Session
                                 </th>
                             </tr>
                         </thead>
@@ -85,14 +86,15 @@
                             @foreach ($courses as $course)
                                 <tr>
                                     <td class="px-6 py-3 text-center">
-                                        <input type="checkbox" name="courseIDs[]" value="{{ $course->id }}"
+                                        <input type="checkbox" name="courseIDs[]" value="{{ $course['ID'] }}"
                                             class="course-checkbox cursor-pointer">
                                     </td>
                                     <td class="px-6 py-3 text-gray-700 text-sm font-medium">
                                         {{ $course->course->courseName }}
                                     </td>
-                                    <td class="px-6 py-3 text-gray-700 text-sm">
-                                        {{ $course->courseCode ?? '—' }}
+                                    <td class="px-6 py-3 text-gray-700 text-sm font-medium">
+                                        <input type="hidden" name="sessionID" value="{{ $course->diploma->session->id }}">
+                                        {{ $course->diploma->session->session }}
                                     </td>
                                 </tr>
                             @endforeach
@@ -104,7 +106,7 @@
                 <div class="flex justify-center mt-8">
                     <button type="submit"
                         class="px-8 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all">
-                        Assign Selected Courses
+                        Save
                     </button>
                 </div>
             </form>
@@ -123,5 +125,64 @@
             });
         });
     </script>
+   <script>
+        $(document).ready(function () {
+        var table = $('.examination-marks-table').DataTable({
+            dom:  
+            '<"mid-toolbar flex gap-4 items-center mb-4 mr-3"lf>' + 
+            't' + 
+            '<"bottom-toolbar flex items-center justify-between mt-4"<"flex-1"></><"flex justify-center"><"flex-1 text-right text-sm text-gray-500">>',
+            pageLength: 100,
+            stateSave: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search here...",
+                lengthMenu: "_MENU_"
+            },
+            initComplete: function () {
+                $('.dt-input')
+                    .addClass('border border-gray-300 rounded-lg text-[14px] px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm')
+                    .css({
+                        'width': '200px',
+                        'padding': '6px 10px',}); 
+                $('.dt-length select')
+                    .addClass('border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm')
+                    .css({
+                        'width': '80px',
+                        'padding': '6px 10px'
+                    });
+                $('.dt-length').addClass('px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm');
+            },
+            columnDefs: [
+                {
+                    targets: [2], 
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    targets:[1],
+                    searchable:true,
+                }
+            ],
+            
 
+        })
+        // Save last searched word in sessionStorage
+        $('.dt-input').on('keyup change', function () {
+            sessionStorage.setItem('datatableSearch', $(this).val());
+        });
+
+        // Restore old searched word (if any)
+        var oldSearch = sessionStorage.getItem('datatableSearch');
+        if (oldSearch) {
+            table.search(oldSearch).draw();
+            $('.dt-input').val(oldSearch);
+        }
+
+        // Clear sessionStorage when leaving/reloading the page
+        window.addEventListener('beforeunload', function () {
+            sessionStorage.clear();
+        });
+    });
+    </script>
 @endsection

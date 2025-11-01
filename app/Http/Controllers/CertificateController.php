@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Certificate;
 use App\Models\Student;
+use App\Models\StudentDiploma;
 use Illuminate\Http\Request;
 
 class CertificateController extends Controller
@@ -21,23 +22,44 @@ class CertificateController extends Controller
      */
     public function create()
     {
-        //
+        $studentDiplomas = StudentDiploma::with(['student', 'diploma', 'semester'])->get();
+
+        return view('Admin.requestCertificate', compact('studentDiplomas'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, $data)
+    public function store(Request $request)
     {
-       $student = Student::with(['institute', 'session', 'course'])->findOrFail($data);
+        $validated = $request->validate([
+            'student_id' => 'required|exists:students,id',
+            'diploma_id' => 'required|exists:diplomas,id',
+            'session_id' => 'required|exists:mysessions,id',
+        ]);
 
-        // Now you can safely access relationships
-        $instituteName = $student->institute->institute_name;
-        $sessionName = $student->session->sessionName;
-        $courseTitle = $student->course->courseName;
-        $name=$student->institute->institute_name;
-        dd($name);
+        // Check for duplicates
+        $exists = Certificate::where('student_id', $validated['student_id'])
+            ->where('diplomaID', $validated['diploma_id'])
+            ->where('sessionID', $validated['session_id'])
+            ->exists();
+
+        if ($exists) {
+            return back()->with('error', 'Certificate already requested for this student, diploma, and session.');
+        }
+
+        // Create new certificate record
+        Certificate::create([
+            'student_id' => $validated['student_id'],
+            'diplomaID' => $validated['diploma_id'],
+            'sessionID' => $validated['session_id'],
+            'status' => 'Pending',
+        ]);
+
+        return redirect()->route('admin.viewCertificates')
+            ->with('success', 'Certificate request created successfully.');
     }
+
 
     /**
      * Display the specified resource.
@@ -60,7 +82,13 @@ class CertificateController extends Controller
      */
     public function update(Request $request, Certificate $certificate)
     {
-        //
+        $validated = $request->validate([
+            'status' => 'required|in:approved,rejected,pending',
+        ]);
+
+        $certificate->update(['status' => $validated['status']]);
+
+        return redirect()->route('superAdmin.certificatesRequests')->with('success', 'Certificate ' . ucfirst($validated['status']) . ' successfully.');
     }
 
     /**

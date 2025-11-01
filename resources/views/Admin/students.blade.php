@@ -104,7 +104,7 @@
 
 
                 <!-- Course -->
-                <div>
+                {{-- <div>
                     <label class="block text-sm font-medium text-gray-700">Course</label>
                     <select name="course_id"
                         class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 bg-white focus:ring-green-500 focus:border-green-500 {{ $errors->has('course_id') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}">
@@ -117,10 +117,10 @@
                     @error('course_id')
                         <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                     @enderror
-                </div>
+                </div> --}}
 
                 <!-- Session -->
-                <div>
+                {{-- <div>
                     <label class="block text-sm font-medium text-gray-700">Session</label>
                     <select name="session_id"
                         class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 bg-white focus:ring-green-500 focus:border-green-500 {{ $errors->has('session_id') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}">
@@ -134,7 +134,7 @@
                     @error('session_id')
                         <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                     @enderror
-                </div>
+                </div> --}}
 
                 <!-- Institute -->
                 <div>
@@ -178,15 +178,25 @@
                         <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
-                <!-- Address -->
+
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Address</label>
-                    <input type="text" name="address" placeholder="Address" value="{{ old('address') }}"
-                        class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500 {{ $errors->has('address') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}">
-                    @error('address')
+                    <label class="block text-sm font-medium text-gray-700" for="joiningDate">Joining Date</label>
+                    <input type="Date" name="joiningDate"value="{{ old('joiningDate', date('Y-m-d')) }}"
+                        maxlength="11"
+                        class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500 {{ $errors->has('phone') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}">
+                    @error('joiningDate')
                         <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
+            </div>
+            <!-- Address -->
+            <div class="mt-4">
+                <label class="block text-sm font-medium text-gray-700">Address</label>
+                <input type="text" name="address" placeholder="Address" value="{{ old('address') }}"
+                    class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500 {{ $errors->has('address') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}">
+                @error('address')
+                    <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                @enderror
             </div>
 
 

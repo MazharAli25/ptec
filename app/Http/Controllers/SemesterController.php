@@ -31,9 +31,11 @@ class SemesterController extends Controller
     {
         $validated = $request->validate([
             'semesterName' => 'required|string|max:255',
+            'semesterDuration'=> 'required|string|max:255'
         ]);
         Semester::create([
             'SemesterName' => $validated['semesterName'],
+            'Duration' => $validated['semesterDuration']
         ]);
         return redirect()->route('semester.create')->with('success', 'Semester created successfully.');
     }

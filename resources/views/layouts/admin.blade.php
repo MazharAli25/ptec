@@ -13,6 +13,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
         integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    {{-- JQUERY CDN --}}
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+    {{-- DATA TABLES CSS--}}
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.4/css/dataTables.dataTables.min.css">
     <script>
         function toggleDropdown(id) {
             const dropdown = document.getElementById(id);
@@ -44,7 +50,7 @@
         <x-success></x-success>
 
 
-        {{-- @if ($errors->any())
+        @if ($errors->any())
         <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 ml-[20vw]">
             <strong>Whoops! Something went wrong:</strong>
             <ul class="mt-2 list-disc list-inside text-sm text-red-600">
@@ -53,7 +59,7 @@
                 @endforeach
             </ul>
         </div>
-        @endif --}}
+        @endif
 
 
         @yield('main-content')
@@ -78,6 +84,9 @@
                 transform: rotate(180deg);
             }
         </style>
+            {{-- DATA TABLE JS --}}
+            <script src="https://cdn.datatables.net/2.3.4/js/dataTables.min.js"></script>
+
 
     </body>
 

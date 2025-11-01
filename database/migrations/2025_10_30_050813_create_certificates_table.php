@@ -14,10 +14,8 @@ return new class extends Migration
         Schema::create('certificates', function (Blueprint $table) {
         $table->id();
         $table->foreignId('student_id')->constrained('students')->cascadeOnDelete();
-        $table->string('session_name');
-        $table->string('course_title');
-        $table->date('sessionStart');
-        $table->date('sessionEnd');
+        $table->foreignId('diplomaID')->constrained('diplomas')->cascadeOnDelete();
+        $table->foreignId('sessionID')->constrained('mysessions')->cascadeOnDelete();
         $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
         $table->timestamps();
 });

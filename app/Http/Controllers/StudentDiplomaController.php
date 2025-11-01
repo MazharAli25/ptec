@@ -8,6 +8,8 @@ use App\Models\Semester;
 use App\Models\DiplomawiseCourses;
 use App\Models\StudentCourse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
 
 class StudentDiplomaController extends Controller
 {
@@ -43,44 +45,101 @@ class StudentDiplomaController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+    // public function store(Request $request)
+    // {
+    //     $validated = $request->validate([
+    //         'student_id' => 'required|exists:students,id',
+    //         'diploma_id' => 'required|exists:diplomas,id',
+    //         'semester_id' => 'required|exists:semesters,id',
+    //     ]);
+
+    //     $existingEnrollment = StudentDiploma::where('student_id', $validated['student_id'])
+    //         ->where('diploma_id', $validated['diploma_id'])
+    //         ->exists();
+
+    //     if ($existingEnrollment) {
+    //         return redirect()->route('studentDiploma.create')->with('error', 'Student is already enrolled in this diploma.');
+    //     }
+    //     $studentDiploma = StudentDiploma::create([
+    //         'student_id' => $validated['student_id'],
+    //         'diploma_id' => $validated['diploma_id'],
+    //         'semester_id' => $validated['semester_id'],
+    //         'issue_diploma' => 0,
+    //     ]);
+
+
+    //     $diplomaCourses = DiplomaWiseCourses::where('diplomaID', $validated['diploma_id'])->pluck('id');
+    //     foreach ($diplomaCourses as $courseId) {
+    //         StudentCourse::create([
+    //             'StudentDiplomaID' => $studentDiploma->id,
+    //             'DiplomawiseCourseID' => $courseId,
+    //         ]);
+
+    //         dd([
+    //             'StudentDiplomaID' => $studentDiploma->id,
+    //             'DiplomawiseCourseID' => $courseId,
+    //         ]);
+    //     }
+
+
+    //     return redirect()->route('studentDiploma.create')->with('success', 'Diploma assigned to student successfully.');
+    // }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
             'student_id' => 'required|exists:students,id',
             'diploma_id' => 'required|exists:diplomas,id',
             'semester_id' => 'required|exists:semesters,id',
+            // 'session'=> 'required',
         ]);
+        // Find or create StudentDiploma record
+        $studentDiploma = StudentDiploma::firstOrCreate(
+            [
+                'student_id' => $validated['student_id'],
+                'diploma_id' => $validated['diploma_id'],
+            ],
+            [
+                'semester_id' => $validated['semester_id'],
+                'issue_diploma' => 0,
+            ]
+        );
 
-        $existingEnrollment = StudentDiploma::where('student_id', $validated['student_id'])
-            ->where('diploma_id', $validated['diploma_id'])
-            ->exists();
+        //  Get all required course IDs for this diploma
+        $requiredCourses = DiplomaWiseCourses::where('diplomaID', $validated['diploma_id'])
+            // ->where('sessionID', $validated['session'])
+            ->pluck('id')
+            ->toArray();
 
-        if ($existingEnrollment) {
-            return redirect()->route('studentDiploma.create')->with('error', 'Student is already enrolled in this diploma.');
+
+        // Get existing courses already assigned to this student for this diploma
+        $existingCourses = StudentCourse::where('StudentDiplomaID', $studentDiploma->ID)
+            ->pluck('DiplomawiseCourseID')
+            ->toArray();
+
+        // Find missing courses
+        $missingCourses = array_diff($requiredCourses, $existingCourses);
+
+        if (empty($missingCourses)) {
+            // Student already has all courses for this diploma
+            return redirect()
+                ->route('studentDiploma.create')
+                ->with('error', 'Student is already enrolled in all courses of this diploma.');
         }
-        $studentDiploma = StudentDiploma::create([
-            'student_id' => $validated['student_id'],
-            'diploma_id' => $validated['diploma_id'],
-            'semester_id' => $validated['semester_id'],
-            'issue_diploma' => 0,
-        ]);
 
+        //  Assign missing courses safely in a transaction
+        DB::transaction(function () use ($missingCourses, $studentDiploma) {
+            foreach ($missingCourses as $courseId) {
+                StudentCourse::create([
+                    'StudentDiplomaID' => $studentDiploma->ID,
+                    'DiplomawiseCourseID' => $courseId,
+                ]);
+            }
+        });
 
-        $diplomaCourses = DiplomaWiseCourses::where('diplomaID', $validated['diploma_id'])->pluck('id');
-        foreach ($diplomaCourses as $courseId) {
-            StudentCourse::create([
-                'StudentDiplomaID' => $studentDiploma->id,
-                'DiplomawiseCourseID' => $courseId,
-            ]);
-
-            dd([
-                'StudentDiplomaID' => $studentDiploma->id,
-                'DiplomawiseCourseID' => $courseId,
-            ]);
-        }
-
-
-        return redirect()->route('studentDiploma.create')->with('success', 'Diploma assigned to student successfully.');
+        return redirect()
+            ->route('studentDiploma.create')
+            ->with('success', count($missingCourses) . ' new courses assigned to the student for this diploma.');
     }
 
     /**

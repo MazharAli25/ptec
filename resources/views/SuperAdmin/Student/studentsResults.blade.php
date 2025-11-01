@@ -19,46 +19,50 @@
     <!-- Main Content -->
     <div class="flex-1 p-8 ml-[19vw]">
         <div class="mb-6">
-            <h1 class="text-3xl font-bold text-gray-800">Assigned Courses To Diplomas </h1>
-            <p class="text-gray-600 mt-2">View the details of assigned courses to the diplomas</p>
+            <h1 class="text-3xl font-bold text-gray-800">Results Of Students</h1>
+            <p class="text-gray-600 mt-2">View the results of students</p>
         </div>
 
         <!-- Table Section (Placeholder for future data) -->
         <div class="bg-white rounded-lg form-shadow p-6">
 
             <div class="border border-gray-200 rounded-lg overflow-hidden">
-                <table class="min-w-full divide-y divide-gray-200 assigned-courses-table">
+                <table class="min-w-full divide-y divide-gray-200 students-table">
                     <thead class="bg-gray-200">
                         <tr>
                             <th class="px-6 py-3 text-left text-[14px] text-gray-800 uppercase tracking-wider">
                                 ID</th>
                             <th class="px-6 py-3 text-left text-[14px] text-gray-800 uppercase tracking-wider">
+                                Student Name</th>
+                                <th class="px-6 py-3 text-left text-[14px] text-gray-800 uppercase tracking-wider">
                                 Diploma Name</th>
-                            <th class="px-6 py-3 text-left text-[14px] text-gray-800 uppercase tracking-wider">
-                                Course Name</th>
-                            <th class="px-6 py-3 text-left text-[14px] text-gray-800 uppercase tracking-wider">
-                                Semester</th>
+                                <th class="px-6 py-3 text-left text-[14px] text-gray-800 uppercase tracking-wider">
+                                Institute Name</th>
                             <th class="px-6 py-3 text-center text-[14px] text-gray-800 uppercase tracking-wider">
                                 Actions</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         <!-- Empty state for now -->
-                        @foreach ($diplomas as $diploma)
+                        @foreach ($results as $result)
                             <tr>
                                 <td class="px-6 py-3 text-left text-[14px] font-medium text-gray-600 tracking-wider">
-                                    {{ $diploma['ID'] }}</td>
+                                    {{ $result['id'] }}</td>
                                 <td class="px-6 py-3 text-left text-[14px] font-medium text-gray-600 tracking-wider">
-                                    {{ $diploma->diploma->DiplomaName }}</td>
+                                    {{ $result->student->name }}</td>
                                 <td class="px-6 py-3 text-left text-[14px] font-medium text-gray-600 tracking-wider">
-                                    {{ $diploma->course->courseName }}</td>
+                                    {{ $result->ExaminationCriteria->diplomawiseCourse->diploma->DiplomaName }}</td>
                                 <td class="px-6 py-3 text-left text-[14px] font-medium text-gray-600 tracking-wider">
-                                    {{ $diploma->diploma->session->session }}</td>
+                                    {{ $result->student->institute->institute_name }}</td>
                                 <td class="px-6 py-3 text-center text-[14px] font-medium text-gray-600 tracking-wider">
                                     <!-- Edit Link -->
                                     <a href="#"
                                         class="inline-flex items-center px-2 py-1.5 bg-blue-500 text-white text-sm font-medium rounded hover:bg-blue-600 transition-colors">
                                         <i class="fas fa-edit text-base"></i>
+                                    </a>
+                                    <a href="{{ route('result.show', $result) }}"
+                                        class="inline-flex items-center px-2 py-1.5 bg-green-500 text-white text-sm font-medium rounded hover:bg-green-600 transition-colors">
+                                        <i class="fas fa-eye text-base"></i>
                                     </a>
                                     <!-- Delete Link -->
                                     <a href="#"
@@ -68,17 +72,16 @@
                                 </td>
                             </tr>
                         @endforeach
-                    </tbody>
+                    </tbody>    
                 </table>
             </div>
 
         </div>
     </div>
-    </div>
 
-    <script>
+<script>
         $(document).ready(function () {
-        var table = $('.assigned-courses-table').DataTable({
+        var table = $('.students-table').DataTable({
             dom:  
             '<"mid-toolbar flex gap-4 items-center mb-4 mr-3"lf>' + 
             't' + 
@@ -138,3 +141,4 @@
     </script>
 
 @endsection
+

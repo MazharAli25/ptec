@@ -52,18 +52,17 @@ class StudentController extends Controller
             'name' => ['required'],
             'fatherName' => ['required'],
             'dob'=>['nullable', 'date'],
-            // Custom email validation for specific domains like gmail, yahoo, hotmail
             'email' => ['required', 'unique:students,email', function ($attribute, $value, $fail) {
                 if (!preg_match('/@(gmail|yahoo|hotmail)\.com$/', $value)) {
                     $fail('The email must be a Gmail, Yahoo, or Hotmail address.');
                 }
-            },],
-
+            }],
             'cnic' => ['required', 'regex:/^[0-9]{5}-[0-9]{7}-[0-9]{1}$/', 'unique:students,cnic'],
             'phone' => ['required', 'unique:students,phone', 'max:11'],
             'gender' => ['required'],
-            'course_id' => ['required'],
-            'session_id'=>['required'],
+            // 'course_id' => ['required'],
+            // 'session_id'=>['required'],
+            'joiningDate'=>['required', 'date'],
             'address' => ['nullable'],
         ]);
 
@@ -82,8 +81,9 @@ class StudentController extends Controller
             'cnic'=> $validated['cnic'],
             'phone'=> $validated['phone'],
             'gender'=>$validated['gender'],
-            'courseId'=> $validated['course_id'],
-            'sessionId'=> $validated['session_id'],
+            // 'courseId'=> $validated['course_id'],
+            // 'sessionId'=> $validated['session_id'],
+            'joiningDate'=> $validated['joiningDate'],
             'address'=> $validated['address'],
         ]);
 
@@ -95,7 +95,8 @@ class StudentController extends Controller
      */
     public function show(Student $student)
     {
-        //
+        $student= $student;
+        return view('Admin.studentDetails', compact('student'));
     }
 
     /**

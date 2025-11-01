@@ -19,4 +19,12 @@ class mysession extends Model
     public function diplomas() {
         return $this->hasMany(Diploma::class, 'SessionID');
     }
+
+    public function examinationCriterias() {
+        return $this->hasMany(ExaminationCriteria::class, 'sessionID');
+    }
+
+    public function certificates(){
+        return $this->hasMany(Certificate::class, 'sessionID', 'id');
+    }
 }

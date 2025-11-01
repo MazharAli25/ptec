@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class StudentDiploma extends Model
 {
     protected $table= 'student_diplomas';
+    protected $primaryKey= 'ID';
     protected $fillable = [
         'student_id',
         'diploma_id',
@@ -29,6 +30,6 @@ class StudentDiploma extends Model
     }
 
     public function studentCourses(){
-        return $this ->hasMany(StudentCourse::class, 'StudentDiplomaID');
+        return $this ->hasMany(StudentCourse::class, 'StudentDiplomaID', 'ID');
     }
 }

@@ -13,15 +13,16 @@ class Student extends Model
     protected $fillable=[
         'image',
         'instituteId',
-        'courseId',
+        // 'courseId',
         'name',
         'fatherName',
         'cnic',
         'dob',
         'email',
         'phone',
-        'sessionId',
+        // 'sessionId',
         'address',
+        'joiningDate'
     ];
 
     public function institute() {
@@ -33,7 +34,7 @@ class Student extends Model
     }
 
     public function certificates() {
-        return $this->hasMany(Certificate::class);
+        return $this->hasMany(Certificate::class, 'student_id', 'id');
     }
 
      public function course() {
@@ -52,5 +53,9 @@ class Student extends Model
     public function studentDiplomas()
     {
         return $this->hasMany(StudentDiploma::class, 'student_id');
+    }
+
+    public function result(){
+        return $this->hasMany(Result::class, 'StudentID', 'id');
     }
 }

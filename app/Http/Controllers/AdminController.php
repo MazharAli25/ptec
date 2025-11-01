@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin;
+use App\Models\Certificate;
+use App\Models\Diploma;
 use App\Models\Institute;
 use App\Models\Student;
+use App\Models\StudentDiploma;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -46,7 +49,7 @@ class AdminController extends Controller
             'institute_id' => $validated['institute_id'],
             'name' => $validated['name'],
             'email' => $validated['email'],
-            'phone'=> $validated['phone'],
+            'phone' => $validated['phone'],
             'password' => Hash::make($validated['password']),
             'status' => $validated['status'],
         ]);
@@ -87,26 +90,28 @@ class AdminController extends Controller
     }
 
 
-    public function requestCertificate(Request $request)
-    {
-        $query = \App\Models\Student::query();
+    // public function requestCertificate(Request $request)
+    // {
+    //     $query = Student::with('studentDiplomas.diploma.session');
 
-        if ($request->filled('name')) {
-            $query->where('name', 'like', "%{$request->name}%");
-        }
+    //     if ($request->filled('id')) {
+    //         $query->where('id', $request->id); // exact match is better here
+    //     }
 
-        if ($request->filled('fatherName')) {
-            $query->where('fatherName', 'like', "%{$request->fatherName}%");
-        }
+    //     $reqStudents = $request->filled('id')
+    //         ? $query->get()
+    //         : collect();
 
-        if ($request->filled('email')) {
-            $query->where('email', 'like', "%{$request->email}%");
-        }
-        
-        $reqStudents = $request->hasAny(['name', 'fatherName', 'email'])
-            ? $query->get()
-            : collect();
+    //     return view('Admin.requestCertificate', compact('reqStudents'));
+    // }
 
-        return view('Admin.requestCertificate', compact('reqStudents'));
+    // public function requestedCertificates()
+    // {
+        // return view('Admin.requestCertificate');
+    // }
+
+    public function requestedCertificates(){
+        $requests= Certificate::get();
+        return view('Admin.Certificates.RequestedCertificates', compact('requests'));
     }
 }

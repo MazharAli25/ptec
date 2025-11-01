@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('examination_criteria', function (Blueprint $table) {
             $table->id('ID');
-            $table->foreignId('DiplomawiseCourseID')->constrained('diplomawise_courses', 'ID')->onDelete('cascade');
+            $table->foreignId('DiplomawiseCourseID')->constrained('diplomawise_courses')->onDelete('cascade');
+            $table->foreignId('sessionID')->constrained('mysessions')->onDelete('cascade');
             $table->integer('TheoryMarks');
             $table->integer('PracticalMarks')->nullable();
             $table->integer('TotalMarks');

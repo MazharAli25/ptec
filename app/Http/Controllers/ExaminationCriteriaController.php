@@ -13,7 +13,8 @@ class ExaminationCriteriaController extends Controller
      */
     public function index()
     {
-        //
+        $criterias = ExaminationCriteria::with(['diplomawiseCourse.course', 'session'])->get();
+        return view('SuperAdmin.ExaminationCriteria.viewCriterias', compact('criterias'));
     }
 
     /**
@@ -30,58 +31,50 @@ class ExaminationCriteriaController extends Controller
      */
     public function store(Request $request)
     {
-        // $validated = $request->validate([
-        //     'diplomaID' => 'required|exists:diplomas,id',
-        //     'semesterID' => 'required|exists:semesters,id',
-        //     'courseIDs' => 'required|array|min:1',
-        //     'courseIDs.*' => 'exists:courses,id',
-        // ]);
+        $validated = $request->validate([
+            'theoryMarks'   => 'required|numeric|min:0',
+            'practicalMarks' => 'nullable|numeric|min:0',
+            'sessionID'     => 'required|exists:mysessions,ID',
+            'courseIDs'     => 'required|array|min:1',
+            'courseIDs.*'   => 'exists:diplomawise_courses,ID',
+        ]);
 
-        // $diplomaID = $validated['diplomaID'];
-        // $semesterID = $validated['semesterID'];
-        // $courseIDs = $validated['courseIDs'];
+        $inserted = 0;
+        $skippedCourses = [];
 
-        // $data = [];
-        // $duplicates = [];
+        foreach ($validated['courseIDs'] as $courseId) {
+            // Check for existing record
+            $exists = ExaminationCriteria::where('DiplomawiseCourseID', $courseId)
+                ->where('sessionID', $validated['sessionID'])
+                ->exists();
 
-        // foreach ($courseIDs as $courseId) {
-        //     $existingAssignment = DiplomawiseCourses::where('diplomaID', $diplomaID)
-        //         ->where('courseID', $courseId)
-        //         ->where('semesterID', $semesterID)
-        //         ->exists();
+            if ($exists) {
+                $course = \App\Models\DiplomawiseCourses::with('course')->find($courseId);
+                $skippedCourses[] = $course?->course?->courseName ?? 'Unknown Course';
+                continue;
+            }
 
-        //     if ($existingAssignment) {
-        //         $courseName = Course::where('id', $courseId)->value('courseName');
-        //         $duplicates[] = $courseName;
-        //         continue;
-        //     }
+            $totalMarks = $validated['theoryMarks'] + ($validated['practicalMarks'] ?? $validated['theoryMarks'] || 0);
 
-        //     $data[] = [
-        //         'diplomaID' => $diplomaID,
-        //         'courseID' => $courseId,
-        //         'semesterID' => $semesterID,
-        //         'created_at' => now(),
-        //         'updated_at' => now(),
-        //     ];
-        // }
+            ExaminationCriteria::create([
+                'DiplomawiseCourseID' => $courseId,
+                'sessionID'            => $validated['sessionID'],
+                'TheoryMarks'          => $validated['theoryMarks'],
+                'PracticalMarks'       => $validated['practicalMarks'] ?? 0,
+                'TotalMarks'           => $totalMarks,
+            ]);
 
-        // if (!empty($data)) {
-        //     DiplomawiseCourses::insert($data);
-        // }
+            $inserted++;
+        }
 
-        // Build success message
-        // $message = '<span class="font-semibold"> Selected courses assigned successfully.</span>';
+        // Build message
+        $message = " $inserted criteria added successfully.";
+        if (!empty($skippedCourses)) {
+            $message .= "  Already existed for: " . implode(', ', $skippedCourses);
+        }
 
-        // if (!empty($duplicates)) {
-        //     $message .= '<br><span class="text-yellow-600"> These courses were already assigned in the selected session and skipped:</span> <br> <strong class="text-yellow-600">'
-        //         . implode(', ', $duplicates) . '</strong>';
-        // }
-
-        // return redirect()
-            // ->route('diplomawiseCourse.create')
-            // ->with('success', $message);
+        return redirect()->back()->with('success', $message);
     }
-
     /**
      * Display the specified resource.
      */

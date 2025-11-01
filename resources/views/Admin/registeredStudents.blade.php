@@ -27,7 +27,7 @@
         <div class="bg-white rounded-lg form-shadow p-6">
 
             <div class="border border-gray-200 rounded-lg overflow-hidden">
-                <table class="min-w-full divide-y divide-gray-200">
+                <table class="min-w-full divide-y divide-gray-200 students-table">
                     <thead class="bg-gray-100">
                         <tr>
                             <th class="px-6 py-3 text-left text-xs text-[25px] text-gray-800 uppercase tracking-wider">
@@ -64,6 +64,11 @@
                                         class="inline-flex items-center px-2 py-1.5 bg-blue-500 text-white text-sm font-medium rounded hover:bg-blue-600 transition-colors">
                                         <i class="fas fa-edit text-base"></i>
                                     </a>
+                                    <!-- View Link -->
+                                    <a href="{{ route('student.show', $student) }}"
+                                        class="inline-flex items-center px-2 py-1.5 bg-green-500 text-white text-sm font-medium rounded hover:bg-green-600 transition-colors">
+                                        <i class="fas fa-eye text-base"></i>
+                                    </a>
 
                                     <!-- Delete Link -->
                                     <a href="#"
@@ -80,5 +85,65 @@
         </div>
     </div>
     </div>
+    <script>
+        $(document).ready(function () {
+        var table = $('.students-table').DataTable({
+            dom:  
+            '<"mid-toolbar flex gap-4 items-center mb-4 mr-3"lf>' + 
+            't' + 
+            '<"bottom-toolbar flex items-center justify-between mt-4"<"flex-1"></><"flex justify-center"><"flex-1 text-right text-sm text-gray-500">>',
+            pageLength: 100,
+            stateSave: true,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search here...",
+                lengthMenu: "_MENU_"
+            },
+            initComplete: function () {
+                $('.dt-input')
+                    .addClass('border border-gray-300 rounded-lg text-[14px] px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm')
+                    .css({
+                        'width': '200px',
+                        'padding': '6px 10px',}); 
+                $('.dt-length select')
+                    .addClass('border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm')
+                    .css({
+                        'width': '80px',
+                        'padding': '6px 10px'
+                    });
+                $('.dt-length').addClass('px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm');
+            },
+            columnDefs: [
+                {
+                    targets: [2], 
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    targets:[1],
+                    searchable:true,
+                }
+            ],
+            
+
+        })
+        // Save last searched word in sessionStorage
+        $('.dt-input').on('keyup change', function () {
+            sessionStorage.setItem('datatableSearch', $(this).val());
+        });
+
+        // Restore old searched word (if any)
+        var oldSearch = sessionStorage.getItem('datatableSearch');
+        if (oldSearch) {
+            table.search(oldSearch).draw();
+            $('.dt-input').val(oldSearch);
+        }
+
+        // Clear sessionStorage when leaving/reloading the page
+        window.addEventListener('beforeunload', function () {
+            sessionStorage.clear();
+        });
+    });
+    </script>
 
 @endsection

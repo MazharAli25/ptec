@@ -107,7 +107,8 @@
                                         class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                         <option value="">Select Diploma</option>
                                         @foreach ($diplomas as $diploma)
-                                            <option value="{{ $diploma->id }}">{{ $diploma->DiplomaName }}</option>
+                                            {{-- <input type="hidden" name="sessionID" value="{{ $diploma->session->session }}"> --}}
+                                            <option value="{{ $diploma->id }}">{{ $diploma->DiplomaName }} ({{$diploma->session->session}})</option>
                                         @endforeach
                                     </select>
                                 </div>

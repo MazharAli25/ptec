@@ -28,4 +28,8 @@ class Diploma extends Model
     {
         return $this->hasMany(StudentDiploma::class, 'diploma_id');
     }
+
+    public function certificates(){
+        return $this->hasMany(Certificate::class, 'diplomaID', 'id');
+    }
 }

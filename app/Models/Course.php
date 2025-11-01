@@ -10,13 +10,11 @@ class Course extends Model
 
     protected $fillable=[
         'courseName',
-        'courseDuration',
         'edit_courseName',
-        'edit_courseDuration',
     ];
 
     public function diplomawiseCourses()
     {
-        return $this->hasMany(DiplomawiseCourses::class, 'courseID');
+        return $this->hasMany(DiplomawiseCourses::class, 'courseID', 'id');
     }
 }

@@ -32,6 +32,10 @@
             "Tests\\": "tests/"
         }
     },
+    "files": [
+    "app/Helpers/NumberToWords.php"
+    ],
+
     "scripts": {
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",

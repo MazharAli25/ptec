@@ -19,41 +19,50 @@
     <!-- Main Content -->
     <div class="flex-1 p-8 ml-[19vw]">
         <div class="mb-6">
-            <h1 class="text-3xl font-bold text-gray-800">Assigned Courses To Diplomas </h1>
-            <p class="text-gray-600 mt-2">View the details of assigned courses to the diplomas</p>
+            <h1 class="text-3xl font-bold text-gray-800">Examination Criterias </h1>
+            <p class="text-gray-600 mt-2">View the details of assigned examination criterias</p>
         </div>
 
         <!-- Table Section (Placeholder for future data) -->
         <div class="bg-white rounded-lg form-shadow p-6">
 
             <div class="border border-gray-200 rounded-lg overflow-hidden">
-                <table class="min-w-full divide-y divide-gray-200 assigned-courses-table">
+                <table class="min-w-full divide-y divide-gray-200 criterias-table">
                     <thead class="bg-gray-200">
                         <tr>
                             <th class="px-6 py-3 text-left text-[14px] text-gray-800 uppercase tracking-wider">
                                 ID</th>
                             <th class="px-6 py-3 text-left text-[14px] text-gray-800 uppercase tracking-wider">
-                                Diploma Name</th>
-                            <th class="px-6 py-3 text-left text-[14px] text-gray-800 uppercase tracking-wider">
                                 Course Name</th>
                             <th class="px-6 py-3 text-left text-[14px] text-gray-800 uppercase tracking-wider">
-                                Semester</th>
+                                Session</th>
+                            <th class="px-6 py-3 text-left text-[14px] text-gray-800 uppercase tracking-wider">
+                                Theory Marks</th>
+                            <th class="px-6 py-3 text-left text-[14px] text-gray-800 uppercase tracking-wider">
+                                Practical Marks</th>
+                            <th class="px-6 py-3 text-left text-[14px] text-gray-800 uppercase tracking-wider">
+                                Total Marks</th>
                             <th class="px-6 py-3 text-center text-[14px] text-gray-800 uppercase tracking-wider">
                                 Actions</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         <!-- Empty state for now -->
-                        @foreach ($diplomas as $diploma)
+                        @foreach ($criterias as $criteria)
                             <tr>
                                 <td class="px-6 py-3 text-left text-[14px] font-medium text-gray-600 tracking-wider">
-                                    {{ $diploma['ID'] }}</td>
+                                    {{ $criteria['ID'] }}</td>
                                 <td class="px-6 py-3 text-left text-[14px] font-medium text-gray-600 tracking-wider">
-                                    {{ $diploma->diploma->DiplomaName }}</td>
+                                    {{ $criteria->diplomawiseCourse->course->courseName }}</td>
                                 <td class="px-6 py-3 text-left text-[14px] font-medium text-gray-600 tracking-wider">
-                                    {{ $diploma->course->courseName }}</td>
-                                <td class="px-6 py-3 text-left text-[14px] font-medium text-gray-600 tracking-wider">
-                                    {{ $diploma->diploma->session->session }}</td>
+                                    {{ $criteria->session->session }}</td>
+                                <td class="px-6 py-3 text-center text-[14px] font-medium text-gray-600 tracking-wider">
+                                    {{ $criteria['TheoryMarks'] }}</td>
+                                <td class="px-6 py-3 text-center text-[14px] font-medium text-gray-600 tracking-wider">
+                                    {{ $criteria['PracticalMarks'] }}</td>
+                                <td class="px-6 py-3 text-center text-[14px] font-medium text-gray-600 tracking-wider">
+                                    {{ $criteria['TotalMarks'] }}</td>
+                               
                                 <td class="px-6 py-3 text-center text-[14px] font-medium text-gray-600 tracking-wider">
                                     <!-- Edit Link -->
                                     <a href="#"
@@ -74,11 +83,9 @@
 
         </div>
     </div>
-    </div>
-
-    <script>
+   <script>
         $(document).ready(function () {
-        var table = $('.assigned-courses-table').DataTable({
+        var table = $('.criterias-table').DataTable({
             dom:  
             '<"mid-toolbar flex gap-4 items-center mb-4 mr-3"lf>' + 
             't' + 
@@ -106,7 +113,7 @@
             },
             columnDefs: [
                 {
-                    targets: [2], 
+                    targets: [6], 
                     orderable: false,
                     searchable: false
                 },
@@ -136,5 +143,5 @@
         });
     });
     </script>
-
 @endsection
+

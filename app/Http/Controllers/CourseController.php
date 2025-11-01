@@ -32,12 +32,10 @@ class CourseController extends Controller
     {
         $validated = $request->validate([
             'courseName'=> ['required', 'string', 'unique:courses,courseName'],
-            'courseDuration'=> ['required', 'string'],
         ]);
 
         Course::create([
             'courseName'=> $validated['courseName'],
-            'courseDuration'=> $validated['courseDuration'],
         ]);
         
         return redirect()->route('course.create')->with('success', 'course created successfully');
@@ -67,12 +65,10 @@ class CourseController extends Controller
     {
         $validated = $request->validate([
             'edit_courseName'=> ['required', 'string'],
-            'edit_courseDuration'=> ['required', 'string'],
         ]);
 
         $course->update([
             'courseName'=> $validated['edit_courseName'],
-            'courseDuration'=> $validated['edit_courseDuration'],
         ]);
         
         return redirect()->route('course.index')->with('success', 'course updated successfully');

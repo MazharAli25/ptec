@@ -9,6 +9,7 @@ class Semester extends Model
 
     protected $fillable = [
         'SemesterName',
+        'Duration',
     ];
 
     public function diplomawiseCourses()

@@ -4,12 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\DiplomawiseCourses;
+use App\Models\mysession;
 
 class ExaminationCriteria extends Model
 {
     protected $table = 'examination_criteria';
     protected $fillable = [
         'DiplomawiseCourseID',
+        'sessionID',
         'TheoryMarks',
         'PracticalMarks',
         'TotalMarks',
@@ -18,5 +20,14 @@ class ExaminationCriteria extends Model
     public function diplomawiseCourse()
     {
         return $this->belongsTo(DiplomawiseCourses::class, 'DiplomawiseCourseID', 'ID');
+    }
+
+    public function session()
+    {
+        return $this->belongsTo(mysession::class, 'sessionID', 'id');
+    }
+
+    public function result(){   
+        return $this->hasOne(Result::class, 'ExaminationCriteriaID', 'ID');
     }
 }

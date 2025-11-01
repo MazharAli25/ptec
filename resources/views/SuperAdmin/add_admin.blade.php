@@ -147,7 +147,7 @@
 
 
             <div class="border border-gray-200 rounded-lg overflow-hidden">
-                <table class="min-w-full divide-y divide-gray-200">
+                <table class="min-w-full divide-y divide-gray-200 admins-table">
                     <thead class="bg-gray-200">
                         <tr>
                             <th class="px-6 py-3 text-left text-[14px] font-semibold text-gray-800 uppercase tracking-wider">
@@ -199,6 +199,46 @@
 
         </div>
     </div>
+
+    <script>
+        $(document).ready(function () {
+        var table = $('.admins-table').DataTable({
+            dom:  
+            '<"mid-toolbar flex justify-between items-center mb-4 mr-3"lf>' + 
+            't' + 
+            '<"bottom-toolbar flex items-center justify-between mt-4"<"flex-1"></><"flex justify-center"><"flex-1 text-right text-sm text-gray-500">>',
+
+            pageLength: 10,
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search here..."
+            },
+            initComplete: function () {
+                $('.dt-input')
+                    .addClass('border border-gray-300 rounded-lg text-[14px] px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm')
+                    .css('width', '200px'); 
+                $('.dt-length').addClass('px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm');
+            },
+            // columnDefs: [
+            //     { targets: [3, 4, 5, 6], searchable: false } 
+            //     // 3 = Theory Marks, 4 = Practical Marks, 5 = Obtained Theory, 6 = Obtained Practical
+            // ],
+            
+
+        })
+        // Save last searched word in sessionStorage
+        $('.dt-input').on('keyup change', function () {
+            sessionStorage.setItem('datatableSearch', $(this).val());
+        });
+
+        // Restore old searched word (if any)
+        var oldSearch = sessionStorage.getItem('datatableSearch');
+        if (oldSearch) {
+            table.search(oldSearch).draw();
+            $('.dt-input').val(oldSearch);
+        }
+    });
+    </script>
 
 @endsection
 
