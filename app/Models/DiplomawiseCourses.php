@@ -11,6 +11,7 @@ class DiplomawiseCourses extends Model
         'diplomaID',
         'courseID',
         'semesterID',
+        'sessionID'
     ];
 
     public function diploma()
@@ -29,6 +30,10 @@ class DiplomawiseCourses extends Model
     public function studentCourses()
     {
         return $this->belongsTo(StudentCourse::class, 'DiplomawiseCourseID');
+    }
+    public function session()
+    {
+        return $this->belongsTo(mysession::class, 'sessionID');
     }
 
     public function examinationCriteria()

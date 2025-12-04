@@ -22,10 +22,11 @@
                 print-color-adjust: exact;
             }
 
-            .image{
+            .image {
                 z-index: 1;
             }
-            .content{
+
+            .content {
                 z-index: 5;
             }
         }
@@ -44,37 +45,84 @@
         <div class="content print:absolute font-serif text-[16px] leading-tight text-black z-10">
 
             {{-- Roll No --}}
-            <p class="print:absolute print:top-[28vh] print:left-[210px]">
+            <p class="print:absolute print:top-[28vh] print:text-[18px] print:left-[210px]">
                 {{ $certificate->student->id }}
             </p>
 
             {{-- Student Name --}}
-            <p class="print:absolute print:top-[42vh] print:w-[200px] print:left-[22vw]">
+            <p class="print:absolute print:top-[39vh] print:w-[200px] print:left-[22vw]">
                 {{ $certificate->student->name }}
             </p>
 
             {{-- Father’s Name --}}
-            <p class="print:absolute print:top-[42vh] print:w-[200px] print:left-[60vw]">
+            <p class="print:absolute print:top-[39vh] print:w-[200px] print:left-[60vw]">
                 {{ $certificate->student->fatherName }}
             </p>
 
-            {{-- Institute --}}
-            <p class="print:absolute print:top-[47.3vh] print:w-[200px] print:left-[23vw]">
-                {{ $certificate->student->institute->institute_name }}
+            {{-- Roll No --}}
+            <p class="print:absolute print:text-[18px] print:top-[44.3vh] print:w-[200px] print:left-[26vw]">
+                @php
+                    // Get first letters of each word in institute name
+                    $instituteInitials = collect(
+                        explode(' ', $certificate->student->certificateInstitute->institute_name),
+                    )
+                        ->map(fn($word) => strtoupper(substr($word, 0, 1)))
+                        ->implode('');
+
+                    // Get first letters of each word in diploma name
+                    $diplomaInitials = collect(
+                        explode(' ', $certificate->diploma->studentDiplomas[0]->diploma->DiplomaName),
+                    )
+                        ->map(fn($word) => strtoupper(substr($word, 0, 1)))
+                        ->implode('');
+                @endphp
+
+                EDX/{{ $instituteInitials }}/{{ $diplomaInitials }}-{{ $certificate->student->id }}
             </p>
             {{-- Diploma --}}
-            <p class="print:absolute print:top-[52vh] print:w-[400px] print:left-[45vw]">
-                {{ $certificate->diploma->studentDiplomas[0]->diploma->DiplomaName }}  ({{ $certificate->diploma->studentDiplomas[0]->diploma->session->session }})
+            <p class="print:absolute print:top-[49vh] print:w-[400px] print:left-[45vw]">
+                {{ $certificate->diploma->studentDiplomas[0]->diploma->DiplomaName }}
             </p>
+            {{--  From Date --}}
+            <p class="print:absolute print:top-[53.5vh] print:w-[200px] print:left-[16vw] text-[16px]">
+                {{ \Carbon\Carbon::parse($certificate->student->from)->format('d M Y') }}
+            </p>
+            {{-- To Date --}}
+            <p class="print:absolute print:top-[53.5vh] print:w-[200px] print:left-[30vw] text-[16px]">
+                {{ \Carbon\Carbon::parse($certificate->student->to)->format('d M Y') }}
+            </p>
+
+            {{-- Institute Name --}}
+            <p class="print:absolute print:top-[58.5vh] print:w-[200px] print:left-[220px] text-[16px]">
+                {{ $certificate->student->certificateInstitute->institute_name }}
+            </p>
+
+            @php
+                function ordinal($number)
+                {
+                    if (!in_array($number % 100, [11, 12, 13])) {
+                        switch ($number % 10) {
+                            case 1:
+                                return $number . 'st';
+                            case 2:
+                                return $number . 'nd';
+                            case 3:
+                                return $number . 'rd';
+                        }
+                    }
+                    return $number . 'th';
+                }
+            @endphp
 
             {{-- Issued On --}}
-            <p class="print:absolute print:top-[65.5vh] print:w-[200px] print:left-[52vw] text-[13px]">
-                {{ \Carbon\Carbon::parse($issuedDate)->format('d F Y') }}
+            <p class="print:absolute print:top-[64.5vh] print:w-[200px] print:left-[56vw] text-[16px]">
+                {{ ordinal((int) \Carbon\Carbon::parse($certificate->student->joiningDate)->format('d')) }}
             </p>
 
-            {{-- Day --}}
-            <p class="print:absolute print:top-[65.5vh] w-[200px] print:left-[67vw] print:text-[13px]">
-                {{ \Carbon\Carbon::parse($issuedDate)->format('l') }}
+
+            {{-- Issued On --}}
+            <p class="print:absolute print:top-[64.5vh] print:w-[200px] print:left-[68vw] text-[16px]">
+                {{ \Carbon\Carbon::parse($certificate->student->joiningDate)->format('M Y') }}
             </p>
 
         </div>

@@ -7,6 +7,7 @@ use App\Models\Institute;
 use App\Models\Course;
 use App\Models\mysession;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 
 class StudentController extends Controller
@@ -16,12 +17,14 @@ class StudentController extends Controller
      */
     public function index()
     {
-        $students= Student::get();
+        $students = Student::with('studentDiplomas')->whereDoesntHave('studentDiplomas')->get();
         return view('SuperAdmin.registeredStudents', compact('students'));
     }
 
-    public function adminIndex(){
-        $students= Student::get();
+    public function adminIndex()
+    {
+
+        $students = Student::where('instituteId')->get();
         return view('Admin.registeredStudents', compact('students'));
     }
 
@@ -35,9 +38,9 @@ class StudentController extends Controller
         session(['student_id' => $nextStudentId]);
 
         $admin = Auth::guard('admin')->user();
-        $insts= Institute::where('id', $admin->institute_id)->get();
-        $courses= Course::get();
-        $sessions= mysession::get();
+        $insts = Institute::get();
+        $courses = Course::get();
+        $sessions = mysession::get();
         return view('Admin.students', compact(['insts', 'courses', 'sessions']));
     }
 
@@ -51,7 +54,7 @@ class StudentController extends Controller
             'institute_id' => ['required'],
             'name' => ['required'],
             'fatherName' => ['required'],
-            'dob'=>['nullable', 'date'],
+            'dob' => ['nullable', 'date'],
             'email' => ['required', 'unique:students,email', function ($attribute, $value, $fail) {
                 if (!preg_match('/@(gmail|yahoo|hotmail)\.com$/', $value)) {
                     $fail('The email must be a Gmail, Yahoo, or Hotmail address.');
@@ -62,8 +65,10 @@ class StudentController extends Controller
             'gender' => ['required'],
             // 'course_id' => ['required'],
             // 'session_id'=>['required'],
-            'joiningDate'=>['required', 'date'],
+            'joiningDate' => ['required', 'date'],
             'address' => ['nullable'],
+            'fromDate' => ['required'],
+            'toDate' => ['required'],
         ]);
 
         $photoPath = null;
@@ -71,20 +76,25 @@ class StudentController extends Controller
             $photoPath = $request->file('photo')->store('photos', 'public');
         }
 
+        $instituteId = Auth::guard('admin')->user()->institute_id;
+
         Student::create([
-            'image'=> $photoPath,
-            'instituteId'=> $validated['institute_id'],
-            'name'=> $validated['name'],
-            'fatherName'=> $validated['fatherName'],
-            'email'=> $validated['email'],
-            'dob'=>$validated['dob'],
-            'cnic'=> $validated['cnic'],
-            'phone'=> $validated['phone'],
-            'gender'=>$validated['gender'],
+            'image' => $photoPath,
+            'instituteId' => $instituteId,
+            'certificateInstituteId' => $validated['institute_id'],
+            'name' => $validated['name'],
+            'fatherName' => $validated['fatherName'],
+            'email' => $validated['email'],
+            'dob' => $validated['dob'],
+            'cnic' => $validated['cnic'],
+            'phone' => $validated['phone'],
+            'gender' => $validated['gender'],
             // 'courseId'=> $validated['course_id'],
             // 'sessionId'=> $validated['session_id'],
-            'joiningDate'=> $validated['joiningDate'],
-            'address'=> $validated['address'],
+            'joiningDate' => $validated['joiningDate'],
+            'from' => $validated['fromDate'],
+            'to' => $validated['toDate'],
+            'address' => $validated['address'],
         ]);
 
         return redirect()->route('student.create')->with('success', 'Student Added Successfully');
@@ -95,7 +105,7 @@ class StudentController extends Controller
      */
     public function show(Student $student)
     {
-        $student= $student;
+        $student = $student;
         return view('Admin.studentDetails', compact('student'));
     }
 
@@ -104,7 +114,10 @@ class StudentController extends Controller
      */
     public function edit(Student $student)
     {
-        //
+        $student = Student::findOrFail($student->id);
+        $institutes = Institute::get();
+        // dd($student);
+        return view('Admin.Student.editStudent', compact(['student', 'institutes']));
     }
 
     /**
@@ -112,7 +125,61 @@ class StudentController extends Controller
      */
     public function update(Request $request, Student $student)
     {
-        //
+        // 1. Validation (Ensures 'photo' is used consistently and is nullable)
+        $validated = $request->validate([
+            'institute_id' => ['required'],
+            'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'], // Changed from 'image' to 'photo'
+            'name' => ['required'],
+            'fatherName' => ['required'],
+            'dob' => ['nullable', 'date'],
+
+            // Corrected email unique validation (removed redundant 'email' key and fixed closure)
+            'email' => [
+                'required',
+                'unique:students,email,' . $student->id,
+                function ($attribute, $value, $fail) {
+                    if (!preg_match('/@(gmail|yahoo|hotmail)\.com$/', $value)) {
+                        $fail('The email must be a Gmail, Yahoo, or Hotmail address.');
+                    }
+                }
+            ],
+
+            'cnic' => ['required', 'regex:/^[0-9]{5}-[0-9]{7}-[0-9]{1}$/', 'unique:students,cnic,' . $student->id],
+            'phone' => ['required', 'unique:students,phone,' . $student->id, 'max:11'],
+            'gender' => ['required'],
+            'joiningDate' => ['required', 'date'],
+            'address' => ['nullable'],
+        ]);
+
+        // 2. Conditionally Handle Image Upload 🔥 THIS IS THE KEY FIX
+        $photoPath = $student->image; // Start by keeping the existing image path
+
+        if ($request->hasFile('photo')) {
+            // A. Delete old photo if it exists
+            if ($student->image) {
+                Storage::disk('public')->delete($student->image);
+            }
+
+            // B. Store the new photo (using the same storage path as 'store' method)
+            $photoPath = $request->file('photo')->store('photos', 'public');
+        }
+
+        // 3. Update student data with the potentially new or existing photo path
+        $student->update([
+            'certificateInstituteId' => $validated['institute_id'],
+            'image' => $photoPath, // Use the path determined above
+            'name' => $validated['name'],
+            'fatherName' => $validated['fatherName'],
+            'email' => $validated['email'],
+            'dob' => $validated['dob'],
+            'cnic' => $validated['cnic'],
+            'phone' => $validated['phone'],
+            'gender' => $validated['gender'],
+            'address' => $validated['address'],
+            'joiningDate' => $validated['joiningDate'],
+        ]);
+
+        return redirect()->route('student.edit', $student->id)->with('success', 'Student Details Updated Successfully');
     }
 
     /**
@@ -120,12 +187,24 @@ class StudentController extends Controller
      */
     public function destroy(Student $student)
     {
-        //
+        $student->delete();
+
+        return redirect()->route('admin.studentList')
+            ->with('err', 'Student Deleted Successfully');
     }
 
-    public function assignCourse()
+
+    public function toggleStatus($id)
     {
-        
-    }
+        $student = Student::findOrFail($id);
 
+        // Toggle status
+        $student->status = $student->status === 'active' ? 'inactive' : 'active';
+        $student->save();
+
+        return response()->json([
+            'success' => true,
+            'status' => $student->status
+        ]);
+    }
 }

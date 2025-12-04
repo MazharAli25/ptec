@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id()->primary();
             $table->string('image')->nullable();
             $table->foreignId('instituteId')->constrained('institutes');
+            $table->foreignId('certificateInstituteId')->constrained('institutes');
             // $table->foreignId('courseId')->constrained('courses');
             $table->string('name');
             $table->string('fatherName');
@@ -24,6 +25,9 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->enum('gender',['Male', 'Female', 'Others']);
             $table->date('joiningDate');
+            $table->date('from');
+            $table->date('to');
+            $table->enum('status', ['Active', 'Inactive'])->default('Active');
             // $table->string('sessionId');
             $table->string('address')->nullable();
             $table->timestamps();

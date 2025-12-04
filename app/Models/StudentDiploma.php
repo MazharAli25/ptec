@@ -12,21 +12,26 @@ class StudentDiploma extends Model
         'student_id',
         'diploma_id',
         'semester_id',
+        'session_id',
         'issue_diploma',
     ];
 
     public function student()
     {
-        return $this->belongsTo(Student::class, 'student_id');
+        return $this->belongsTo(Student::class, 'student_id', 'id');
     }
 
     public function diploma()
     {
-        return $this->belongsTo(Diploma::class, 'diploma_id');
+        return $this->belongsTo(Diploma::class, 'diploma_id', 'id');
     }
     public function semester()
     {
         return $this->belongsTo(Semester::class, 'semester_id');
+    }
+
+    public function session(){
+        return $this->belongsTo(mysession::class, 'session_id', 'id');
     }
 
     public function studentCourses(){

@@ -6,6 +6,7 @@ use App\Models\Certificate;
 use App\Models\Student;
 use App\Models\StudentDiploma;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CertificateController extends Controller
 {
@@ -14,7 +15,7 @@ class CertificateController extends Controller
      */
     public function index()
     {
-        //
+        // 
     }
 
     /**
@@ -22,8 +23,18 @@ class CertificateController extends Controller
      */
     public function create()
     {
-        $studentDiplomas = StudentDiploma::with(['student', 'diploma', 'semester'])->get();
+        $adminInstituteId = Auth::guard('admin')->user()->institute_id;
 
+        // Only fetch StudentDiplomas where the student belongs to the same institute as the admin
+        $studentDiplomas = StudentDiploma::with(['student', 'diploma', 'semester'])
+            ->where(function ($query) use ($adminInstituteId) {
+                $query->whereHas('student', function ($q) use ($adminInstituteId) {
+                    $q->where('instituteId', $adminInstituteId);
+                });
+            })
+            ->get();
+
+        // Now, $studentDiplomas only includes records relevant to this admin
         return view('Admin.requestCertificate', compact('studentDiplomas'));
     }
 
@@ -96,6 +107,10 @@ class CertificateController extends Controller
      */
     public function destroy(Certificate $certificate)
     {
-        //
+        $certificate->delete();
+
+        return redirect()
+            ->back()
+            ->with('success', 'Certificate request cancelled successfully.');
     }
 }

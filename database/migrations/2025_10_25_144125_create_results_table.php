@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('StudentID')->constrained('students');
             $table->foreignId('diplomaID')->constrained('diplomas');
             $table->foreignId('sessionID')->constrained('mysessions');
+            $table->foreignId('semesterID')->constrained('semesters');
             $table->integer('TheoryTotalMarks');
             $table->integer('TheoryMarks');
             $table->integer('PracticalTotalMarks');

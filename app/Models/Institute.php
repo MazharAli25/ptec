@@ -20,4 +20,8 @@ class Institute extends Model
     public function students() {
         return $this->hasMany(Student::class);
     }
+
+    public function certificateStudents(){
+        return $this->hasMany(Student::class, 'certificateStudentId', 'id');
+    }
 }

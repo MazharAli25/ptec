@@ -3,16 +3,65 @@
 @section('page-title', 'Student Details')
 
 @section('main-content')
-    <div class="ml-[18vw] min-h-screen bg-gray-50 flex justify-center py-12 px-6">
 
-        <div class="bg-white w-[90%] max-w-6xl rounded-2xl shadow-lg border border-gray-200 overflow-hidden relative">
+    <style>
+        @media print{
+            @page{
+                size: A4;
+                margin:0;
+            }
+
+            .cardContainer{
+                margin-left: 0 !important;
+                width: 100% !important;
+                padding: 0 !important;
+            }
+            .card{
+                box-shadow: none !important;
+                border: none !important;
+                border-radius: 0 !important;
+                width: 100% !important;
+            }
+
+            .header{
+                shadow:none !important;
+            }
+
+            .information{
+                display: flex !important;
+                flex-wrap: wrap !important;
+                flex-direction: row !important;
+
+            }
+
+            .information div{
+                width: 33.33% !important;
+                margin-bottom: 16px !important;
+            }
+
+            .enrollment{
+                display: flex !important;
+                flex-direction: row !important;
+                flex-wrap: wrap !important;
+            }
+
+            .enrollment div{
+                width: 50% !important;
+                margin-bottom: 16px !important;
+            }
+        }
+    </style>
+
+    <div class="ml-[18vw] min-h-screen bg-gray-50 flex justify-center py-12 px-6 cardContainer">
+
+        <div class="bg-white w-[90%] max-w-6xl rounded-2xl shadow-lg border border-gray-200 overflow-hidden relative card">
 
             <!-- Header Section -->
             <div
-                class="bg-gradient-to-r from-green-600 to-green-500 text-white p-8 rounded-t-2xl flex flex-col md:flex-row items-center justify-between shadow-md">
+                class="bg-gradient-to-r bg-green-600 text-white p-8 rounded-t-2xl flex flex-col md:flex-row items-center justify-between shadow-md header">
                 <div class="flex items-center space-x-6">
                     @if ($student->image)
-                        <img src="{{ asset('storage/' . $student->photo) }}" alt="Student Photo"
+                        <img src="{{ asset('storage/' . $student->image) }}" alt="Student Photo"
                             class="w-32 h-32 rounded-xl object-cover shadow-md border-2 border-white transition-transform hover:scale-105" />
                     @else
                         <div
@@ -53,7 +102,7 @@
             <div class="p-10">
                 <h3 class="text-2xl font-semibold text-gray-800 mb-6 border-b pb-2">Personal Information</h3>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 information">
                     <div>
                         <p class="text-gray-500 text-sm">Full Name</p>
                         <p class="font-medium text-gray-800">{{ $student->name }}</p>
@@ -96,9 +145,9 @@
                 </div>
 
                 <!-- Enrollment Details -->
-                <div class="mt-10 border-t pt-6">
+                <div class="mt-10 border-t pt-6 enrollmentContainer">
                     <h3 class="text-2xl font-semibold text-gray-800 mb-4">Enrollment Details</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 enrollment">
                         <div>
                             <p class="text-gray-500 text-sm">Institute</p>
                             <p class="font-medium text-gray-800">{{ $student->institute->institute_name ?? 'N/A' }}</p>

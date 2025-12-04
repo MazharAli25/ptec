@@ -2,8 +2,11 @@
 @section('page-title', 'Certificates Requests')
 
 @section('main-content')
-
-    <div class="flex justify-center ml-[15vw] mt-10">
+    <div class="heading flex flex-col justify-center items-center ml-[15vw] mt-6">
+        <h1 class=" text-black font-bold text-[24px]">Print Certificates</h1>
+        <small class=" text-gray-500">Approved Certificates</small>
+    </div>
+    <div class="flex justify-center ml-[15vw] mt-6">
         <div class="overflow-x-auto w-[80%]">
             <table class="min-w-full divide-y divide-gray-200 institute-table">
                 <thead class="bg-gray-200">
@@ -36,7 +39,7 @@
                                         </button>
                                     </form>
                                     
-                                    <form action="{{ route('superAdmin.printFront', $certificate->id) }}" class="inline-block" method="POST">
+                                    <form action="{{ route('superAdmin.printBack', $certificate->id) }}" class="inline-block" method="POST">
                                         @csrf
                                         <input type="hidden" name="diplomaID" value="{{ $certificate->diplomaID }}">
                                         <input type="hidden" name="sessionID" value="{{ $certificate->sessionID }}">

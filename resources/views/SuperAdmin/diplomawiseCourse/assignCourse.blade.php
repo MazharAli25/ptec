@@ -3,6 +3,22 @@
 
 @section('main-content')
 
+    <style>
+        .select2-container .select2-selection--single {
+            height: 42px !important;
+            border: 1px solid #d1d5db !important;
+            /* Tailwind border-gray-300 */
+            border-radius: 0.5rem !important;
+            /* rounded-lg */
+            padding: 6px 10px !important;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            top: 7px !important;
+            right: 10px !important;
+        }
+    </style>
+
     <x-err></x-err>
     <x-success></x-success>
     @if ($errors->any())
@@ -34,28 +50,30 @@
                 </h2>
 
                 <!-- Top Inputs: Diploma & Semester -->
-                <div class="flex flex-wrap justify-between items-center gap-6 w-full mb-6">
+                <div class="flex flex-wrap justify-evenly items-center gap-6 w-full mb-6">
                     <!-- Diploma -->
-                    <div class="flex-1 min-w-[250px]">
-                        <label for="diplomaID" class="block text-sm font-medium text-gray-700 mb-1">
-                            Diploma Name
-                        </label>
+                    <div class="flex-1 min-w-[30%]">
+                        <label for="diplomaID" class="block text-sm font-medium text-gray-700 mb-1">Assign
+                            Diploma</label>
                         <select id="diplomaID" name="diplomaID"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            class="select2 w-full px-4 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                             <option value="">Select Diploma</option>
                             @foreach ($diplomas as $diploma)
-                                <option value="{{ $diploma->id }}">{{ $diploma->DiplomaName }}
-                                    ({{ $diploma->session->session }})
-                                </option>
+                                <option value="{{ $diploma->id }}">{{ $diploma->DiplomaName }}</option>
                             @endforeach
                         </select>
-                        @error('diplomaID')
-                            <p class="text-red-500 text-sm font-semibold mt-1">{{ $message }}</p>
-                        @enderror
                     </div>
-
+                    <!-- Session Dropdown -->
+                    <div class="flex-1 min-w-[30%]">
+                        <label for="session_id" class="block text-sm font-medium text-gray-700 mb-1">Session</label>
+                        <select id="session_id" name="session_id"
+                            class="select2 w-full px-4 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">Select Session</option>
+                        </select>
+                    </div>
+                
                     <!-- Semester -->
-                    <div class="flex-1 min-w-[250px]">
+                    <div class="flex-1 min-w-[30%]">
                         <label for="semesterID" class="block text-sm font-medium text-gray-700 mb-1">
                             Semester Name
                         </label>
@@ -134,64 +152,115 @@
         });
     </script>
     <script>
-        $(document).ready(function () {
-        var table = $('.assign-course-table').DataTable({
-            dom:  
-            '<"mid-toolbar flex gap-4 items-center mb-4 mr-3"lf>' + 
-            't' + 
-            '<"bottom-toolbar flex items-center justify-between mt-4"<"flex-1"></><"flex justify-center"><"flex-1 text-right text-sm text-gray-500">>',
-            pageLength: 100,
-            stateSave: true,
-            language: {
-                search: "_INPUT_",
-                searchPlaceholder: "Search here...",
-                lengthMenu: "_MENU_"
-            },
-            initComplete: function () {
-                $('.dt-input')
-                    .addClass('border border-gray-300 rounded-lg text-[14px] px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm')
-                    .css({
-                        'width': '200px',
-                        'padding': '6px 10px',}); 
-                $('.dt-length select')
-                    .addClass('border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm')
-                    .css({
-                        'width': '80px',
-                        'padding': '6px 10px'
-                    });
-                $('.dt-length').addClass('px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm');
-            },
-            columnDefs: [
-                {
-                    targets: [2], 
-                    orderable: false,
-                    searchable: false
+        $(document).ready(function() {
+            var table = $('.assign-course-table').DataTable({
+                dom: '<"mid-toolbar flex gap-4 items-center mb-4 mr-3"lf>' +
+                    't' +
+                    '<"bottom-toolbar flex items-center justify-between mt-4"<"flex-1"></><"flex justify-center"><"flex-1 text-right text-sm text-gray-500">>',
+                pageLength: 100,
+                stateSave: true,
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Search here...",
+                    lengthMenu: "_MENU_"
                 },
-                {
-                    targets:[1],
-                    searchable:true,
+                initComplete: function() {
+                    $('.dt-input')
+                        .addClass(
+                            'border border-gray-300 rounded-lg text-[14px] px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm'
+                        )
+                        .css({
+                            'width': '200px',
+                            'padding': '6px 10px',
+                        });
+                    $('.dt-length select')
+                        .addClass(
+                            'border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm'
+                        )
+                        .css({
+                            'width': '80px',
+                            'padding': '6px 10px'
+                        });
+                    $('.dt-length').addClass(
+                        'px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm');
+                },
+                columnDefs: [{
+                        targets: [2],
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        targets: [1],
+                        searchable: true,
+                    }
+                ],
+
+
+            })
+            // Save last searched word in sessionStorage
+            $('.dt-input').on('keyup change', function() {
+                sessionStorage.setItem('datatableSearch', $(this).val());
+            });
+
+            // Restore old searched word (if any)
+            var oldSearch = sessionStorage.getItem('datatableSearch');
+            if (oldSearch) {
+                table.search(oldSearch).draw();
+                $('.dt-input').val(oldSearch);
+            }
+
+            // Clear sessionStorage when leaving/reloading the page
+            window.addEventListener('beforeunload', function() {
+                sessionStorage.clear();
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2({
+                placeholder: "Please select",
+                allowClear: true,
+                width: '100%'
+            });
+
+            $('#diplomaID').on('change', function() {
+                let diplomaId = $(this).val();
+                let sessionDropdown = $('#session_id');
+
+                sessionDropdown.empty().append('<option value="">Loading...</option>').trigger('change');
+
+                if (diplomaId) {
+                    $.ajax({
+                        url: '/super-admin/get-super-sessions/' + $('#diplomaID option:selected').text(),
+                        type: 'GET',
+                        success: function(data) {
+                            sessionDropdown.empty().append(
+                                '<option value="">Select Session</option>');
+
+                            if (data.length > 0) {
+                                $.each(data, function(index, item) {
+                                    sessionDropdown.append(
+                                        `<option value="${item.id}">${item.name}</option>`
+                                    );
+                                });
+                            } else {
+                                sessionDropdown.append(
+                                    '<option value="">No sessions found</option>');
+                            }
+
+                            sessionDropdown.trigger('change');
+                        },
+                        error: function() {
+                            sessionDropdown.empty().append(
+                                '<option value="">Error loading sessions</option>');
+                        }
+                    });
+                } else {
+                    sessionDropdown.empty().append('<option value="">Select Session</option>').trigger(
+                        'change');
                 }
-            ],
-            
-
-        })
-        // Save last searched word in sessionStorage
-        $('.dt-input').on('keyup change', function () {
-            sessionStorage.setItem('datatableSearch', $(this).val());
+            });
         });
-
-        // Restore old searched word (if any)
-        var oldSearch = sessionStorage.getItem('datatableSearch');
-        if (oldSearch) {
-            table.search(oldSearch).draw();
-            $('.dt-input').val(oldSearch);
-        }
-
-        // Clear sessionStorage when leaving/reloading the page
-        window.addEventListener('beforeunload', function () {
-            sessionStorage.clear();
-        });
-    });
     </script>
 
 @endsection

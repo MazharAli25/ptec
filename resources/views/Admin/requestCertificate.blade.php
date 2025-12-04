@@ -7,10 +7,10 @@
         <div class="overflow-x-auto w-[80%]">
             <h2 class="text-2xl font-semibold text-center mb-5">Students Assigned to Diplomas</h2>
 
-            <table class="min-w-full border border-gray-200 rounded-lg overflow-hidden">
+            <table class="requestCertificate-table min-w-full border border-gray-200 rounded-lg overflow-hidden">
                 <thead class="bg-cyan-600 text-white">
                     <tr>
-                        <th class="py-3 px-4 text-center font-semibold">Student ID</th>
+                        <th class="py-3 px-4 text-center font-semibold">ID</th>
                         <th class="py-3 px-4 text-center font-semibold">Student Name</th>
                         <th class="py-3 px-4 text-center font-semibold">Father Name</th>
                         <th class="py-3 px-4 text-center font-semibold">Diploma</th>
@@ -52,5 +52,74 @@
             </table>
         </div>
     </div>
+
+    <script>
+        $(document).ready(function() {
+            var table = $('.requestCertificate-table').DataTable({
+                dom: '<"mid-toolbar flex gap-4 items-center mb-4 mr-3"lf>' +
+                    't' +
+                    '<"bottom-toolbar flex items-center justify-between mt-4"<"flex-1"></><"flex justify-center"><"flex-1 text-right text-sm text-gray-500">>',
+                pageLength: 100,
+                stateSave: true,
+                lengthMenu: [
+                    [10, 25, 50, 100, 500, 1000, 5000],
+                    [10, 25, 50, 100, 500, 1000, 5000]
+                ],
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Search here...",
+                    lengthMenu: "_MENU_"
+                },
+                initComplete: function() {
+                    $('.dt-input')
+                        .addClass(
+                            'border border-gray-300 rounded-lg text-[14px] px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm'
+                        )
+                        .css({
+                            'width': '200px',
+                            'padding': '6px 10px',
+                        });
+                    $('.dt-length select')
+                        .addClass(
+                            'border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm'
+                        )
+                        .css({
+                            'width': '80px',
+                            'padding': '6px 10px'
+                        });
+                    $('.dt-length').addClass(
+                        'px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm');
+                },
+                columnDefs: [{
+                        targets: [5],
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        targets: [1],
+                        searchable: true,
+                    }
+                ],
+
+
+            })
+            // Save last searched word in sessionStorage
+            $('.dt-input').on('keyup change', function() {
+                sessionStorage.setItem('datatableSearch', $(this).val());
+            });
+
+            // Restore old searched word (if any)
+            var oldSearch = sessionStorage.getItem('datatableSearch');
+            if (oldSearch) {
+                table.search(oldSearch).draw();
+                $('.dt-input').val(oldSearch);
+            }
+
+            // Clear sessionStorage when leaving/reloading the page
+            window.addEventListener('beforeunload', function() {
+                sessionStorage.clear();
+            });
+        });
+    </script>
 
 @endsection

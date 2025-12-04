@@ -23,7 +23,7 @@ class SuperAdmin
                 return redirect()->route('admin.dashboard');
             }
 
-            return redirect()->route('dashboard');
+            return redirect()->route('superAdmin.index');
         }
 
         return $next($request);

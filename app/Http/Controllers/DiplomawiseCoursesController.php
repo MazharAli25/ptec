@@ -8,6 +8,7 @@ use App\Models\StudentCourse;
 use App\Models\DiplomawiseCourses;
 use App\Models\Semester;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DiplomawiseCoursesController extends Controller
 {
@@ -25,7 +26,10 @@ class DiplomawiseCoursesController extends Controller
     public function create()
     {
         $courses = Course::all();
-        $diplomas = Diploma::all();
+        $diplomas = Diploma::select(DB::raw('MIN(id) as id'), 'DiplomaName')
+            ->groupBy('DiplomaName')
+            ->orderBy('DiplomaName', 'asc')
+            ->get();
         $semesters = Semester::all();
         $assignedCourses = DiplomawiseCourses::with(['diploma', 'course', 'semester'])->get();
         return view('SuperAdmin.diplomawiseCourse.assignCourse', compact(['assignedCourses', 'courses', 'diplomas', 'semesters']));
@@ -64,12 +68,14 @@ class DiplomawiseCoursesController extends Controller
     {
         $validated = $request->validate([
             'diplomaID' => 'required|exists:diplomas,id',
+            'session_id'=> 'required',
             'semesterID' => 'required|exists:semesters,id',
             'courseIDs' => 'required|array|min:1',
             'courseIDs.*' => 'exists:courses,id',
         ]);
 
         $diplomaID = $validated['diplomaID'];
+        $sessionID = $validated['session_id'];
         $semesterID = $validated['semesterID'];
         $courseIDs = $validated['courseIDs'];
 
@@ -80,6 +86,7 @@ class DiplomawiseCoursesController extends Controller
             $existingAssignment = DiplomawiseCourses::where('diplomaID', $diplomaID)
                 ->where('courseID', $courseId)
                 ->where('semesterID', $semesterID)
+                ->where('sessionID', $sessionID)
                 ->exists();
 
             if ($existingAssignment) {
@@ -93,6 +100,7 @@ class DiplomawiseCoursesController extends Controller
                 'diplomaID' => $diplomaID,
                 'courseID' => $courseId,
                 'semesterID' => $semesterID,
+                'sessionID'=> $sessionID,
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
@@ -146,5 +154,28 @@ class DiplomawiseCoursesController extends Controller
     public function destroy(DiplomawiseCourses $diplomawiseCourses)
     {
         //
+    }
+
+    public function getSessions($diplomaName)
+    {
+        // find all diplomas that share the same name
+        $diplomas = Diploma::where('DiplomaName', $diplomaName)
+            ->with('session')
+            ->get();
+
+        // dd($diplomas);
+
+        if ($diplomas->isEmpty()) {
+            return response()->json([]);
+        }
+
+        $formatted = $diplomas->map(function ($diploma) {
+            return [
+                'id'   => $diploma->session->id,
+                'name' => $diploma->DiplomaName . ' - ' . $diploma->session->session,
+            ];
+        });
+
+        return response()->json($formatted);
     }
 }

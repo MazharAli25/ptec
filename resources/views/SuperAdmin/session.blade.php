@@ -65,7 +65,7 @@
                 <table class="min-w-full divide-y divide-gray-200 sessions-table">
                     <thead class="bg-gray-200">
                         <tr>
-                            <th class="px-6 py-3 text-left text-[14px] font-semibold text-gray-800 uppercase tracking-wider">
+                            <th class="px-6 py-3 text-left text-[14px] w-[10px] font-semibold text-gray-800 uppercase tracking-wider">
                                 ID</th>
                             <th class="px-6 py-3 text-left text-[14px] font-semibold text-gray-800 uppercase tracking-wider">
                                 Session</th>

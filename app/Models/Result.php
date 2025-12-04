@@ -12,6 +12,7 @@ class Result extends Model
         'StudentID',
         'diplomaID',
         'sessionID',
+        'semesterID',
         'TheoryMarks',
         'TheoryTotalMarks',
         'PracticalMarks',
@@ -29,5 +30,11 @@ class Result extends Model
 
     public function student(){
         return $this->belongsTo(Student::class, 'StudentID', 'id');
+    }
+    public function semester(){
+        return $this->belongsTo(Semester::class, 'semesterID', 'id');
+    }
+    public function session(){
+        return $this->belongsTo(mysession::class, 'sessionID', 'id');
     }
 }

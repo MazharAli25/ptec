@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\StudentDiploma;
 use App\Models\Diploma;
 use App\Models\Semester;
+use App\Models\mysession;
 use App\Models\DiplomawiseCourses;
 use App\Models\StudentCourse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 
@@ -26,21 +28,32 @@ class StudentDiplomaController extends Controller
      */
     public function create(Request $request)
     {
-        $diplomas = Diploma::all();
-        $semesters = Semester::all();
+        $diplomas = Diploma::select(DB::raw('MIN(id) as id'), 'DiplomaName')
+            ->groupBy('DiplomaName')
+            ->orderBy('DiplomaName', 'asc')
+            ->get();
 
-        $query = \App\Models\Student::query();
+        $semesters = Semester::all();
+        $adminInstituteId = Auth::guard('admin')->user()->institute_id;
+        $student = collect();
 
         if ($request->filled('id')) {
-            $query->where('id', 'like', "%{$request->id}%");
+            $student = \App\Models\Student::where('id', $request->id)
+                ->where('instituteId', $adminInstituteId)
+                ->first();
+
+            if ($student) {
+                $student = collect([$student]);
+            } else {
+                return back()->with('error', 'No student with this ID exists in your institute.');
+            }
         }
 
-        $student = $request->hasAny(['name', 'id'])
-            ? $query->get()
-            : collect();
-
-        return view('Admin.studentDiploma', compact(['student', 'diplomas', 'semesters']));
+        return view('Admin.studentDiploma', compact('student', 'diplomas', 'semesters'));
     }
+
+
+
 
     /**
      * Store a newly created resource in storage.
@@ -91,13 +104,14 @@ class StudentDiplomaController extends Controller
             'student_id' => 'required|exists:students,id',
             'diploma_id' => 'required|exists:diplomas,id',
             'semester_id' => 'required|exists:semesters,id',
-            // 'session'=> 'required',
+            'session_id' => 'required',
         ]);
         // Find or create StudentDiploma record
         $studentDiploma = StudentDiploma::firstOrCreate(
             [
                 'student_id' => $validated['student_id'],
                 'diploma_id' => $validated['diploma_id'],
+                'session_id' => $validated['session_id'],
             ],
             [
                 'semester_id' => $validated['semester_id'],
@@ -105,40 +119,58 @@ class StudentDiplomaController extends Controller
             ]
         );
 
-        //  Get all required course IDs for this diploma
-        $requiredCourses = DiplomaWiseCourses::where('diplomaID', $validated['diploma_id'])
-            // ->where('sessionID', $validated['session'])
-            ->pluck('id')
-            ->toArray();
+        $sessionID=  $validated['session_id'];
 
+        //  Get all required course IDs for this diploma
+        $requiredCourses = DiplomaWiseCourses::with('diploma.session')
+        ->where('diplomaID', $validated['diploma_id'])
+        ->where('sessionID', $validated['session_id'])
+        ->where('semesterID', $validated['semester_id'])
+        ->pluck('id')
+        ->toArray();
 
         // Get existing courses already assigned to this student for this diploma
-        $existingCourses = StudentCourse::where('StudentDiplomaID', $studentDiploma->ID)
+        $existingCourses = StudentCourse::where(['semesterID' => $validated['semester_id'], 'StudentDiplomaID' => $studentDiploma->ID])
             ->pluck('DiplomawiseCourseID')
             ->toArray();
 
         // Find missing courses
         $missingCourses = array_diff($requiredCourses, $existingCourses);
 
+        if (empty($requiredCourses)) {
+            // Student already has all courses for this diploma
+            return redirect()   
+                ->back()
+                ->with('error', 'No further courses are assigned to the selected semester.');
+        }
         if (empty($missingCourses)) {
             // Student already has all courses for this diploma
             return redirect()
-                ->route('studentDiploma.create')
+                ->back()
                 ->with('error', 'Student is already enrolled in all courses of this diploma.');
         }
+        $diplomaID = $validated['diploma_id'];
+        $session_id = $validated['session_id'];
 
-        //  Assign missing courses safely in a transaction
-        DB::transaction(function () use ($missingCourses, $studentDiploma) {
+        $diplomaID = $validated['diploma_id'];
+        $sessionID = $validated['session_id'];
+
+        $semesterID = DiplomawiseCourses::where('diplomaID', $diplomaID)
+            ->value('semesterID'); // get one semester ID
+
+        DB::transaction(function () use ($missingCourses, $studentDiploma, $semesterID, $sessionID) {
             foreach ($missingCourses as $courseId) {
                 StudentCourse::create([
-                    'StudentDiplomaID' => $studentDiploma->ID,
+                    'StudentDiplomaID'    => $studentDiploma->ID,
+                    'semesterID'          => $semesterID,
+                    'sessionID'           => $sessionID,
                     'DiplomawiseCourseID' => $courseId,
                 ]);
             }
         });
 
         return redirect()
-            ->route('studentDiploma.create')
+            ->back()
             ->with('success', count($missingCourses) . ' new courses assigned to the student for this diploma.');
     }
 
@@ -172,5 +204,28 @@ class StudentDiplomaController extends Controller
     public function destroy(StudentDiploma $studentDiploma)
     {
         //
+    }
+
+    public function getSessions($diplomaName)
+    {
+        // find all diplomas that share the same name
+        $diplomas = Diploma::where('DiplomaName', $diplomaName)
+            ->with('session')
+            ->get();
+
+        // dd($diplomas);
+
+        if ($diplomas->isEmpty()) {
+            return response()->json([]);
+        }
+
+        $formatted = $diplomas->map(function ($diploma) {
+            return [
+                'id'   => $diploma->session->id,
+                'name' => $diploma->DiplomaName . ' - ' . $diploma->session->session,
+            ];
+        });
+
+        return response()->json($formatted);
     }
 }

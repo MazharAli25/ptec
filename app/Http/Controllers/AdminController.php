@@ -9,6 +9,7 @@ use App\Models\Institute;
 use App\Models\Student;
 use App\Models\StudentDiploma;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
@@ -111,7 +112,30 @@ class AdminController extends Controller
     // }
 
     public function requestedCertificates(){
-        $requests= Certificate::get();
+        $adminId = Auth::guard('admin')->user()->id;
+        $requests= Certificate::with(['student'])
+            ->whereHas('student', function ($query) use ($adminId){
+                $query->where('InstituteId', $adminId);
+            })
+            ->get();
         return view('Admin.Certificates.RequestedCertificates', compact('requests'));
+    }
+
+    public function registeredStudentsList(){
+        $instituteID= Auth::guard('admin')->user()->institute_id;
+        $students= Student::where('instituteId', $instituteID)
+        ->whereDoesntHave('studentDiplomas')
+        ->get();
+        return view('Admin.registeredStudents', compact('students'));
+    }
+
+    public function studentslist(){
+        $students= StudentDiploma::with('student')
+        ->whereHas('student', function ($query){
+            $instituteID= Auth::guard('admin')->user()->institute_id;
+            $query->where('instituteId', $instituteID);
+        })
+        ->get();
+        return view('Admin.Student.studentsList', compact('students'));
     }
 }

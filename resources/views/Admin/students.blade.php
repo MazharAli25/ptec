@@ -8,7 +8,7 @@
         <div class="bg-white w-[90%] max-w-6xl rounded-2xl shadow-md border border-gray-200 p-10 relative">
 
             <!-- Header -->
-            <div class="flex flex-col md:flex-row items-center justify-between mb-10">
+            <div class="flex flex-col md:flex-row items-center justify-end mb-10">
                 <form action="{{ route('student.store') }}" method="POST" enctype="multipart/form-data">
                     <!-- Upload Image -->
                     <div class="flex flex-col items-center mb-6 md:mb-0">
@@ -30,7 +30,7 @@
 
                     <!-- Title -->
                     <h2
-                        class="absolute top-[20vh] left-[200px] inline-block text-2xl font-bold text-gray-800 text-center md:text-right w-[60%]">
+                        class="absolute top-[10vh] left-[200px] inline-block text-2xl font-bold text-gray-800 text-center md:text-right w-[60%]">
                         Student Registration Form
                     </h2>
             </div>
@@ -39,36 +39,42 @@
 
             @csrf
 
-            <!-- Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="absolute top-40">
+                <label class="block text-sm font-medium text-gray-700">Student ID</label>
+                <input type="text" name="id" placeholder="Upcoming Student ID"
+                    value="{{ session('student_id') ?? 'Not Set' }}" readonly
+                    class="mt-1 w-20 border rounded-lg px-4 py-2 
+                        focus:ring-green-500 focus:border-green-500
+                        {{ $errors->has('id') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}">
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-2">
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Student ID</label>
-                    <input type="text" name="id" placeholder="Upcoming Student ID"
-                        value="{{ session('student_id') ?? 'Not Set' }}" readonly
-                        class="mt-1 w-full border rounded-lg px-4 py-2 
-                            focus:ring-green-500 focus:border-green-500 
-                            {{ $errors->has('id') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}">
-                </div>
-                <!-- Name -->
+                <!-- Student Name -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Name</label>
-                    <input type="text" name="name" placeholder="Enter full name" value="{{ old('name') }}"
-                        class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500 {{ $errors->has('name') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}">
+                    <input type="text" name="name" value="{{ old('name') }}" maxlength="30"
+                        placeholder="Enter Student Name"
+                        class="mt-1 w-full border rounded-lg px-4 py-2
+            {{ $errors->has('name') ? 'border-red-500' : 'border-gray-300' }}">
                     @error('name')
-                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                        <p class="text-red-600 text-sm">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <!-- Father Name -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Father Name</label>
-                    <input type="text" name="fatherName" placeholder="Enter father name" value="{{ old('fatherName') }}"
-                        class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500 {{ $errors->has('fatherName') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}">
+                    <input type="text" name="fatherName" value="{{ old('fatherName') }}" maxlength="30"
+                        placeholder="Enter Father Name"
+                        class="mt-1 w-full border rounded-lg px-4 py-2
+            {{ $errors->has('fatherName') ? 'border-red-500' : 'border-gray-300' }}">
                     @error('fatherName')
-                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                        <p class="text-red-600 text-sm">{{ $message }}</p>
                     @enderror
                 </div>
+
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
                 <!-- Date of Birth -->
                 <div>
@@ -156,13 +162,16 @@
                 <!-- Contact -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Contact</label>
-                    <input type="text" name="phone" placeholder="Contact number" value="{{ old('phone') }}"
-                        maxlength="11"
-                        class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500 {{ $errors->has('phone') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}">
+                    <input type="text" name="phone" id="phone" placeholder="Contact number"
+                        value="{{ old('phone') }}" maxlength="11"
+                        class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 
+                        focus:ring-green-500 focus:border-green-500 
+                        {{ $errors->has('phone') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}">
                     @error('phone')
                         <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
+
 
                 <!-- Course -->
                 <div>
@@ -183,8 +192,26 @@
                     <label class="block text-sm font-medium text-gray-700" for="joiningDate">Joining Date</label>
                     <input type="Date" name="joiningDate"value="{{ old('joiningDate', date('Y-m-d')) }}"
                         maxlength="11"
-                        class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500 {{ $errors->has('phone') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}">
+                        class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500 {{ $errors->has('joiningDate') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}">
                     @error('joiningDate')
+                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700" for="fromDate">From</label>
+                    <input type="Date" name="fromDate"value="{{ old('fromDate') }}" maxlength="11"
+                        class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500 {{ $errors->has('fromDate') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}">
+                    @error('fromDate')
+                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700" for="toDate">To</label>
+                    <input type="Date" name="toDate"value="{{ old('toDate') }}" maxlength="11"
+                        class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500 {{ $errors->has('toDate') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}">
+                    @error('toDate')
                         <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>
@@ -227,6 +254,8 @@
                 placeholder.classList.remove('hidden');
             }
         });
+
+        // CNIC FORMAT
         const cnicInput = document.getElementById('cnic');
 
         cnicInput.addEventListener('input', (e) => {
@@ -242,6 +271,19 @@
             }
 
             e.target.value = formatted;
+        });
+
+        // PHONE NUMBER FORMAT
+        const phoneInput = document.getElementById('phone');
+
+        phoneInput.addEventListener('input', (e) => {
+            // Remove all non-digit characters
+            let value = e.target.value.replace(/\D/g, '');
+
+            // Limit to 11 digits
+            value = value.slice(0, 11);
+
+            e.target.value = value;
         });
     </script>
 @endsection

@@ -7,7 +7,9 @@ use App\Models\Admin;
 use App\Models\SuperAdmin;
 use App\Models\Certificate;
 use App\Models\Result;
+use App\Models\StudentCard;
 use App\Models\StudentDiploma;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -92,7 +94,15 @@ class SuperAdminController extends Controller
 
     public function studentsResults()
     {
-        $results = Result::get();
+        $results = Result::with(['student.institute', 'ExaminationCriteria.diplomawiseCourse.diploma'])
+            ->get()
+            ->groupBy(function ($item) {
+                return $item->StudentID . '-' .
+                    $item->ExaminationCriteria->diplomawiseCourse->diploma->id . '-' .
+                    $item->sessionID . '-' .    
+                    $item->semesterID;
+            });
+
         return view('SuperAdmin.Student.studentsResults', compact('results'));
     }
 
@@ -104,7 +114,7 @@ class SuperAdminController extends Controller
 
     public function printCertificates()
     {
-        $certificates = Certificate::get();
+        $certificates = Certificate::where('status', 'approved')->get();
         return view('SuperAdmin.Certificates.printCertificates', compact('certificates'));
     }
 
@@ -136,14 +146,37 @@ class SuperAdminController extends Controller
             ])->with('student.studentDiplomas')
             ->firstOrFail();
 
-        $issuedDate = now()->format('d M Y'); // e.g. 31 Oct 2025
-
-        return view('SuperAdmin.Certificates.printFront', compact('certificate', 'issuedDate'));
+        return view('SuperAdmin.Certificates.printFront', compact('certificate'));
     }
 
 
-    public function printBack()
+    public function printBack(Request $request, $id)
     {
-        return view('SuperAdmin.Certificates.printBack');
+        $validated = $request->validate([
+            'diplomaID' => 'required|exists:diplomas,id',
+            'sessionID' => 'required|exists:mysessions,id',
+        ]);
+
+        $certificate = Certificate::with(['student', 'diploma', 'session'])
+            ->where([
+                'diplomaID' => $validated['diplomaID'],
+                'sessionID' => $validated['sessionID'],
+                'id' => $id,
+            ])->with('student.studentDiplomas')
+            ->firstOrFail();
+
+        $url = route('superAdmin.printBack', $certificate->id);
+        $qrCode = QrCode::size(75)->generate($url);
+
+
+
+        return view('SuperAdmin.Certificates.printBack', compact('qrCode'));
+    }
+
+    public function studentCardRequests()
+    {
+        $requests = StudentCard::get();
+        // dd($requests);
+        return view('SuperAdmin.Student.cardsRequests', compact('requests'));
     }
 }
