@@ -35,10 +35,6 @@ class StudentController extends Controller
      */
     public function create()
     {
-        session()->forget('student_id');
-        $nextStudentId = Student::max('id') + 1;
-        session(['student_id' => $nextStudentId]);
-
         $admin = Auth::guard('admin')->user();
         $insts = Institute::get();
         $courses = Course::get();

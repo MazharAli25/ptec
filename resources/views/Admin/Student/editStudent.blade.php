@@ -35,7 +35,7 @@
             <div class="absolute top-40">
                 <label class="block text-sm font-medium text-gray-700">Student ID</label>
                 <input type="text" name="id" placeholder="Upcoming Student ID"
-                    value="{{ session('student_id') ?? 'Not Set' }}" readonly
+                    value="{{ $student->id ?? 'Not Set' }}" readonly
                     class="mt-1 w-20 border rounded-lg px-4 py-2
                         focus:ring-green-500 focus:border-green-500
                         {{ $errors->has('id') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}">

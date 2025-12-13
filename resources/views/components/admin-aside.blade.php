@@ -96,39 +96,9 @@
             </div>
             
         </div>
-        <div x-data="{ open: {{ request()->routeIs('card.*') ? 'true' : 'false' }} }" class="relative">
-            <button @click="open = !open"
-                class="flex items-center justify-between w-full px-3 py-2 rounded-lg hover:bg-green-100 transition">
-                <div class="flex items-center gap-3">
-                    <svg class="w-5 h-5 text-[#666a85]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 14l9-5-9-5-9 5 9 5z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 14l6.16-3.422A12.083 12.083 0 0112 20.944a12.083 12.083 0 01-6.16-10.366L12 14z" />
-                    </svg>
-                    <span class="font-medium text-[#666a85]">Student Cards</span>
-                </div>
-                <svg :class="{ 'rotate-180': open }" class="w-4 h-4 ml-1 text-gray-600 transition-transform"
-                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
 
-            </button>
+        {{-- Add Result --}}
 
-            <div x-show="open" x-transition class="mt-1 space-y-1overflow-hidden">
-                <a href="{{ route('card.create') }}"
-                    class="flex items-center w-full gap-3 text-[15px] px-4 py-2 rounded-none text-[#666a85] font-medium hover:bg-green-100 hover:text-green-700 transition no-underline
-                    {{ request()->routeIs('card.create') ? 'bg-green-100 text-green-700 font-semibold' : '' }}">
-                    Request Student Card
-                </a>
-                <a href="{{ route('card.index') }}"
-                    class="flex items-center w-full gap-3 text-[15px] px-4 py-2 rounded-none text-[#666a85] font-medium hover:bg-green-100 hover:text-green-700 transition no-underline
-                    {{ request()->routeIs('card.index') ? 'bg-green-100 text-green-700 font-semibold' : '' }}">
-                    Requested Student Cards
-                </a>
-            </div>
-            
-        </div>
         <div x-data="{ open: {{ request()->routeIs('result.*') ? 'true' : 'false' }} }" class="relative">
             <button @click="open = !open"
                 class="flex items-center justify-between w-full px-3 py-2 rounded-lg hover:bg-green-100 transition">
@@ -156,7 +126,8 @@
                 </a>
             </div>
         </div>
-        {{-- CERTIFICATES  --}}
+
+        {{-- Request CERTIFICATES  --}}
         <div x-data="{ open: {{ request()->routeIs('certificate.create') || request()->routeIs('admin.viewCertificates') ? 'true' : 'false' }} }" class="relative">
             <button @click="open = !open"
                 class="flex items-center justify-between w-full px-3 py-2 rounded-lg hover:bg-green-100 transition">
@@ -192,6 +163,43 @@
             </div>
         </div>
 
+
+        {{-- Student Cards --}}
+        <div x-data="{ open: {{ request()->routeIs('card.*') ? 'true' : 'false' }} }" class="relative">
+            <button @click="open = !open"
+                class="flex items-center justify-between w-full px-3 py-2 rounded-lg hover:bg-green-100 transition">
+                <div class="flex items-center gap-3">
+                    <svg class="w-5 h-5 text-[#666a85]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 14l9-5-9-5-9 5 9 5z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 14l6.16-3.422A12.083 12.083 0 0112 20.944a12.083 12.083 0 01-6.16-10.366L12 14z" />
+                    </svg>
+                    <span class="font-medium text-[#666a85]">Student Cards</span>
+                </div>
+                <svg :class="{ 'rotate-180': open }" class="w-4 h-4 ml-1 text-gray-600 transition-transform"
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+
+            </button>
+
+            <div x-show="open" x-transition class="mt-1 space-y-1overflow-hidden">
+                <a href="{{ route('card.create') }}"
+                    class="flex items-center w-full gap-3 text-[15px] px-4 py-2 rounded-none text-[#666a85] font-medium hover:bg-green-100 hover:text-green-700 transition no-underline
+                    {{ request()->routeIs('card.create') ? 'bg-green-100 text-green-700 font-semibold' : '' }}">
+                    Request Student Card
+                </a>
+                <a href="{{ route('card.index') }}"
+                    class="flex items-center w-full gap-3 text-[15px] px-4 py-2 rounded-none text-[#666a85] font-medium hover:bg-green-100 hover:text-green-700 transition no-underline
+                    {{ request()->routeIs('card.index') ? 'bg-green-100 text-green-700 font-semibold' : '' }}">
+                    Requested Student Cards
+                </a>
+            </div>
+            
+        </div>
+        
+        
         {{-- <form href="{{ route('logout') }}" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-green-100 transition text-black no-underline" method="POST">
             @csrf
             <button class="font-medium text-[#666a85]" type="submit">Logout</button>

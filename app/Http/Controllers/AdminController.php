@@ -19,7 +19,16 @@ class AdminController extends Controller
      */
     public function index()
     {
-        return view('Admin.dashboard');
+        $adminId = Auth::guard('admin')->user()->institute_id;
+        $students = Student::where('instituteId', $adminId)->get();
+        $pending = Certificate::whereHas('student', function ($query) use ($adminId) {
+            $query->where('instituteId', $adminId);
+        })->where('status','pending')->get();
+        $approved = Certificate::whereHas('student', function ($query) use ($adminId) {
+            $query->where('instituteId', $adminId);
+        })->where('status','approved')->get();
+
+        return view('Admin.dashboard', compact(['students', 'pending', 'approved']));
     }
 
     /**
@@ -29,6 +38,7 @@ class AdminController extends Controller
     {
         $insts = Institute::get();
         $admins = Admin::get();
+
         return view('SuperAdmin.add_admin', compact(['insts', 'admins']));
     }
 
@@ -90,7 +100,6 @@ class AdminController extends Controller
         //
     }
 
-
     // public function requestCertificate(Request $request)
     // {
     //     $query = Student::with('studentDiplomas.diploma.session');
@@ -108,34 +117,40 @@ class AdminController extends Controller
 
     // public function requestedCertificates()
     // {
-        // return view('Admin.requestCertificate');
+    // return view('Admin.requestCertificate');
     // }
 
-    public function requestedCertificates(){
+    public function requestedCertificates()
+    {
         $adminId = Auth::guard('admin')->user()->id;
-        $requests= Certificate::with(['student'])
-            ->whereHas('student', function ($query) use ($adminId){
+        $requests = Certificate::with(['student'])
+            ->whereHas('student', function ($query) use ($adminId) {
                 $query->where('InstituteId', $adminId);
             })
             ->get();
+
         return view('Admin.Certificates.RequestedCertificates', compact('requests'));
     }
 
-    public function registeredStudentsList(){
-        $instituteID= Auth::guard('admin')->user()->institute_id;
-        $students= Student::where('instituteId', $instituteID)
-        ->whereDoesntHave('studentDiplomas')
-        ->get();
+    public function registeredStudentsList()
+    {
+        $instituteID = Auth::guard('admin')->user()->institute_id;
+        $students = Student::where('instituteId', $instituteID)
+            ->whereDoesntHave('studentDiplomas')
+            ->get();
+
         return view('Admin.registeredStudents', compact('students'));
     }
 
-    public function assignedDiplomas(){
-        $students= StudentDiploma::with('student')
-        ->whereHas('student', function ($query){
-            $instituteID= Auth::guard('admin')->user()->institute_id;
-            $query->where('instituteId', $instituteID);
-        })
-        ->get();
+    public function assignedDiplomas()
+    {
+        $students = StudentDiploma::with('student')
+            ->whereHas('student', function ($query) {
+                $instituteID = Auth::guard('admin')->user()->institute_id;
+                $query->where('instituteId', $instituteID);
+            })
+            ->get();
+
         return view('Admin.Student.assignedDiplomas', compact('students'));
     }
 }

@@ -21,7 +21,7 @@
                                     </svg>
                                 </div>
                             </div>
-                            <p class="text-4xl font-bold text-gray-800">0</p>
+                            <p class="text-4xl font-bold text-gray-800">{{count($students)}}</p>
                             <p class="text-gray-600 mt-1">Total Students</p>
                         </div>
     
@@ -35,7 +35,7 @@
                                     </svg>
                                 </div>
                             </div>
-                            <p class="text-4xl font-bold text-gray-800">0</p>
+                            <p class="text-4xl font-bold text-gray-800">{{count($pending)}}</p>
                             <p class="text-gray-600 mt-1">Pending Diplomas</p>
                         </div>
     
@@ -49,7 +49,7 @@
                                     </svg>
                                 </div>
                             </div>
-                            <p class="text-4xl font-bold text-gray-800">0</p>
+                            <p class="text-4xl font-bold text-gray-800">{{count($approved)}}</p>
                             <p class="text-gray-600 mt-1">Diplomas Issued</p>
                         </div>
     
@@ -96,28 +96,6 @@
                             <p class="text-gray-600 mt-1">Verified Fee (PKR)</p>
                         </div>
                     </div>
-    
-                    <!-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  Fee    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@# -->
-                    <div class="bg-white mt-10 w-full max-w-6xl rounded-2xl shadow p-6">
-                        <!-- Header -->
-                        <div class="flex justify-between items-center mb-6">
-                            <h2 class="text-2xl font-semibold text-gray-800">Fees Paid</h2>
-                            <a href="#" class="text-blue-600 font-medium hover:underline">View All</a>
-                        </div>
-    
-    
-                        <div class="bg-cyan-600 text-white font-semibold grid grid-cols-5 py-3 rounded-full text-center">
-                            <span>S#</span>
-                            <span>Fee (PKR)</span>
-                            <span>Description</span>
-                            <span>Datetime</span>
-                            <span>Status</span>
-                        </div>
-                        <div class="text-center py-12 text-gray-400 font-medium">
-                            No fee paid yet!
-                        </div>
-                    </div>
-                    <!-- ####################   footer   ########################################## -->
     
                 </div>
     

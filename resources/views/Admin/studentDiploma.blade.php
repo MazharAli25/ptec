@@ -26,7 +26,7 @@
             <form action="{{ route('studentDiploma.create') }}" method="GET">
                 <div class="mt-3">
                     <label for="id" class="block text-sm font-medium text-gray-700 mb-1">
-                        Search Student By Name
+                        Search Student By ID
                     </label>
 
                     <div class="flex flex-row gap-3">
