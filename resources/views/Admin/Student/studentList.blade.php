@@ -47,7 +47,7 @@
                                     <i class="fas fa-eye text-base"></i>
                                 </a>
                                 <!-- Delete Link -->
-                                <form action="{{ route('student.destroy', encrypt($student)) }}" method="post" class="inline-block">
+                                <form action="{{ route('student.destroy', encrypt($student)) }}" class="inline-block" method="POST">
                                     @csrf
                                     @method('DELETE')
                                     <button

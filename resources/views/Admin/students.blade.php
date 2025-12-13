@@ -35,7 +35,6 @@
                     </h2>
             </div>
 
-            <!-- Form -->
 
             @csrf
 
@@ -219,7 +218,7 @@
             <!-- Address -->
             <div class="mt-4">
                 <label class="block text-sm font-medium text-gray-700">Address</label>
-                <input type="text" name="address" placeholder="Address" value="{{ old('address') }}"
+                <input type="text" maxlength="500" name="address" placeholder="Address" value="{{ old('address') }}"
                     class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500 {{ $errors->has('address') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}">
                 @error('address')
                     <p class="text-red-600 text-sm mt-1">{{ $message }}</p>

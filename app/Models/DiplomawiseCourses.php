@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class DiplomawiseCourses extends Model
 {
     protected $table = 'diplomawise_courses';
+    protected $primaryKey = 'ID';
     protected $fillable = [
         'diplomaID',
         'courseID',
@@ -29,7 +30,7 @@ class DiplomawiseCourses extends Model
     
     public function studentCourses()
     {
-        return $this->belongsTo(StudentCourse::class, 'DiplomawiseCourseID');
+        return $this->hasMany(StudentCourse::class, 'DiplomawiseCourseID');
     }
     public function session()
     {

@@ -50,11 +50,11 @@
                                         value="{{ old('theoryMarks.' . $index) }}"
                                         oninput="if(this.value.length>3) this.value=this.value.slice(0,3)"> 
                                 </td>
-                                <td class="px-4"> <input type="number" name=" []"
+                                <td class="px-4"> <input type="number" name="practicalMarks[]"
                                     class="border border-gray-300 rounded px-2 py-1 w-20 text-center"
                                     value="{{ old('practicalMarks.' . $index) }}"
                                     oninput="if(this.value.length>3) this.value=this.value.slice(0,3)">
-                                <td>
+                                </td>
                                 {{-- <td class="py-2.5 px-4"> <input type="number" name="passingMarks[]" class="border border-gray-300 rounded px-2 py-1 w-20 text-center" oninput="if(this.value.length>2) this.value=this.value.slice(0,2)" required> </td> --}}
                             </tr>
                         @endforeach
@@ -95,11 +95,11 @@
                         'px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm');
                 },
                 columnDefs: [{
-                    targets: [6, 7, ],
+                    targets: [6, 7],
                     searchable: false,
                     orderable: false
                 }, {
-                    targets: [4, 5, ],
+                    targets: [4, 5],
                     searchable: false,
                     orderable: false
                 }, ],

@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('page-title', 'Student Details')
+@section('page-title', 'Student Diplomas')
 
 @section('main-content')
     <div class="ml-[18vw] min-h-screen bg-gray-50 flex justify-center py-10 px-6">
@@ -16,13 +16,13 @@
                         <img id="photoPreview" src="{{ asset('storage/' . $student->image) }}"
                             class="absolute inset-0 w-full h-full object-cover rounded-lg z-10" />
 
-                </div>
+                    </div>
                 </div>
 
                 <!-- Title -->
                 <h2
                     class="absolute top-[10vh] left-[200px] inline-block text-2xl font-bold text-gray-800 text-center md:text-right w-[60%]">
-                    Student Details
+                    Student Diploma Details
                 </h2>
             </div>
 
@@ -51,9 +51,17 @@
                     <label class="block text-sm font-medium text-gray-700">Father Name</label>
                     <input value="{{ $student->fatherName }}" class="mt-1 w-full border rounded-lg px-4 py-2" readonly>
                 </div>
+                <!-- Diploma Name -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Diploma Name</label>
+                    <input value="{{ $studentCourses[0]->studentDiploma->diploma->DiplomaName }}" class="mt-1 w-full border rounded-lg px-4 py-2" readonly>
+                </div>
 
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+
+            {{-- Student Extra Information --}}
+            {{-- <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
                 <!-- Date of Birth -->
                 <div>
@@ -102,6 +110,32 @@
                     <label class="block text-sm font-medium text-gray-700">Address</label>
                     <input class="mt-1 w-[300%] border border-gray-300 rounded-lg px-4 py-2"
                         value="{{ $student->address }}" readonly>
+
+                </div>
+            </div> --}}
+
+
+            <div class="flex justify-center mt-10">
+                <div class="overflow-x-auto w-[100%]">
+                    <table class="min-w-full border border-gray-200 rounded-lg overflow-hidden students-table">
+                        <thead class="bg-cyan-600 text-white">
+                            <tr>
+                                <th class="py-2.5 px-4 text-center font-semibold">
+                                    Courses
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-gray-700 divide-y divide-gray-200 text-center">
+                            @foreach ($studentCourses as $sc)
+                                <tr class="hover:bg-gray-50 transition">
+                                    <td class="py-2 px-4">
+                                        {{ $sc->diplomawiseCourse->course->courseName }} -
+                                        {{ $sc->diplomawiseCourse->session->session }}
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
 
                 </div>
             </div>

@@ -94,7 +94,7 @@ Route::middleware(['web', 'admin'])->group(function () {
     Route::resource('/certificate', CertificateController::class);
     // Route::post('/certificate/store/{id}', [CertificateController::class, 'store'])->name('certificate.store');
     Route::get('admin/student/registered-student-list', [AdminController::class, 'registeredStudentsList'])->name('admin.registeredStudentList');
-    Route::get('admin/student/student-list', [AdminController::class, 'studentsList'])->name('admin.studentList');
+    Route::get('admin/student/assigned-diplomas', [AdminController::class, 'assignedDiplomas'])->name('admin.assignedDiplomas');
 
     // Student Card Routes
     Route::get('student-card/request', [StudentCardController::class, 'create'])->name('card.create');
@@ -102,17 +102,14 @@ Route::middleware(['web', 'admin'])->group(function () {
     Route::get('student-card/requested-cards', [StudentCardController::class, 'index'])->name('card.index');
     Route::delete('student-card/{studentCard}', [StudentCardController::class, 'destroy'])
         ->name('card.destroy');
-
-
     // Route::get('/get-sessions/{diplomaId}', [App\Http\Controllers\StudentDiplomaController::class, 'getSessions'])->name('get.sessions');
     Route::get('/get-sessions/{diplomaName}', [StudentDiplomaController::class, 'getSessions']);
-
+    Route::get('/student-list', [StudentController::class, 'studentList'])->name('admin.studentList');
     Route::post('/student/toggle-status/{id}', [StudentController::class, 'toggleStatus'])
         ->name('student.toggleStatus');
 });
+
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
-
-
 
 require __DIR__ . '/auth.php';
 // $2y$12$MGUKRihIe1HCL1CKvl6da.QsRA7Hd/J9W540JOHYl8SEN5nUUqzh. 

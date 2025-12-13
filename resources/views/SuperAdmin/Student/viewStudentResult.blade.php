@@ -200,7 +200,7 @@
                         <td>{{ $totalMarks }}</td>
                         <td colspan="2" class="text-right border px-2 py-1">Obtained Marks:</td>
                         <td>{{ $obtainedMarks }}</td>
-                        <td>Pass</td>
+                        <td>{{ $course->status }}</td>
                     </tr>
                     <tr>
                         <td colspan="6" class="text-right border px-2 py-1">Percentage:</td>

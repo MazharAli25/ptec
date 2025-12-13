@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/2.3.4/css/dataTables.dataTables.min.css">
     <script>
         function toggleDropdown(id) {
-            const dropdown = document.getElementById(id);
+            const dropdown = document.getElementById(id); 
             const icon = document.getElementById(`${id}-icon`);
             dropdown.classList.toggle('hidden');
             icon.classList.toggle('rotate-180');

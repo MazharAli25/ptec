@@ -129,13 +129,13 @@ class AdminController extends Controller
         return view('Admin.registeredStudents', compact('students'));
     }
 
-    public function studentslist(){
+    public function assignedDiplomas(){
         $students= StudentDiploma::with('student')
         ->whereHas('student', function ($query){
             $instituteID= Auth::guard('admin')->user()->institute_id;
             $query->where('instituteId', $instituteID);
         })
         ->get();
-        return view('Admin.Student.studentsList', compact('students'));
+        return view('Admin.Student.assignedDiplomas', compact('students'));
     }
 }

@@ -30,7 +30,7 @@
                                 <td class="py-3 px-4">
                                     <button class="status-btn" data-id="{{ $student->student->id }}">
                                         <span
-                                            class="px-3 py-1 rounded-full text-sm font-medium {{ $student->student->status === 'inactive' ? 'bg-yellow-100 text-yellow-800' : ($student->student->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800') }}">
+                                            class="px-3 py-1 rounded-full text-sm font-medium {{ $student->student->status === 'Inactive' ? 'bg-yellow-100 text-yellow-800' : ($student->student->status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800') }}">
                                             {{ $student->student->status }}
                                         </span>
                                     </button>
@@ -39,17 +39,18 @@
 
                                 <td class="py-3 px-4 text-green-600 font-semibold w-60">
                                     <!-- Edit Link -->
-                                    <a href="{{ route('student.edit', $student->student->id) }}"
+                                    <a href="{{ route('studentDiploma.edit', encrypt($student->ID)) }}"
                                         class="no-underline inline-flex items-center px-2 py-1.5 bg-blue-500 text-white text-sm font-medium rounded hover:bg-blue-600 transition-colors">
                                         <i class="fa-solid fa-pen-to-square text-[16px]"></i>
                                     </a>
                                     <!-- View Link -->
-                                    <a href="{{ route('student.show', $student->student->id) }}"
+                                    <a href="{{ route('studentDiploma.show', encrypt($student->ID)) }}"
                                         class="no-underline inline-flex items-center px-2 py-1.5 bg-green-500 text-white text-sm font-medium rounded hover:bg-green-600 transition-colors">
                                         <i class="fas fa-eye text-base"></i>
                                     </a>
                                     <!-- Delete Link -->
-                                    <form action="{{ route('student.destroy', $student->student->id) }}" method="POST" class="inline-block">
+                                    <form action="{{ route('studentDiploma.destroy', encrypt($student->ID)) }}"
+                                        method="POST" class="inline-block">
                                         @csrf
                                         @method('DELETE')
                                         <button
@@ -150,11 +151,6 @@
             let id = button.data('id');
             let badge = button.find("span");
 
-            // Show temporary loading
-            // badge.text("Updating...")
-            //     .removeClass()
-            //     .addClass("px-3 py-1 rounded-full text-sm font-medium bg-gray-200 text-gray-800");
-
             $.ajax({
                 url: "/student/toggle-status/" + id,
                 type: "POST",
@@ -163,19 +159,19 @@
                 },
                 success: function(response) {
                     if (response.success) {
-
-                        if (response.status === "active") {
-                            badge.text("active")
+                        // Use response.status, not undefined status
+                        if (response.status === "Active") {
+                            badge.text("Active")
                                 .removeClass()
                                 .addClass(
                                     "px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800"
-                                    );
+                                );
                         } else {
-                            badge.text("inactive")
+                            badge.text("Inactive")
                                 .removeClass()
                                 .addClass(
                                     "px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800"
-                                    );
+                                );
                         }
                     }
                 }

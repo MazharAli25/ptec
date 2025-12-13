@@ -6,15 +6,15 @@
     <form method="POST" action="{{ route('login') }}">
         @csrf
         @if ($errors->any())
-    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 ml-[20vw]">
-        <strong>Whoops! Something went wrong:</strong>
-        <ul class="mt-2 list-disc list-inside text-sm text-red-600">
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-    @endif
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 ml-[20vw]">
+                <strong>Whoops! Something went wrong:</strong>
+                <ul class="mt-2 list-disc list-inside text-sm text-red-600">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
         <!-- Email Address -->
         <div>
@@ -43,16 +43,16 @@
             </label>
         </div>
 
-        <div class="flex items-center justify-end mt-4">
+        <div class="flex flex-col items-center justify-end mt-4">
             @if (Route::has('password.request'))
                 <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
                     {{ __('Forgot your password?') }}
                 </a>
             @endif
 
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
+            <button class="ms-3" style="background: rgb(21, 128, 61); padding: 10px 20px; color: white; border-radius: 5px; text-decoration: none; margin-top: 10px;">
+                Login
+            </button>
         </div>
     </form>
 </x-guest-layout>

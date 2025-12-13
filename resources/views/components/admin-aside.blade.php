@@ -18,8 +18,8 @@
             <span class="font-medium text-[#666a85]">Dashboard</span>
         </a>
 
-        <!-- Courses -->
-        <div x-data="{ open: {{ request()->routeIs('student.*') || request()->routeIs('admin.*') || request()->routeIs('studentDiploma.*') || request()->routeIs('certificate.*') || request()->routeIs('card.create') || request()->routeIs('card.index') ? 'true' : 'false' }} }" class="relative">
+        <!-- Student -->
+        <div x-data="{ open: {{ request()->routeIs('student.create') || request()->routeIs('admin.studentList') || request()->routeIs('admin.registeredStudentList')  ? 'true' : 'false' }} }" class="relative">
             <button @click="open = !open"
                 class="flex items-center justify-between w-full px-3 py-2 rounded-lg hover:bg-green-100 transition">
                 <div class="flex items-center gap-3">
@@ -51,15 +51,47 @@
                     {{ request()->routeIs('admin.registeredStudentList') ? 'bg-green-100 text-green-700 font-semibold' : '' }}">
                     Registered Students List
                 </a>
+            </div>
+            <div x-show="open" x-transition class="mt-1 space-y-1overflow-hidden">
+                <a href="{{ route('admin.studentList') }}"
+                    class="flex items-center w-full gap-3 text-[15px] px-4 py-2 rounded-none text-[#666a85] font-medium hover:bg-green-100 hover:text-green-700 transition no-underline
+                    {{ request()->routeIs('admin.studentList') ? 'bg-green-100 text-green-700 font-semibold' : '' }}">
+                    Students List
+                </a>
+            </div>
+            
+        </div>
+
+
+        <!-- Diploma -->
+        <div x-data="{ open: {{ request()->routeIs('studentDiploma.create') || route('admin.assignedDiplomas') ? 'true' : 'false' }} }" class="relative">
+            <button @click="open = !open"
+                class="flex items-center justify-between w-full px-3 py-2 rounded-lg hover:bg-green-100 transition">
+                <div class="flex items-center gap-3">
+                    <svg class="w-5 h-5 text-[#666a85]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 14l9-5-9-5-9 5 9 5z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 14l6.16-3.422A12.083 12.083 0 0112 20.944a12.083 12.083 0 01-6.16-10.366L12 14z" />
+                    </svg>
+                    <span class="font-medium text-[#666a85]">Diploma</span>
+                </div>
+                <svg :class="{ 'rotate-180': open }" class="w-4 h-4 ml-1 text-gray-600 transition-transform"
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+
+            </button>
+            <div x-show="open" x-transition class="mt-1 space-y-1overflow-hidden">
                 <a href="{{ route('studentDiploma.create') }}"
                     class="flex items-center w-full gap-3 text-[15px] px-4 py-2 rounded-none text-[#666a85] font-medium hover:bg-green-100 hover:text-green-700 transition no-underline
                 {{ request()->routeIs('studentDiploma.create') ? 'bg-green-100 text-green-700 font-semibold' : '' }}">
                     Assign Diploma
                 </a>
-                <a href="{{ route('admin.studentList') }}"
+                <a href="{{ route('admin.assignedDiplomas') }}"
                     class="flex items-center w-full gap-3 text-[15px] px-4 py-2 rounded-none text-[#666a85] font-medium hover:bg-green-100 hover:text-green-700 transition no-underline
-                {{ request()->routeIs('admin.studentList') ? 'bg-green-100 text-green-700 font-semibold' : '' }}">
-                    Students List
+                {{ request()->routeIs('admin.assignedDiplomas') ? 'bg-green-100 text-green-700 font-semibold' : '' }}">
+                    Assigned Diplomas List
                 </a>
             </div>
             

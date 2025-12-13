@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Student;
-use App\Models\Institute;
 use App\Models\Course;
+use App\Models\Institute;
 use App\Models\mysession;
+use App\Models\Student;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class StudentController extends Controller
 {
@@ -18,6 +18,7 @@ class StudentController extends Controller
     public function index()
     {
         $students = Student::with('studentDiplomas')->whereDoesntHave('studentDiplomas')->get();
+
         return view('SuperAdmin.registeredStudents', compact('students'));
     }
 
@@ -25,6 +26,7 @@ class StudentController extends Controller
     {
 
         $students = Student::where('instituteId')->get();
+
         return view('Admin.registeredStudents', compact('students'));
     }
 
@@ -41,6 +43,7 @@ class StudentController extends Controller
         $insts = Institute::get();
         $courses = Course::get();
         $sessions = mysession::get();
+
         return view('Admin.students', compact(['insts', 'courses', 'sessions']));
     }
 
@@ -56,7 +59,7 @@ class StudentController extends Controller
             'fatherName' => ['required'],
             'dob' => ['nullable', 'date'],
             'email' => ['required', 'unique:students,email', function ($attribute, $value, $fail) {
-                if (!preg_match('/@(gmail|yahoo|hotmail)\.com$/', $value)) {
+                if (! preg_match('/@(gmail|yahoo|hotmail)\.com$/', $value)) {
                     $fail('The email must be a Gmail, Yahoo, or Hotmail address.');
                 }
             }],
@@ -106,6 +109,7 @@ class StudentController extends Controller
     public function show(Student $student)
     {
         $student = $student;
+
         return view('Admin.studentDetails', compact('student'));
     }
 
@@ -115,9 +119,10 @@ class StudentController extends Controller
     public function edit(Student $student)
     {
         $student = Student::findOrFail($student->id);
-        $institutes = Institute::get();
+        $insts = Institute::get();
+
         // dd($student);
-        return view('Admin.Student.editStudent', compact(['student', 'institutes']));
+        return view('Admin.Student.editStudent', compact(['student', 'insts']));
     }
 
     /**
@@ -125,7 +130,6 @@ class StudentController extends Controller
      */
     public function update(Request $request, Student $student)
     {
-        // 1. Validation (Ensures 'photo' is used consistently and is nullable)
         $validated = $request->validate([
             'institute_id' => ['required'],
             'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'], // Changed from 'image' to 'photo'
@@ -136,22 +140,20 @@ class StudentController extends Controller
             // Corrected email unique validation (removed redundant 'email' key and fixed closure)
             'email' => [
                 'required',
-                'unique:students,email,' . $student->id,
+                'unique:students,email,'.$student->id,
                 function ($attribute, $value, $fail) {
-                    if (!preg_match('/@(gmail|yahoo|hotmail)\.com$/', $value)) {
+                    if (! preg_match('/@(gmail|yahoo|hotmail)\.com$/', $value)) {
                         $fail('The email must be a Gmail, Yahoo, or Hotmail address.');
                     }
-                }
+                },
             ],
 
-            'cnic' => ['required', 'regex:/^[0-9]{5}-[0-9]{7}-[0-9]{1}$/', 'unique:students,cnic,' . $student->id],
-            'phone' => ['required', 'unique:students,phone,' . $student->id, 'max:11'],
+            'cnic' => ['required', 'regex:/^[0-9]{5}-[0-9]{7}-[0-9]{1}$/', 'unique:students,cnic,'.$student->id],
+            'phone' => ['required', 'unique:students,phone,'.$student->id, 'max:11'],
             'gender' => ['required'],
             'joiningDate' => ['required', 'date'],
             'address' => ['nullable'],
         ]);
-
-        // 2. Conditionally Handle Image Upload 🔥 THIS IS THE KEY FIX
         $photoPath = $student->image; // Start by keeping the existing image path
 
         if ($request->hasFile('photo')) {
@@ -167,7 +169,7 @@ class StudentController extends Controller
         // 3. Update student data with the potentially new or existing photo path
         $student->update([
             'certificateInstituteId' => $validated['institute_id'],
-            'image' => $photoPath, // Use the path determined above
+            'image' => $photoPath,
             'name' => $validated['name'],
             'fatherName' => $validated['fatherName'],
             'email' => $validated['email'],
@@ -179,7 +181,7 @@ class StudentController extends Controller
             'joiningDate' => $validated['joiningDate'],
         ]);
 
-        return redirect()->route('student.edit', $student->id)->with('success', 'Student Details Updated Successfully');
+        return redirect()->route('student.edit', encrypt($student->id))->with('success', 'Student Details Updated Successfully');
     }
 
     /**
@@ -189,22 +191,32 @@ class StudentController extends Controller
     {
         $student->delete();
 
-        return redirect()->route('admin.studentList')
+        return redirect()->route('admin.assignedDiplomas')
             ->with('err', 'Student Deleted Successfully');
     }
-
 
     public function toggleStatus($id)
     {
         $student = Student::findOrFail($id);
 
         // Toggle status
-        $student->status = $student->status === 'active' ? 'inactive' : 'active';
+        $student->status = $student->status === 'Active' ? 'Inactive' : 'Active';
         $student->save();
 
         return response()->json([
             'success' => true,
-            'status' => $student->status
+            'status' => $student->status,
         ]);
+    }
+
+    public function studentList()
+    {
+        $students = Student::where('instituteId', Auth::guard('admin')->user()->institute_id)
+            ->whereHas('studentDiplomas')
+            ->get();
+
+        // dd($students);
+
+        return view('Admin.Student.studentList', compact(['students']));
     }
 }

@@ -1,241 +1,202 @@
 @extends('layouts.admin')
-
-@section('page-title', 'Edit Student Details')
-
+@section('page-title', 'Student Edit Form')
 @section('main-content')
-
-    <style>
-        @media print {
-            @page {
-                size: A4;
-                margin: 0;
-            }
-
-            .cardContainer {
-                margin-left: 0 !important;
-                width: 100% !important;
-                padding: 0 !important;
-            }
-
-            .card {
-                box-shadow: none !important;
-                border: none !important;
-                border-radius: 0 !important;
-                width: 100% !important;
-            }
-
-            .header {
-                box-shadow: none !important;
-                -webkit-print-color-adjust: exact; /* Ensures background colors print */
-                print-color-adjust: exact;
-            }
-
-            .information {
-                display: flex !important;
-                flex-wrap: wrap !important;
-                flex-direction: row !important;
-            }
-
-            .information div {
-                width: 33.33% !important;
-                margin-bottom: 16px !important;
-            }
-
-            .enrollment {
-                display: flex !important;
-                flex-direction: row !important;
-                flex-wrap: wrap !important;
-            }
-
-            .enrollment div {
-                width: 50% !important;
-                margin-bottom: 16px !important;
-            }
-
-            .no-print {
-                display: none !important;
-            }
-
-            #name {
-                font-size: 20px !important;
-                color: black !important;
-            }
-
-            #student-id,
-            #institute-name {
-                color: black !important;
-            }
-        }
-    </style>
-
-    <div class="ml-[18vw] min-h-screen bg-gray-50 flex justify-center py-12 px-6 cardContainer">
-
-        <form action="{{ route('student.update', $student) }}" method="POST" enctype="multipart/form-data" class="w-full max-w-6xl">
-            @csrf
-            @method('PUT')
-
-            <div class="bg-white w-full rounded-2xl shadow-lg border border-gray-200 overflow-hidden relative card">
-
-                <div class="bg-green-600 text-white p-8 rounded-t-2xl flex flex-col md:flex-row items-center justify-between shadow-md header">
-                    <div class="flex items-center space-x-6">
-
+    <div class="ml-[18vw] min-h-screen bg-gray-50 flex justify-center py-10 px-6">
+        <div class="bg-white w-[90%] max-w-6xl rounded-2xl shadow-md border border-gray-200 p-10 relative">
+            <!-- Header -->
+            <div class="flex flex-col md:flex-row items-center justify-end mb-10">
+                <form action="{{ route('student.update', encrypt($student->id) ) }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    @method('PUT')
+                    <!-- Upload Image -->
+                    <div class="flex flex-col items-center mb-6 md:mb-0">
                         <input type="file" name="photo" id="imageInput" class="hidden" accept="image/*">
-
-                        <div class="relative group cursor-pointer" onclick="document.getElementById('imageInput').click()">
-                            
-                            <img id="profileImage" 
-                                src="{{ $student->image ? asset('storage/' . $student->image) : '' }}" 
-                                alt="Student Photo"
-                                class="{{ $student->image ? '' : 'hidden' }} w-32 h-32 rounded-xl object-cover shadow-md border-2 border-white transition-transform transform group-hover:scale-105" />
-
-                            <div id="placeholderImage" class="{{ $student->image ? 'hidden' : 'flex' }} flex-col items-center justify-center w-32 h-32 border-2 border-dashed border-white rounded-xl bg-green-500/20 text-white group-hover:bg-green-500/40 transition">
-                                <svg class="w-10 h-10 mb-2 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m10 12V4m-9 8l2 2 4-4m5 6H5" />
+                        <label for="photo"
+                            class="flex flex-col items-center justify-center w-40 h-40 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition relative overflow-hidden">
+                            <img id="photoPreview" src="{{ $student->image ? asset('storage/' . $student->image) : '' }}" alt="Preview"
+                                class="absolute inset-0 w-full h-full object-cover rounded-lg" />
+                            <div id="uploadPlaceholder" class="flex flex-col items-center justify-center text-center">
+                                <svg class="w-10 h-10 text-gray-400 mb-2" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M7 16V4m10 12V4m-9 8l2 2 4-4m5 6H5" />
                                 </svg>
-                                <p class="text-xs font-semibold">Upload Photo</p>
+                                <p class="text-sm text-gray-500">Upload std image</p>
                             </div>
-
-                            <div class="absolute inset-0 bg-black bg-opacity-40 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 no-print">
-                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="">
-                            <h2 class="text-3xl font-bold" id="name">{{ $student->name }}</h2>
-                            <p class="text-sm text-green-100 mt-1" id="student-id">Student ID: {{ $student->id }}</p>
-                            <p class="text-sm text-green-100" id="institute-name">
-                                {{ $student->institute->institute_name ?? 'Institute: N/A' }}</p>
-                        </div>
+                            <input id="photo" type="file" name="photo" class="hidden" accept="image/*" />
+                        </label>
                     </div>
-
-                    <div class="mt-6 md:mt-0 flex space-x-3 no-print">
-                        <a href="{{ route('admin.studentList') }}"
-                            class="bg-green-700 text-white px-5 py-2 rounded-lg font-semibold hover:bg-green-800 transition-all shadow">
-                            Back
-                        </a>
-                    </div>
-                </div>
-
-                <div class="p-10">
-                    <h3 class="text-2xl font-semibold text-gray-800 mb-6 border-b pb-2">Personal Information</h3>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 information">
-                        <div>
-                            <p class="text-gray-500 text-sm">Full Name</p>
-                            <input
-                                class="font-medium text-gray-800 px-2 py-1 border border-1 border-gray-400 focus:border-green-600"
-                                value="{{ $student->name }}" name="name" />
-                        </div>
-
-                        <div>
-                            <p class="text-gray-500 text-sm">Father Name</p>
-                            <input
-                                class="font-medium text-gray-800 px-2 py-1 border border-1 border-gray-400 focus:border-green-600"
-                                value="{{ $student->fatherName }}" name="fatherName" />
-                        </div>
-
-                        <div>
-                            <p class="text-gray-500 text-sm">Date of Birth</p>
-                            <input
-                                type="date"
-                                class="font-medium text-gray-800 px-2 py-1 border border-1 border-gray-400 focus:border-green-600"
-                                value="{{ $student->dob }}" name="dob" />
-                        </div>
-
-                        <div>
-                            <p class="text-gray-500 text-sm">CNIC</p>
-                            <input
-                                class="font-medium text-gray-800 px-2 py-1 border border-1 border-gray-400 focus:border-green-600"
-                                value="{{ $student->cnic }}" name="cnic" id="cnic" />
-                        </div>
-
-                        <div>
-                            <p class="text-gray-500 text-sm">Email</p>
-                            <input
-                                class="font-medium text-gray-800 px-2 py-1 border border-1 border-gray-400 focus:border-green-600"
-                                value="{{ $student->email }}" name="email" />
-                        </div>
-
-                        <div>
-                            <p class="text-gray-500 text-sm">Contact</p>
-                            <input type="text"
-                                class="font-medium text-gray-800 px-2 py-1 border border-1 border-gray-400 focus:border-green-600"
-                                value="{{ $student->phone }}" name="phone" id="phone" maxlength="11" />
-                        </div>
-
-                        <div>
-                            <p class="text-gray-500 text-sm">Gender</p>
-                            <input
-                                class="font-medium text-gray-800 px-2 py-1 border border-1 border-gray-400 focus:border-green-600"
-                                value="{{ $student->gender }}" name="gender" />
-                        </div>
-
-                        <div class="md:col-span-2">
-                            <p class="text-gray-500 text-sm">Address</p>
-                            <input
-                                class="font-medium text-gray-800 px-2 py-1 border border-1 border-gray-400 focus:border-green-600 w-full"
-                                value="{{ $student->address }}" name="address" />
-                        </div>
-                    </div>
-
-                    <div class="mt-10 border-t pt-6 enrollmentContainer">
-                        <h3 class="text-2xl font-semibold text-gray-800 mb-4">Enrollment Details</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 enrollment">
-                            <div>
-                                <p class="text-gray-500 text-sm">Institute</p>
-                                <select name="institute_id"
-                                    class="font-medium text-gray-800 px-2 py-1 border border-1 border-gray-400 focus:border-green-600 w-full">
-                                    @foreach ($institutes as $institute)
-                                        <option value="{{ $institute->id }}"
-                                            {{ $student->institute_id == $institute->id ? 'selected' : '' }}>
-                                            {{ $institute->institute_name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div>
-                                <p class="text-gray-500 text-sm">Registration Date</p>
-                                <input
-                                    class="font-medium text-gray-800 px-2 py-1 border border-1 border-gray-400 focus:border-green-600"
-                                    value="{{ $student->joiningDate }}" name="joiningDate" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="button mt-4 flex flex-row justify-center no-print">
-                        <button type="submit" class="px-4 py-2 bg-green-700 text-white rounded hover:bg-green-800 transition">
-                            Submit Changes
-                        </button>
-                    </div>
-                </div>
-
+                    <!-- Title -->
+                    <h2
+                        class="absolute top-[10vh] left-[200px] inline-block text-2xl font-bold text-gray-800 text-center md:text-right w-[60%]">
+                        Student Edit Form
+                    </h2>
             </div>
-        </form>
+            <div class="absolute top-40">
+                <label class="block text-sm font-medium text-gray-700">Student ID</label>
+                <input type="text" name="id" placeholder="Upcoming Student ID"
+                    value="{{ session('student_id') ?? 'Not Set' }}" readonly
+                    class="mt-1 w-20 border rounded-lg px-4 py-2
+                        focus:ring-green-500 focus:border-green-500
+                        {{ $errors->has('id') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}">
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-2">
+                <!-- Student Name -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Name</label>
+                    <input type="text" name="name" value="{{ $student->name }}" maxlength="30"
+                        placeholder="Enter Student Name"
+                        class="mt-1 w-full border rounded-lg px-4 py-2
+            {{ $errors->has('name') ? 'border-red-500' : 'border-gray-300' }}">
+                    @error('name')
+                        <p class="text-red-600 text-sm">{{ $message }}</p>
+                    @enderror
+                </div>
+                <!-- Father Name -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Father Name</label>
+                    <input type="text" name="fatherName" value="{{ $student->fatherName }}" maxlength="30"
+                        placeholder="Enter Father Name"
+                        class="mt-1 w-full border rounded-lg px-4 py-2
+            {{ $errors->has('fatherName') ? 'border-red-500' : 'border-gray-300' }}">
+                    @error('fatherName')
+                        <p class="text-red-600 text-sm">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Date of Birth -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Date of Birth</label>
+                    <input type="date" name="dob" min="1900-01-01" max="3000-12-31" value="{{ $student->dob }}"
+                        class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500 {{ $errors->has('dob') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}">
+                    @error('dob')
+                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <!-- CNIC -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">CNIC</label>
+                    <input type="text" name="cnic" placeholder="Enter your CNIC" value="{{ $student->cnic }}"
+                        id="cnic"
+                        class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500 {{ $errors->has('cnic') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}"
+                        maxlength="15">
+                    @error('cnic')
+                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <!-- Email -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Email</label>
+                    <input type="email" name="email" placeholder="Enter email address" value="{{ $student->email }}"
+                        class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500 {{ $errors->has('email') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}">
+                    @error('email')
+                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <!-- Institute -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Institute</label>
+                    <select name="institute_id"
+                        class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 bg-white focus:ring-green-500 focus:border-green-500 {{ $errors->has('institute_id') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}">
+                        <option value="">Select institute</option>
+                        @foreach ($insts as $institute)
+                            <option value="{{ $institute->id }}"
+                                {{ $student->instituteId == $institute->id ? 'selected' : '' }}>
+                                {{ $institute->institute_name }}</option>
+                        @endforeach
+                    </select>
+                    @error('institute_id')
+                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <!-- Contact -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Contact</label>
+                    <input type="text" name="phone" id="phone" placeholder="Contact number"
+                        value="{{ $student->phone }}" maxlength="11"
+                        class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2
+                        focus:ring-green-500 focus:border-green-500
+                        {{ $errors->has('phone') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}">
+                    @error('phone')
+                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <!-- Gender -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Gender</label>
+                    <select name="gender"
+                        class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 bg-white focus:ring-green-500 focus:border-green-500 {{ $errors->has('gender') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}">
+                        <option value="">Select a Gender</option>
+                        <option value="Male" {{ $student->gender === 'Male' ? 'selected' : '' }}>Male</option>
+                        <option value="Female" {{ $student->gender === 'Female' ? 'selected' : '' }}>Female</option>
+                        <option value="Others" {{ $student->gender === 'Others' ? 'selected' : '' }}>Others</option>
+                    </select>
+                    @error('gender')
+                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700" for="joiningDate">Joining Date</label>
+                    <input type="Date" name="joiningDate" value="{{ $student->joiningDate }}" maxlength="11"
+                        class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500 {{ $errors->has('joiningDate') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}">
+                    @error('joiningDate')
+                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700" for="fromDate">From</label>
+                    <input type="Date" name="fromDate" value="{{ $student->from }}" maxlength="11"
+                        class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500 {{ $errors->has('fromDate') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}">
+                    @error('fromDate')
+                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700" for="toDate">To</label>
+                    <input type="Date" name="toDate" value="{{ $student->to }}" maxlength="11"
+                        class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500 {{ $errors->has('toDate') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}">
+                    @error('toDate')
+                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+            <!-- Address -->
+            <div class="mt-4">
+                <label class="block text-sm font-medium text-gray-700">Address</label>
+                <input type="text" maxlength="500" name="address" placeholder="Address"
+                    value="{{ $student->address }}"
+                    class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-green-500 focus:border-green-500 {{ $errors->has('address') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300' }}">
+                @error('address')
+                    <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+            <!-- Submit Button -->
+            <div class="flex justify-center mt-8">
+                <button type="submit"
+                    class="bg-green-600 text-white px-10 py-2 rounded-lg font-semibold hover:bg-green-700 transition">
+                    Save Student
+                </button>
+            </div>
+            </form>
+        </div>
     </div>
-
     <script>
-        // 1. IMAGE PREVIEW LOGIC
-        const imageInput = document.getElementById('imageInput');
-        const profileImage = document.getElementById('profileImage');
-        const placeholderImage = document.getElementById('placeholderImage');
-
-        imageInput.addEventListener('change', function(event) {
+        const input = document.getElementById('photo');
+        const preview = document.getElementById('photoPreview');
+        const placeholder = document.getElementById('uploadPlaceholder');
+        input.addEventListener('change', (event) => {
             const file = event.target.files[0];
             if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    profileImage.src = e.target.result;
-                    profileImage.classList.remove('hidden');
-                    placeholderImage.classList.add('hidden');
-                    placeholderImage.classList.remove('flex'); // Ensure flex is removed
-                }
-                reader.readAsDataURL(file);
+                preview.src = URL.createObjectURL(file);
+                preview.classList.remove('hidden');
+                placeholder.classList.add('hidden');
+            } else {
+                preview.classList.add('hidden');
+                placeholder.classList.remove('hidden');
             }
         });
-
-        // 2. CNIC FORMATTING
+        // CNIC FORMAT
         const cnicInput = document.getElementById('cnic');
         cnicInput.addEventListener('input', (e) => {
             let value = e.target.value.replace(/\D/g, '');
@@ -248,11 +209,12 @@
             }
             e.target.value = formatted;
         });
-
-        // 3. PHONE FORMATTING
+        // PHONE NUMBER FORMAT
         const phoneInput = document.getElementById('phone');
         phoneInput.addEventListener('input', (e) => {
+            // Remove all non-digit characters
             let value = e.target.value.replace(/\D/g, '');
+            // Limit to 11 digits
             value = value.slice(0, 11);
             e.target.value = value;
         });

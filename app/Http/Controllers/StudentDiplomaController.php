@@ -2,16 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\StudentDiploma;
 use App\Models\Diploma;
-use App\Models\Semester;
-use App\Models\mysession;
 use App\Models\DiplomawiseCourses;
+use App\Models\Semester;
 use App\Models\StudentCourse;
+use App\Models\StudentDiploma;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-
 
 class StudentDiplomaController extends Controller
 {
@@ -52,9 +50,6 @@ class StudentDiplomaController extends Controller
         return view('Admin.studentDiploma', compact('student', 'diplomas', 'semesters'));
     }
 
-
-
-
     /**
      * Store a newly created resource in storage.
      */
@@ -80,7 +75,6 @@ class StudentDiplomaController extends Controller
     //         'issue_diploma' => 0,
     //     ]);
 
-
     //     $diplomaCourses = DiplomaWiseCourses::where('diplomaID', $validated['diploma_id'])->pluck('id');
     //     foreach ($diplomaCourses as $courseId) {
     //         StudentCourse::create([
@@ -93,7 +87,6 @@ class StudentDiplomaController extends Controller
     //             'DiplomawiseCourseID' => $courseId,
     //         ]);
     //     }
-
 
     //     return redirect()->route('studentDiploma.create')->with('success', 'Diploma assigned to student successfully.');
     // }
@@ -119,15 +112,15 @@ class StudentDiplomaController extends Controller
             ]
         );
 
-        $sessionID=  $validated['session_id'];
+        $sessionID = $validated['session_id'];
 
         //  Get all required course IDs for this diploma
         $requiredCourses = DiplomaWiseCourses::with('diploma.session')
-        ->where('diplomaID', $validated['diploma_id'])
-        ->where('sessionID', $validated['session_id'])
-        ->where('semesterID', $validated['semester_id'])
-        ->pluck('id')
-        ->toArray();
+            ->where('diplomaID', $validated['diploma_id'])
+            ->where('sessionID', $validated['session_id'])
+            ->where('semesterID', $validated['semester_id'])
+            ->pluck('id')
+            ->toArray();
 
         // Get existing courses already assigned to this student for this diploma
         $existingCourses = StudentCourse::where(['semesterID' => $validated['semester_id'], 'StudentDiplomaID' => $studentDiploma->ID])
@@ -139,7 +132,7 @@ class StudentDiplomaController extends Controller
 
         if (empty($requiredCourses)) {
             // Student already has all courses for this diploma
-            return redirect()   
+            return redirect()
                 ->back()
                 ->with('error', 'No further courses are assigned to the selected semester.');
         }
@@ -161,9 +154,9 @@ class StudentDiplomaController extends Controller
         DB::transaction(function () use ($missingCourses, $studentDiploma, $semesterID, $sessionID) {
             foreach ($missingCourses as $courseId) {
                 StudentCourse::create([
-                    'StudentDiplomaID'    => $studentDiploma->ID,
-                    'semesterID'          => $semesterID,
-                    'sessionID'           => $sessionID,
+                    'StudentDiplomaID' => $studentDiploma->ID,
+                    'semesterID' => $semesterID,
+                    'sessionID' => $sessionID,
                     'DiplomawiseCourseID' => $courseId,
                 ]);
             }
@@ -171,7 +164,7 @@ class StudentDiplomaController extends Controller
 
         return redirect()
             ->back()
-            ->with('success', count($missingCourses) . ' new courses assigned to the student for this diploma.');
+            ->with('success', count($missingCourses).' new courses assigned to the student for this diploma.');
     }
 
     /**
@@ -179,7 +172,13 @@ class StudentDiplomaController extends Controller
      */
     public function show(StudentDiploma $studentDiploma)
     {
-        //
+        $studentDiplomaID = $studentDiploma->ID;
+        $student = $studentDiploma->student;
+        $studentCourses = StudentCourse::with('diplomawiseCourse.course', 'diplomawiseCourse.diploma', 'diplomawiseCourse.session')
+            ->where('StudentDiplomaID', $studentDiplomaID)
+            ->get();
+
+        return view('Admin.Student.showStudentDiplomas', compact('studentDiploma', 'studentCourses', 'student'));
     }
 
     /**
@@ -187,7 +186,12 @@ class StudentDiplomaController extends Controller
      */
     public function edit(StudentDiploma $studentDiploma)
     {
-        //
+        $studentDiplomaID = $studentDiploma->ID;
+        $student = $studentDiploma->student;
+        $studentCourses = StudentCourse::with('diplomawiseCourse.course', 'diplomawiseCourse.diploma', 'diplomawiseCourse.session')
+            ->where('StudentDiplomaID', $studentDiplomaID)
+            ->get();
+        return view('Admin.Student.editStudentDiplomas', compact('studentDiploma', 'studentCourses', 'student'));
     }
 
     /**
@@ -203,7 +207,16 @@ class StudentDiplomaController extends Controller
      */
     public function destroy(StudentDiploma $studentDiploma)
     {
-        //
+        DB::transaction(function () use ($studentDiploma) {
+            // Delete all courses associated with this diploma
+            StudentCourse::where('StudentDiplomaID', $studentDiploma->ID)->delete();
+
+            // Delete the diploma itself
+            $studentDiploma->delete();
+        });
+
+        return redirect()->back()
+            ->with('success', 'Student diploma and its courses deleted successfully.');
     }
 
     public function getSessions($diplomaName)
@@ -221,8 +234,8 @@ class StudentDiplomaController extends Controller
 
         $formatted = $diplomas->map(function ($diploma) {
             return [
-                'id'   => $diploma->session->id,
-                'name' => $diploma->DiplomaName . ' - ' . $diploma->session->session,
+                'id' => $diploma->session->id,
+                'name' => $diploma->DiplomaName.' - '.$diploma->session->session,
             ];
         });
 
