@@ -18,10 +18,10 @@
                         </tr>
                     </thead>
                     <tbody class="text-gray-700 divide-y divide-gray-200 text-center">
-                        @foreach ($students as $index => $student)
-                            {{-- {{ dd($student->studentCourse->student->id) }} --}}
-                            <tr> {{-- {{ dd($students->diplomawiseCourse) }} --}} {{-- {{ dd() }} --}} <td class="py-2.5 w-[5px]">
-                                    {{ $student->studentDiploma->student->id }}
+                        {{-- @foreach ($students as $index => $student)
+                             {{ dd($student->studentCourse->student->id) }} --}}
+                        {{-- <tr> {{-- {{ dd($students->diplomawiseCourse) }} --}} {{-- {{ dd() }} --}} <td class="py-2.5 w-[5px]">
+                            {{-- {{ $student->studentDiploma->student->id }}
                                 </td>
                                 <td class="py-2.5 px-4">{{ $student->studentDiploma->student->name }}</td>
                                 <td class="py-2.5 px-4">{{ $student->diplomawiseCourse->course->courseName }}</td>
@@ -54,10 +54,10 @@
                                     class="border border-gray-300 rounded px-2 py-1 w-20 text-center"
                                     value="{{ old('practicalMarks.' . $index) }}"
                                     oninput="if(this.value.length>3) this.value=this.value.slice(0,3)">
-                                </td>
-                                {{-- <td class="py-2.5 px-4"> <input type="number" name="passingMarks[]" class="border border-gray-300 rounded px-2 py-1 w-20 text-center" oninput="if(this.value.length>2) this.value=this.value.slice(0,2)" required> </td> --}}
-                            </tr>
-                        @endforeach
+                                </td> --}}
+                            {{-- <td class="py-2.5 px-4"> <input type="number" name="passingMarks[]" class="border border-gray-300 rounded px-2 py-1 w-20 text-center" oninput="if(this.value.length>2) this.value=this.value.slice(0,2)" required> </td> --}}
+                            {{-- </tr>  
+                        @endforeach --}}
                     </tbody>
                 </table>
                 <div class="flex justify-center mb-[5vh]"> <button type="submit"
@@ -73,6 +73,12 @@
                     '<"bottom-toolbar flex items-center justify-between mt-4"<"flex-1"></><"flex justify-center"><"flex-1 text-right text-sm text-gray-500">>',
                 pageLength: 100,
                 stateSave: true,
+                // For Yajra
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('result.create') }}"
+                },
                 language: {
                     search: "_INPUT_",
                     searchPlaceholder: "Search here...",
@@ -103,7 +109,50 @@
                     searchable: false,
                     orderable: false
                 }, ],
-            }) // Save last searched word in sessionStorage
+                columns: [{
+                        data: 'student_id',
+                        name: 'studentDiploma.student.id'
+                    },
+                    {
+                        data: 'student_name',
+                        name: 'studentDiploma.student.name'
+                    },
+                    {
+                        data: 'course',
+                        name: 'diplomawiseCourse.course.courseName'
+                    },
+                    {
+                        data: 'diploma',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'theory_total',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'practical_total',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'theory_marks',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'practical_marks',
+                        orderable: false,
+                        searchable: false
+                    }
+                ]
+
+
+            })
+
+
+            // Save last searched word in sessionStorage
             $('.dt-input').on('keyup change', function() {
                 sessionStorage.setItem('datatableSearch', $(this).val());
             });

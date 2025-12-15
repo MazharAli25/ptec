@@ -3,40 +3,128 @@
 namespace App\Http\Controllers;
 
 use App\Models\StudentCard;
-use App\Models\Student;
 use App\Models\StudentDiploma;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Auth as FacadesAuth;
+use Yajra\DataTables\Facades\DataTables;
 
 class StudentCardController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $adminId = Auth::guard('admin')->user()->institute_id;
-        $requests = StudentCard::with(['student'])
-        ->whereHas('student', function ($query) use ($adminId){
-            $query->where('instituteId', $adminId);
-        })
-        ->get();
-        return view('Admin.Student.requestedCards', compact('requests'));
+        if ($request->ajax()) {
+            $requests = StudentCard::with(['student'])
+                ->whereHas('student', function ($query) use ($adminId) {
+                    $query->where('instituteId', $adminId);
+                });
+
+            return DataTables::eloquent($requests)
+                ->addColumn('id', function ($row) {
+                    return $row->student->id;
+                })
+                ->addColumn('student_name', function ($row) {
+                    return $row->student->name;
+                })
+                ->addColumn('father_name', function ($row) {
+                    return $row->student->fatherName;
+                })
+                ->addColumn('diploma_name', function ($row) {
+                    return $row->diploma->DiplomaName;
+                })
+                ->addColumn('session_name', function ($row) {
+                    return $row->session->session;
+                })
+                ->addColumn('status', function ($row) {
+                    $status = strtolower($row->status);
+
+                    $class = match ($status) {
+                        'pending' => 'bg-yellow-500 hover:bg-yellow-600',
+                        'approved' => 'bg-green-500 hover:bg-green-600',
+                        'rejected' => 'bg-red-500 hover:bg-red-600',
+                        default => 'bg-gray-500'
+                    };
+
+                    return '
+                        <span
+                            class="inline-flex items-center px-2 py-1.5 text-white text-sm font-medium rounded transition-colors '.$class.'">
+                            '.ucfirst($status).'
+                        </span>
+                    ';
+                })
+                ->addColumn('actions', function ($row) {
+                    return '
+                        <button type="button" data-modal-target="deleteModal" data-id="'.$row->id .'"
+                                        class="inline-flex items-center px-2 no-underline py-1.5 bg-red-500 text-white text-sm font-medium rounded hover:bg-red-600 transition-colors">
+                                        Cancel
+                                    </button>
+                    ';
+                })
+                ->rawColumns(['status', 'actions'])
+                ->make(true);
+        }
+        // $requests = StudentCard::with(['student'])
+        //     ->whereHas('student', function ($query) use ($adminId) {
+        //         $query->where('instituteId', $adminId);
+        //     })
+        //     ->get();
+
+        return view('Admin.Student.requestedCards');
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
         $adminId = Auth::guard('admin')->user()->institute_id;
-        $studentDiplomas = StudentDiploma::with(['student', 'diploma', 'semester'])
-        ->whereHas('student', function ($query) use ($adminId){
-            $query->where('instituteId', $adminId);
-        })
-        ->get();
-        return view('Admin.Student.requestCard', compact('studentDiplomas'));
+        if ($request->ajax()) {
+            $studentDiplomas = StudentDiploma::with(['student', 'diploma', 'semester'])
+                ->whereHas('student', function ($query) use ($adminId) {
+                    $query->where('instituteId', $adminId);
+                });
+
+            return DataTables::eloquent($studentDiplomas)
+                ->addColumn('id', function ($row) {
+                    return $row->student->id;
+                })
+                ->addColumn('student_name', function ($row) {
+                    return $row->student->name;
+                })
+                ->addColumn('father_name', function ($row) {
+                    return $row->student->fatherName;
+                })
+                ->addColumn('diploma_name', function ($row) {
+                    return $row->diploma->DiplomaName;
+                })
+                ->addColumn('session_name', function ($row) {
+                    return $row->session->session;
+                })
+                ->addColumn('actions', function ($row) {
+                    return '
+                         <form action="'.route('card.store').'" method="POST">
+                                    '.csrf_field().'
+                                    <input type="hidden" name="student_id" value="'.$row->student->id.'">
+                                    <input type="hidden" name="diploma_id" value="'.$row->diploma->id.'">
+                                    <input type="hidden" name="session_id" value="'.$row->diploma->session->id.'">
+
+                                    <button type="submit"
+                                        class="inline-flex items-center px-3 py-1.5 bg-blue-500 text-white text-sm font-medium rounded hover:bg-blue-600 transition-colors">
+                                        Request ID Card
+                                    </button>
+                                </form>
+                    ';
+                })
+                ->rawColumns(['actions'])
+                ->make(true);
+
+        }
+
+        // ->get();
+        return view('Admin.Student.requestCard');
     }
 
     /**
@@ -101,12 +189,11 @@ class StudentCardController extends Controller
 
         if ($studentCard->update()) {
             return redirect()->route('superCard.requests')
-                ->with('success', 'Certificate ' . ucfirst($validated['status']) . ' successfully.');
+                ->with('success', 'Certificate '.ucfirst($validated['status']).' successfully.');
         } else {
             dd('error');
         }
     }
-
 
     /**
      * Remove the specified resource from storage.
@@ -123,6 +210,7 @@ class StudentCardController extends Controller
     public function printCards()
     {
         $cards = StudentCard::where('status', 'approved ')->get();
+
         return view('SuperAdmin.Student.printCards', compact('cards'));
     }
 
@@ -140,7 +228,6 @@ class StudentCardController extends Controller
                 'id' => $id,
             ])->with('student.studentDiplomas')
             ->firstOrFail();
-
 
         return view('SuperAdmin.Student.printFront', compact(['card']));
     }
@@ -161,6 +248,7 @@ class StudentCardController extends Controller
             ->firstOrFail();
 
         $issuedDate = now()->format('d M Y');
+
         return view('SuperAdmin.Student.printBack', compact(['card', 'issuedDate']));
     }
 }

@@ -20,7 +20,7 @@
                 </thead>
 
                 <tbody class="text-gray-700 divide-y divide-gray-200 text-center">
-                    @forelse ($studentDiplomas as $sd)
+                    {{-- @forelse ($studentDiplomas as $sd)
                         <tr class="hover:bg-gray-50 transition">
                             <td class="py-3 px-4">{{ $sd->student->id }}</td>
                             <td class="py-3 px-4">{{ $sd->student->name }}</td>
@@ -47,7 +47,7 @@
                                 No students with assigned diplomas found.
                             </td>
                         </tr>
-                    @endforelse
+                    @endforelse --}}
                 </tbody>
             </table>
         </div>
@@ -61,6 +61,12 @@
                     '<"bottom-toolbar flex items-center justify-between mt-4"<"flex-1"></><"flex justify-center"><"flex-1 text-right text-sm text-gray-500">>',
                 pageLength: 100,
                 stateSave: true,
+                // for yajra
+                serverSide:true,
+                processing: true,
+                ajax: {
+                    url: "{{ route('certificate.create') }}"
+                },
                 lengthMenu: [
                     [10, 25, 50, 100, 500, 1000, 5000],
                     [10, 25, 50, 100, 500, 1000, 5000]
@@ -100,6 +106,14 @@
                         searchable: true,
                     }
                 ],
+                columns:[
+                    {data: 'id', name: 'id'},
+                    {data: 'student_name', name: 'student_name'},
+                    {data: 'father_name', name: 'father_name'},
+                    {data: 'diploma', name: 'diploma'},
+                    {data: 'session', name: 'session', orderable:false, searchable:false},
+                    {data: 'actions', name: 'actions', orderable:false, searchable:false}
+                ] 
 
 
             })

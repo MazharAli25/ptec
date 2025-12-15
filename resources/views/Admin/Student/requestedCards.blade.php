@@ -5,7 +5,7 @@
 
     <div class="flex justify-center ml-[15vw] mt-10">
         <div class="overflow-x-auto w-[80%]">
-            <table class="min-w-full border border-gray-200 rounded-lg overflow-hidden">
+            <table class="min-w-full border border-gray-200 rounded-lg overflow-hidden cards-table">
                 <thead class="bg-cyan-600 text-white">
                     <tr>
                         <th class="py-2.5 px-4 text-center font-semibold">ID</th>
@@ -20,41 +20,7 @@
 
                 <tbody class="text-gray-700 divide-y divide-gray-200 text-center">
                     <!-- Example Row -->
-                    @if ($requests)
-                        {{-- {{ dd($requests) }} --}}
-                        @foreach ($requests as $card)
-                            <tr class="hover:bg-gray-50 transition">
-                                <td class="py-2.5 px-4">{{ $card->student->id }}</td>
-                                <td class="py-2.5 px-4">{{ $card->student->name }}</td>
-                                <td class="py-2.5 px-4">{{ $card->diploma->DiplomaName }}</td>
-                                <td class="py-2.5 px-4">{{ $card->session->session }}</td>
-                                <td class="py-2.5 px-4 text-green-600 font-semibold">
-                                    <span
-                                        class="inline-flex items-center px-2 py-1.5 text-white text-sm font-medium rounded transition-colors no-underline
-                                        {{ $card->status === 'pending' ? 'bg-yellow-500 hover:bg-yellow-600' : ($card->status === 'rejected' ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600') }}">
-                                        {{-- <i class="fas fa-edit text-base"></i> --}}
-                                        {{ ucFirst($card->status) }}
-                                    </span>
-                                </td>
 
-
-                                <td class="py-3 px-4 text-green-600 font-semibold">
-                                    <button type="button" data-modal-target="deleteModal" data-id="{{ $card->id }}"
-                                        class="inline-flex items-center px-2 no-underline py-1.5 bg-red-500 text-white text-sm font-medium rounded hover:bg-red-600 transition-colors">
-                                        Cancel
-                                    </button>
-                                </td>
-                            </tr>
-                        @endforeach
-                    @else
-                        <!-- Empty State -->
-                        <tr>
-                            <td colspan="6" class="py-12 text-gray-400 font-medium text-center">
-                                No Requests Found!
-                            </td>
-                        </tr>
-
-                    @endif
 
 
                 </tbody>
@@ -92,42 +58,114 @@
         </div>
     </div>
 
+    <!-- DATATABLE SCRIPT -->
+    <script>
+        $(document).ready(function() {
+            var table = $('.cards-table').DataTable({
+                dom: '<"mid-toolbar flex gap-4 items-center mb-4 mr-3"lf>' +
+                    't' +
+                    '<"bottom-toolbar flex items-center justify-between mt-4"<"flex-1"></><"flex justify-center"><"flex-1 text-right text-sm text-gray-500">>',
+                pageLength: 100,
+                stateSave: true,
+                // Yajra
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('card.index') }}"
+                },
+                lengthMenu: [
+                    [10, 25, 50, 100, 500, 1000, 5000],
+                    [10, 25, 50, 100, 500, 1000, 5000]
+                ],
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Search here...",
+                    lengthMenu: "_MENU_"
+                },
+                initComplete: function() {
+                    $('.dt-input')
+                        .addClass(
+                            'border border-gray-300 rounded-lg text-[14px] px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm'
+                        )
+                        .css({
+                            'width': '200px',
+                            'padding': '6px 10px',
+                        });
+                    $('.dt-length select')
+                        .addClass(
+                            'border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm'
+                        )
+                        .css({
+                            'width': '80px',
+                            'padding': '6px 10px'
+                        });
+                    $('.dt-length').addClass(
+                        'px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm');
+                },
+                columns: [{
+                        data: 'id',
+                        name: 'id'
+                    },
+                    {
+                        data: 'student_name',
+                        name: 'student_name'
+                    },
+                    {
+                        data: 'diploma_name',
+                        name: 'diploma_name'
+                    },
+                    {
+                        data: 'session_name',
+                        name: 'session_name',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'status',
+                        name: 'status',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'actions',
+                        name: 'actions',
+                        orderable: false,
+                        searchable: false
+                    }
+                ]
+            });
+        });
+    </script>
 
     <script>
-        // Open modal and set dynamic delete route
-        document.querySelectorAll('[data-modal-target]').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const id = btn.getAttribute('data-id');
+        // OPEN MODAL (EVENT DELEGATION - REQUIRED FOR DATATABLES)
+        $(document).on('click', '[data-modal-target]', function() {
 
-                // set form action dynamically
-                document.getElementById('deleteForm').action = "/student-card/" + id ;
+            const id = $(this).data('id');
 
-                // set hidden input value
-                document.getElementById('deleteId').value = id;
+            // Set delete route
+            $('#deleteForm').attr('action', '/student-card/' + id);
 
-                // open modal
-                const modal = document.getElementById('deleteModal');
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-            });
+            // Set hidden input
+            $('#deleteId').val(id);
+
+            // Show modal
+            $('#deleteModal').removeClass('hidden').addClass('flex');
         });
 
-        // Close modal
-        document.querySelectorAll('[data-close-modal]').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const modal = document.getElementById(btn.getAttribute('data-close-modal'));
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            });
+        // CLOSE MODAL BUTTON
+        $(document).on('click', '[data-close-modal]', function() {
+            const modalId = $(this).data('close-modal');
+            $('#' + modalId).addClass('hidden').removeClass('flex');
         });
 
-        // Close modal on outside click
-        document.getElementById('deleteModal').addEventListener('click', (e) => {
-            if (e.target === e.currentTarget) {
-                e.currentTarget.classList.add('hidden');
-                e.currentTarget.classList.remove('flex');
+        // CLOSE MODAL ON BACKDROP
+        $('#deleteModal').on('click', function(e) {
+            if (e.target === this) {
+                $(this).addClass('hidden').removeClass('flex');
             }
         });
     </script>
+
 
 @endsection

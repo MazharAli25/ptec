@@ -11,6 +11,7 @@ use App\Models\StudentDiploma;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Yajra\DataTables\Facades\DataTables;
 
 class AdminController extends Controller
 {
@@ -23,10 +24,10 @@ class AdminController extends Controller
         $students = Student::where('instituteId', $adminId)->get();
         $pending = Certificate::whereHas('student', function ($query) use ($adminId) {
             $query->where('instituteId', $adminId);
-        })->where('status','pending')->get();
+        })->where('status', 'pending')->get();
         $approved = Certificate::whereHas('student', function ($query) use ($adminId) {
             $query->where('instituteId', $adminId);
-        })->where('status','approved')->get();
+        })->where('status', 'approved')->get();
 
         return view('Admin.dashboard', compact(['students', 'pending', 'approved']));
     }
@@ -120,37 +121,156 @@ class AdminController extends Controller
     // return view('Admin.requestCertificate');
     // }
 
-    public function requestedCertificates()
+    public function requestedCertificates(Request $request)
     {
         $adminId = Auth::guard('admin')->user()->id;
-        $requests = Certificate::with(['student'])
-            ->whereHas('student', function ($query) use ($adminId) {
-                $query->where('InstituteId', $adminId);
-            })
-            ->get();
+        if ($request->ajax()) {
+            $requests = Certificate::with(['student'])
+                ->whereHas('student', function ($query) use ($adminId) {
+                    $query->where('InstituteId', $adminId);
+                });
 
-        return view('Admin.Certificates.RequestedCertificates', compact('requests'));
+            return DataTables::eloquent($requests)
+                ->addColumn('id', function ($row) {
+                    return $row->student->id;
+                })
+                ->addColumn('student_name', function ($row) {
+                    return $row->student->name;
+                })
+                ->addColumn('father_name', function ($row) {
+                    return $row->student->fatherName;
+                })
+                ->addColumn('diploma_name', function ($row) {
+                    return $row->diploma->DiplomaName;
+                })
+                ->addColumn('session_name', function ($row) {
+                    return $row->session->session;
+                })
+                ->addColumn('status', function ($row) {
+                    $status = strtolower($row->status);
+
+                    $class = match ($status) {
+                        'pending' => 'bg-yellow-500 hover:bg-yellow-600',
+                        'approved' => 'bg-green-500 hover:bg-green-600',
+                        'rejected' => 'bg-red-500 hover:bg-red-600',
+                        default => 'bg-gray-500'
+                    };
+
+                    return '
+                        <span
+                            class="inline-flex items-center px-2 py-1.5 text-white text-sm font-medium rounded transition-colors '.$class.'">
+                            '.ucfirst($status).'
+                        </span>
+                    ';
+                })
+                ->addColumn('actions', function ($row) {
+                    return '
+                    <button type="button" data-modal-target="deleteModal" data-id="'.$row->id.'"
+                                        class="inline-flex items-center px-2 no-underline py-1.5 bg-red-500 text-white text-sm font-medium rounded hover:bg-red-600 transition-colors">
+                                        Cancel
+                                    </button>
+                    ';
+                })
+                ->rawColumns(['actions', 'status'])
+                ->make(true);
+        }
+
+        return view('Admin.Certificates.RequestedCertificates');
     }
 
-    public function registeredStudentsList()
+    public function registeredStudentsList(Request $request)
     {
         $instituteID = Auth::guard('admin')->user()->institute_id;
-        $students = Student::where('instituteId', $instituteID)
-            ->whereDoesntHave('studentDiplomas')
-            ->get();
+        if ($request->ajax()) {
+            $students = Student::where('instituteId', $instituteID)
+                ->whereDoesntHave('studentDiplomas');
 
-        return view('Admin.registeredStudents', compact('students'));
+            return DataTables::eloquent($students)
+                ->addColumn('actions', function ($student) {
+                    return '
+                 <!-- Edit Link -->
+                 <div class= "flex items-center justify-center gap-2">
+                    <a href="'.route('student.edit', encrypt($student)).'"
+                        class="no-underline inline-flex items-center px-2 py-1.5 bg-blue-500 text-white text-sm font-medium rounded hover:bg-blue-600 transition-colors">
+                        <i class="fas fa-edit text-base"></i>
+                    </a>
+                    <!-- View Link -->
+                    <a href="'.route('student.show', encrypt($student)).'"
+                        class="no-underline inline-flex items-center px-2 py-1.5 bg-green-500 text-white text-sm font-medium rounded hover:bg-green-600 transition-colors">
+                        <i class="fas fa-eye text-base"></i>
+                    </a>
+                    <!-- Delete Link -->
+                    <form action="'.route('student.destroy', encrypt($student)).'" class="inline-block" method="POST">
+                        '.csrf_field().method_field('DELETE').'
+                        <button
+                            class="no-underline inline-flex items-center px-2 py-1.5 bg-red-500 text-white text-sm font-medium rounded hover:bg-red-600 transition-colors">
+                            <i class="fas fa-trash text-base"></i>
+                        </button>
+                    </form>
+                </div>
+                ';
+                })
+                ->rawColumns(['actions'])
+                ->make(true);
+        }
+
+        return view('Admin.registeredStudents');
     }
 
-    public function assignedDiplomas()
+    public function assignedDiplomas(Request $request)
     {
-        $students = StudentDiploma::with('student')
-            ->whereHas('student', function ($query) {
-                $instituteID = Auth::guard('admin')->user()->institute_id;
-                $query->where('instituteId', $instituteID);
-            })
-            ->get();
+        $instituteID = Auth::guard('admin')->user()->institute_id;
 
-        return view('Admin.Student.assignedDiplomas', compact('students'));
+        if ($request->ajax()) {
+            $students = StudentDiploma::with(['student', 'diploma', 'session'])
+                ->whereHas('student', function ($query) use ($instituteID){
+                    $query->where('instituteId', $instituteID);
+                })
+                ->get(); // or add filtering for institute if needed
+
+            return DataTables::of($students)
+                ->addColumn('id', function ($row) {
+                    return $row->student->id;
+                })
+                ->addColumn('student_name', function ($row) {
+                    return $row->student->name;
+                })
+                ->addColumn('diploma_name', function ($row) {
+                    return $row->diploma->DiplomaName;
+                })
+                ->addColumn('session_name', function ($row) {
+                    return $row->session->session;
+                })
+                ->addColumn('status', function ($row) {
+                    $status = $row->student->status;
+                    $color = $status === 'Active' ? 'bg-green-100 text-green-800' : ($status === 'Inactive' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800');
+
+                    return '<button class="status-btn" data-id="'.$row->student->id.'">
+                            <span class="px-3 py-1 rounded-full text-sm font-medium '.$color.'">'.$status.'</span>
+                        </button>';
+                })
+                ->addColumn('actions', function ($row) {
+                    return '
+                    <div class="flex justify-center gap-2">
+                        <a href="'.route('studentDiploma.edit', encrypt($row->ID)).'" class="px-2 py-1.5 bg-blue-500 text-white rounded">
+                            <i class="fa-solid fa-pen-to-square text-[16px]"></i>
+                        </a>
+                        <a href="'.route('studentDiploma.show', encrypt($row->ID)).'" class="px-2 py-1.5 bg-green-500 text-white rounded">
+                            <i class="fas fa-eye text-base"></i>
+                        </a>
+                        <form action="'.route('studentDiploma.destroy', encrypt($row->ID)).'" method="POST" class="inline-block">
+                            '.csrf_field().method_field('DELETE').'
+                            <button class="px-2 py-1.5 bg-red-500 text-white rounded">
+                                <i class="fas fa-trash text-base"></i>
+                            </button>
+                        </form>
+                    </div>
+                ';
+                })
+                ->rawColumns(['status', 'actions'])
+                ->make(true);
+        }
+
+        return view('Admin.Student.assignedDiplomas');
     }
 }

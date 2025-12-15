@@ -145,7 +145,7 @@
                 <!-- Submit -->
                 <div class="flex justify-center mt-8">
                     <button type="submit"
-                        class="px-8 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700">
+                        class="px-8 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700">
                         Assign Diploma
                     </button>
                 </div>

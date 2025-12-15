@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Diploma;
 use App\Models\DiplomawiseCourses;
 use App\Models\Semester;
+use App\Models\Student;
 use App\Models\StudentCourse;
 use App\Models\StudentDiploma;
 use Illuminate\Http\Request;
@@ -36,10 +37,9 @@ class StudentDiplomaController extends Controller
         $student = collect();
 
         if ($request->filled('id')) {
-            $student = \App\Models\Student::where('id', $request->id)
+            $student = Student::where('id', $request->id)
                 ->where('instituteId', $adminInstituteId)
                 ->first();
-
             if ($student) {
                 $student = collect([$student]);
             } else {

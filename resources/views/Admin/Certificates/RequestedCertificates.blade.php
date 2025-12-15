@@ -19,7 +19,7 @@
                 </thead>
 
                 <tbody class="text-gray-700 divide-y divide-gray-200 text-center">
-                    @if ($requests)
+                    {{-- @if ($requests)
                         @foreach ($requests as $certificate)
                             <tr class="hover:bg-gray-50 transition">
                                 <td class="py-2.5 px-4">{{ $certificate->student->id }}</td>
@@ -47,7 +47,7 @@
                                 No Requests Found!
                             </td>
                         </tr>
-                    @endif
+                    @endif --}}
 
                 </tbody>
             </table>
@@ -84,42 +84,6 @@
         </div>
     </div>
 
-    <script>
-        // Open modal and set dynamic delete route
-        document.querySelectorAll('[data-modal-target]').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const id = btn.getAttribute('data-id');
-
-                // set form action dynamically
-                document.getElementById('deleteForm').action = "/certificate/" + id;
-
-                // set hidden input value
-                document.getElementById('deleteId').value = id;
-
-                // open modal
-                const modal = document.getElementById('deleteModal');
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-            });
-        });
-
-        // Close modal
-        document.querySelectorAll('[data-close-modal]').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const modal = document.getElementById(btn.getAttribute('data-close-modal'));
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            });
-        });
-
-        // Close modal on outside click
-        document.getElementById('deleteModal').addEventListener('click', (e) => {
-            if (e.target === e.currentTarget) {
-                e.currentTarget.classList.add('hidden');
-                e.currentTarget.classList.remove('flex');
-            }
-        });
-    </script>
 
     <!-- DATATABLE SCRIPT -->
     <script>
@@ -130,6 +94,12 @@
                     '<"bottom-toolbar flex items-center justify-between mt-4"<"flex-1"></><"flex justify-center"><"flex-1 text-right text-sm text-gray-500">>',
                 pageLength: 100,
                 stateSave: true,
+                // Yajra
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('admin.viewCertificates') }}"
+                },
                 lengthMenu: [
                     [10, 25, 50, 100, 500, 1000, 5000],
                     [10, 25, 50, 100, 500, 1000, 5000]
@@ -139,7 +109,87 @@
                     searchPlaceholder: "Search here...",
                     lengthMenu: "_MENU_"
                 },
+                initComplete: function() {
+                    $('.dt-input')
+                        .addClass(
+                            'border border-gray-300 rounded-lg text-[14px] px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm'
+                        )
+                        .css({
+                            'width': '200px',
+                            'padding': '6px 10px',
+                        });
+                    $('.dt-length select')
+                        .addClass(
+                            'border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm'
+                        )
+                        .css({
+                            'width': '80px',
+                            'padding': '6px 10px'
+                        });
+                    $('.dt-length').addClass(
+                        'px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm');
+                },
+                columns: [{
+                        data: 'id',
+                        name: 'id'
+                    },
+                    {
+                        data: 'student_name',
+                        name: 'student_name'
+                    },
+                    {
+                        data: 'diploma_name',
+                        name: 'diploma_name'
+                    },
+                    {
+                        data: 'session_name',
+                        name: 'session_name',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'status',
+                        name: 'status',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'actions',
+                        name: 'actions',
+                        orderable: false,
+                        searchable: false
+                    }
+                ]
             });
+        });
+    </script>
+    <script>
+        // OPEN MODAL (event delegation)
+        $(document).on('click', '[data-modal-target]', function() {
+
+            const id = $(this).data('id');
+
+            // set form action dynamically
+            $('#deleteForm').attr('action', '/certificate/' + id);
+
+            // set hidden input
+            $('#deleteId').val(id);
+
+            // open modal
+            $('#deleteModal').removeClass('hidden').addClass('flex');
+        });
+
+        // CLOSE MODAL
+        $(document).on('click', '[data-close-modal]', function() {
+            const modalId = $(this).data('close-modal');
+            $('#' + modalId).addClass('hidden').removeClass('flex');
+        });
+
+        // CLOSE MODAL ON BACKDROP CLICK
+        $('#deleteModal').on('click', function(e) {
+            if (e.target === this) {
+                $(this).addClass('hidden').removeClass('flex');
+            }
         });
     </script>
 

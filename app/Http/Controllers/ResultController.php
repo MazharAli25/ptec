@@ -7,6 +7,7 @@ use App\Models\Result;
 use App\Models\StudentCourse;
 use Illuminate\Http\Request;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Yajra\DataTables\Facades\DataTables;
 
 class ResultController extends Controller
 {
@@ -21,13 +22,79 @@ class ResultController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
         $adminInstituteId = auth('admin')->user()->institute_id;
+        // dd($students[2]->diplomawiseCourse);
+        if ($request->ajax()) {
+            $students = StudentCourse::with([
+                'studentDiploma.student',
+                'diplomawiseCourse.course',
+                'diplomawiseCourse.diploma.session',
+                'diplomawiseCourse.semester',
+                'diplomawiseCourse.examinationCriteria',
+            ])
+            ->whereHas('studentDiploma.student', function ($query) use ($adminInstituteId) {
+                $query->where('instituteId', $adminInstituteId);
+            });                                                                                                            
 
-        $students = StudentCourse::get();
+            return DataTables::eloquent($students)
+                ->addIndexColumn()
 
-        return view('Admin.Result.addResult', compact('students'));
+                ->addColumn('student_id', fn ($row) => $row->studentDiploma->student->id
+                )
+
+                ->addColumn('student_name', fn ($row) => $row->studentDiploma->student->name
+                )
+
+                ->addColumn('course', fn ($row) => $row->diplomawiseCourse->course->courseName
+                )
+
+                ->addColumn('diploma', fn ($row) => $row->diplomawiseCourse->diploma->DiplomaName
+                    .' ('.$row->diplomawiseCourse->diploma->session->session.')'
+                )
+
+                ->addColumn('theory_total', function ($row) {
+                    $criteria = $row->diplomawiseCourse->examinationCriteria;
+
+                    return $criteria?->TheoryMarks ?? 'Nill';
+                })
+
+                ->addColumn('practical_total', function ($row) {
+                    $criteria = $row->diplomawiseCourse->examinationCriteria;
+
+                    return $criteria?->PracticalMarks ?? 'Nill';
+                })
+
+                ->addColumn('theory_marks', function ($row) {
+                    return '
+                    <input type="hidden" name="studentID[]" value="'.$row->studentDiploma->student->id.'">
+                    <input type="hidden" name="examinationCriteriaID[]" value="'.($row->diplomawiseCourse->examinationCriteria->ID ?? '').'">
+                    <input type="hidden" name="theoryTotalMarks[]" value="'.($row->diplomawiseCourse->examinationCriteria->TheoryMarks ?? '').'">
+                    <input type="hidden" name="practicalTotalMarks[]" value="'.($row->diplomawiseCourse->examinationCriteria->PracticalMarks ?? '').'">
+                    <input type="hidden" name="diplomaID[]" value="'.($row->diplomawiseCourse->diploma->id ?? '').'">
+                    <input type="hidden" name="sessionID[]" value="'.($row->diplomawiseCourse->diploma->session->id ?? '').'">
+                    <input type="hidden" name="semesterID[]" value="'.($row->diplomawiseCourse->semester->id ?? '').'">
+
+                    <input type="number"
+                        name="theoryMarks[]"
+                        class="border border-gray-300 rounded px-2 py-1 w-20 text-center"
+                        oninput="if(this.value.length>3)this.value=this.value.slice(0,3)">
+                ';
+                })
+
+                ->addColumn('practical_marks', fn () => '
+                <input type="number"
+                    name="practicalMarks[]"
+                    class="border border-gray-300 rounded px-2 py-1 w-20 text-center"
+                    oninput="if(this.value.length>3)this.value=this.value.slice(0,3)">
+            ')
+
+                ->rawColumns(['theory_marks', 'practical_marks'])
+                ->make(true);
+        }
+
+        return view('Admin.Result.addResult');
     }
 
     /**

@@ -20,8 +20,7 @@
 
                 <tbody class="text-gray-700 divide-y divide-gray-200 text-center">
                     <!-- Example Row -->
-                    @if ($students)
-                        @foreach ($students as $student)
+                    {{-- @foreach ($students as $student)
                             <tr class="hover:bg-gray-50 transition">
                                 <td class="py-3 px-4">{{ $student->student->id }}</td>
                                 <td class="py-3 px-4">{{ $student->student->name }}</td>
@@ -60,16 +59,7 @@
                                     </form>
                                 </td>
                             </tr>
-                        @endforeach
-                    @else
-                        <!-- Empty State -->
-                        <tr>
-                            <td colspan="6" class="py-12 text-gray-400 font-medium text-center">
-                                No Requests Found!
-                            </td>
-                        </tr>
-
-                    @endif
+                        @endforeach --}}
 
 
                 </tbody>
@@ -86,6 +76,12 @@
                     '<"bottom-toolbar flex items-center justify-between mt-4"<"flex-1"></><"flex justify-center"><"flex-1 text-right text-sm text-gray-500">>',
                 pageLength: 100,
                 stateSave: true,
+                // for yajra
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('admin.assignedDiplomas') }}"
+                },
                 lengthMenu: [
                     [10, 25, 50, 100, 500, 1000, 5000],
                     [10, 25, 50, 100, 500, 1000, 5000]
@@ -115,16 +111,38 @@
                     $('.dt-length').addClass(
                         'px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm');
                 },
-                columnDefs: [{
-                        targets: [5, 4],
+
+                columns: [{
+                        data: 'id',
+                        name: 'id'
+                    },
+                    {
+                        data: 'student_name',
+                        name: 'student_name'
+                    },
+                    {
+                        data: 'diploma_name',
+                        name: 'diploma_name'
+                    },
+                    {
+                        data: 'session_name',
+                        name: 'session_name',
                         orderable: false,
                         searchable: false
                     },
                     {
-                        targets: [1],
-                        searchable: true,
+                        data: 'status',
+                        name: 'status',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'actions',
+                        name: 'actions',
+                        orderable: false,
+                        searchable: false
                     }
-                ],
+                ]
 
 
             })

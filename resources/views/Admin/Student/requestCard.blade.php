@@ -7,10 +7,10 @@
         <div class="overflow-x-auto w-[80%]">
             <h2 class="text-2xl font-semibold text-center mb-5">Students Assigned to Diplomas</h2>
 
-            <table class="min-w-full border border-gray-200 rounded-lg overflow-hidden">
+            <table class="min-w-full border border-gray-200 rounded-lg overflow-hidden cards-table">
                 <thead class="bg-cyan-600 text-white">
                     <tr>
-                        <th class="py-2.5 px-4 text-center font-semibold">Student ID</th>
+                        <th class="py-2.5 px-4 text-center font-semibold">ID</th>
                         <th class="py-2.5 px-4 text-center font-semibold">Student Name</th>
                         <th class="py-2.5 px-4 text-center font-semibold">Father Name</th>
                         <th class="py-2.5 px-4 text-center font-semibold">Diploma</th>
@@ -20,7 +20,7 @@
                 </thead>
 
                 <tbody class="text-gray-700 divide-y divide-gray-200 text-center">
-                    @forelse ($studentDiplomas as $sd)
+                    {{-- @forelse ($studentDiplomas as $sd)
                         <tr class="hover:bg-gray-50 transition">
                             <td class="py-2.5 px-4">{{ $sd->student->id }}</td>
                             <td class="py-2.5 px-4">{{ $sd->student->name }}</td>
@@ -47,10 +47,99 @@
                                 No students with assigned diplomas found.
                             </td>
                         </tr>
-                    @endforelse
+                    @endforelse --}}
                 </tbody>
             </table>
         </div>
     </div>
-
+    <script>
+        $(document).ready(function() {
+            var table = $('.cards-table').DataTable({
+                dom: '<"mid-toolbar flex gap-4 items-center mb-2 mr-3"lf>' +
+                    't' +
+                    '<"bottom-toolbar flex items-center justify-between mt-4"<"flex-1"></><"flex justify-center"><"flex-1 text-right text-sm text-gray-500">>',
+                pageLength: 100,
+                stateSave: true,
+                // for yajra
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('card.create') }}"
+                },
+                lengthMenu: [
+                    [5, 10, 25, 50, 100, 500, 1000, 5000],
+                    [5, 10, 25, 50, 100, 500, 1000, 5000]
+                ],
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Search here...",
+                    lengthMenu: "_MENU_"
+                },
+                initComplete: function() {
+                    $('.dt-input')
+                        .addClass(
+                            'border border-gray-300 rounded-lg text-[14px] px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm'
+                        )
+                        .css({
+                            'width': '200px',
+                            'padding': '6px 10px',
+                        });
+                    $('.dt-length select')
+                        .addClass(
+                            'border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm'
+                        )
+                        .css({
+                            'width': '80px',
+                            'padding': '6px 10px'
+                        });
+                    $('.dt-length').addClass(
+                        'px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm');
+                },
+                // Defining the columns
+                columns: [{
+                        data: 'id',
+                        name: 'id'
+                    },
+                    {
+                        data: 'student_name',
+                        name: 'student_name'
+                    },
+                    {
+                        data: 'father_name',
+                        name: 'father_name'
+                    },
+                    {
+                        data: 'diploma_name',
+                        name: 'diploma_name'
+                    },
+                    {
+                        data: 'session_name',
+                        name: 'session_name',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'actions',
+                        name: 'actions',
+                        orderable: false,
+                        searchable: false
+                    }
+                ]
+            })
+            // Save last searched word in sessionStorage
+            $('.dt-input').on('keyup change', function() {
+                sessionStorage.setItem('datatableSearch', $(this).val());
+            });
+            // Restore old searched word (if any)
+            var oldSearch = sessionStorage.getItem('datatableSearch');
+            if (oldSearch) {
+                table.search(oldSearch).draw();
+                $('.dt-input').val(oldSearch);
+            }
+            // Clear sessionStorage when leaving/reloading the page
+            window.addEventListener('beforeunload', function() {
+                sessionStorage.clear();
+            });
+        });
+    </script>
 @endsection

@@ -7,6 +7,7 @@ use App\Models\Student;
 use App\Models\StudentDiploma;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Yajra\DataTables\Facades\DataTables;
 
 class CertificateController extends Controller
 {
@@ -21,21 +22,64 @@ class CertificateController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
         $adminInstituteId = Auth::guard('admin')->user()->institute_id;
 
-        // Only fetch StudentDiplomas where the student belongs to the same institute as the admin
-        $studentDiplomas = StudentDiploma::with(['student', 'diploma', 'semester'])
+        if($request->ajax()){
+            $students= StudentDiploma::with(['student', 'diploma', 'semester'])
             ->where(function ($query) use ($adminInstituteId) {
                 $query->whereHas('student', function ($q) use ($adminInstituteId) {
                     $q->where('instituteId', $adminInstituteId);
                 });
+            });
+
+            return DataTables::eloquent($students)
+            ->addColumn('id', function ($row){
+                return $row->student->id;
             })
-            ->get();
+            ->addColumn('student_name', function ($row){
+                return $row->student->name;
+            })
+            ->addColumn('father_name', function ($row){
+                return $row->student->fatherName;
+            })
+            ->addColumn('diploma', function ($row){
+                return $row->diploma->DiplomaName;
+            })
+            ->addColumn('session', function ($row){
+                return $row->session->session;
+            })
+            ->addColumn('actions', function ($row){
+                return '
+                    <form action="'. route('certificate.store') .'" method="POST">
+                        '.csrf_field().'
+                        <input type="hidden" name="student_id" value="'. $row->student->id .'">
+                        <input type="hidden" name="diploma_id" value="'. $row->diploma->id .'">
+                        <input type="hidden" name="session_id" value="'. $row->session->id .'">
+
+                        <button type="submit"
+                            class="inline-flex items-center px-3 py-1.5 bg-blue-500 text-white text-sm font-medium rounded hover:bg-blue-600 transition-colors">
+                            Request Certificate
+                        </button>
+                    </form>
+                ';
+            })
+            ->rawColumns(['actions'])
+            ->make(true);
+        }
+
+        // Only fetch StudentDiplomas where the student belongs to the same institute as the admin
+        // $studentDiplomas = StudentDiploma::with(['student', 'diploma', 'semester'])
+        //     ->where(function ($query) use ($adminInstituteId) {
+        //         $query->whereHas('student', function ($q) use ($adminInstituteId) {
+        //             $q->where('instituteId', $adminInstituteId);
+        //         });
+        //     })
+        //     ->get();
 
         // Now, $studentDiplomas only includes records relevant to this admin
-        return view('Admin.requestCertificate', compact('studentDiplomas'));
+        return view('Admin.requestCertificate');
     }
 
     /**

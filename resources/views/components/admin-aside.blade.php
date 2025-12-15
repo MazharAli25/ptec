@@ -4,7 +4,7 @@
 
     <!-- Logo Section -->
     <div class="p-6 border-b border-gray-200 flex justify-center">
-        <img src="https://atp.ptec.edu.pk/assets/img/ptec-atp-portal-logo.png" alt="Logo"
+        <img src="{{ asset('images/logo.png') }}" alt="Logo"
             class="w-32 h-32 object-contain" />
     </div>
 

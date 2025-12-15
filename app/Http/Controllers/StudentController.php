@@ -9,6 +9,7 @@ use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Yajra\DataTables\Facades\DataTables;
 
 class StudentController extends Controller
 {
@@ -39,8 +40,11 @@ class StudentController extends Controller
         $insts = Institute::get();
         $courses = Course::get();
         $sessions = mysession::get();
+        $lastStudentId = Student::max('id');
+        $nextStudentId = $lastStudentId ? $lastStudentId + 1 : 1;
+        
 
-        return view('Admin.students', compact(['insts', 'courses', 'sessions']));
+        return view('Admin.students', compact(['insts', 'courses', 'sessions', 'nextStudentId']));
     }
 
     /**
@@ -187,7 +191,7 @@ class StudentController extends Controller
     {
         $student->delete();
 
-        return redirect()->route('admin.assignedDiplomas')
+        return redirect()->back()
             ->with('err', 'Student Deleted Successfully');
     }
 
@@ -205,14 +209,45 @@ class StudentController extends Controller
         ]);
     }
 
-    public function studentList()
+    public function studentList(Request $request)
     {
-        $students = Student::where('instituteId', Auth::guard('admin')->user()->institute_id)
-            ->whereHas('studentDiplomas')
-            ->get();
+        $adminId = Auth::guard('admin')->user()->institute_id;
+        if ($request->ajax()) {
+            $students = Student::where('instituteId', $adminId)->whereHas('studentDiplomas');
+
+            return DataTables::eloquent($students)
+                ->addColumn('actions', function ($student) {
+                    return '
+                        <div class="flex justify-center gap-2">
+                            <a href="'.route('student.edit', encrypt($student->id)).'"
+                            class="inline-flex items-center px-2 py-1.5 bg-blue-500 text-white rounded">
+                                <i class="fas fa-edit text-base"></i>
+                            </a>
+                            <a href="'.route('student.show', encrypt($student)).'"
+                                 class="no-underline inline-flex items-center px-2 py-1.5 bg-green-500 text-white text-sm font-medium rounded hover:bg-green-600 transition-colors">
+                                 <i class="fas fa-eye text-base"></i>
+                             </a>
+                             <!-- Delete Link -->
+                             <form action="'.route('student.destroy', encrypt($student)).'" class="inline-block" method="POST">
+                                 '.csrf_field().method_field('DELETE').'
+                                 <button
+                                     class="no-underline inline-flex items-center px-2 py-1.5 bg-red-500 text-white text-sm font-medium rounded hover:bg-red-600 transition-colors">
+                                     <i class="fas fa-trash text-base"></i>
+                                 </button>
+                             </form>
+                        </div>
+                    ';
+                })
+                ->rawColumns(['actions'])
+                ->make(true);
+        }
+
+        // $students = Student::where('instituteId', Auth::guard('admin')->user()->institute_id)
+        //     ->whereHas('studentDiplomas')
+        //     ->get();
 
         // dd($students);
 
-        return view('Admin.Student.studentList', compact(['students']));
+        return view('Admin.Student.studentList');
     }
 }
