@@ -26,7 +26,7 @@
 
         <!-- Form Section -->
         <div class="bg-white rounded-lg form-shadow p-6 mb-8 flex justify-center">
-            <form class="flex flex-col w-[70%]" method="POST" action="{{ route('institute.update', $institute) }}">
+            <form class="flex flex-col w-[70%]" method="POST" action="{{ route('institute.update', encrypt($institute->id)) }}">
                 @csrf
                 @method('PUT')
                 <div class="space-y-4">

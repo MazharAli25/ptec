@@ -1,5 +1,5 @@
 @extends('layouts.superAdmin')
-@section('page-title', 'Add Course')
+@section('page-title', 'Add Subjects')
 
 @section('main-content')
 
@@ -19,8 +19,8 @@
     <!-- Main Content -->
     <div class="flex-1 p-8 ml-[19vw]">
         <div class="mb-6">
-            <h1 class="text-3xl font-bold text-gray-800">Add Courses</h1>
-            <p class="text-gray-600 mt-2">Fill in the details to add a new Course</p>
+            <h1 class="text-3xl font-bold text-gray-800">Add Subjects</h1>
+            <p class="text-gray-600 mt-2">Fill in the details to add a new Subject</p>
         </div>
 
 
@@ -29,15 +29,15 @@
             <form class="flex flex-col w-[70%]" method="POST" action="{{ route('course.store') }}">
                 @csrf
                 <div class="space-y-4">
-                    <h2 class="text-lg font-semibold text-gray-700 border-b pb-2">Course Information</h2>
+                    <h2 class="text-lg font-semibold text-gray-700 border-b pb-2">Subject Information</h2>
                     <div class="flex justify-evenly">
                         <div>
                             <label for="courseName" class="block text-sm font-medium text-gray-700 mb-1">
-                                Course Name
+                                Subject Name
                             </label>
                             <input type="text" id="courseName" name="courseName"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                placeholder="Enter Course name">
+                                placeholder="Enter Subject name">
                         </div>
 
                         {{-- <div>
@@ -82,17 +82,20 @@
                 <table class="min-w-full divide-y divide-gray-200 courses-table">
                     <thead class="bg-gray-200">
                         <tr>
-                            <th class="px-6 py-3 text-left text-[14px] font-semibold text-gray-800 uppercase tracking-wider w-[10px]">
+                            <th
+                                class="px-6 py-3 text-left text-[14px] font-semibold text-gray-800 uppercase tracking-wider w-[20px]">
                                 ID</th>
-                            <th class="px-6 py-3 text-center text-[14px] font-semibold text-gray-800 uppercase tracking-wider">
-                                Course Name</th>
-                            <th class="px-6 py-3 text-center text-[14px] font-semibold text-gray-800 uppercase tracking-wider">
+                            <th
+                                class="px-6 py-3 text-center text-[14px] font-semibold text-gray-800 uppercase tracking-wider">
+                                Subject Name</th>
+                            <th
+                                class="px-6 py-3 text-right text-[14px] font-semibold text-gray-800 uppercase tracking-wider">
                                 Actions</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         <!-- Empty state for now -->
-                        @foreach ($courses as $course)
+                        {{-- @foreach ($courses as $course)
                             <tr>
                                 <td class="px-6 py-3 text-left text-[14px] font-medium text-gray-600 tracking-wider">
                                     {{ $course['id'] }}</td>
@@ -112,7 +115,7 @@
                                     </a>
                                 </td>
                             </tr>
-                        @endforeach
+                        @endforeach --}}
                     </tbody>
                 </table>
             </div>
@@ -121,64 +124,82 @@
     </div>
     </div>
     <script>
-        $(document).ready(function () {
-        var table = $('.courses-table').DataTable({
-            dom:  
-            '<"mid-toolbar flex gap-4 items-center mb-4 mr-3"lf>' + 
-            't' + 
-            '<"bottom-toolbar flex items-center justify-between mt-4"<"flex-1"></><"flex justify-center"><"flex-1 text-right text-sm text-gray-500">>',
-            pageLength: 100,
-            stateSave: true,
-            language: {
-                search: "_INPUT_",
-                searchPlaceholder: "Search here...",
-                lengthMenu: "_MENU_"
-            },
-            initComplete: function () {
-                $('.dt-input')
-                    .addClass('border border-gray-300 rounded-lg text-[14px] px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm')
-                    .css({
-                        'width': '200px',
-                        'padding': '6px 10px',}); 
-                $('.dt-length select')
-                    .addClass('border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm')
-                    .css({
-                        'width': '80px',
-                        'padding': '6px 10px'
-                    });
-                $('.dt-length').addClass('px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm');
-            },
-            columnDefs: [
-                {
-                    targets: [2], 
-                    orderable: false,
-                    searchable: false
+        $(document).ready(function() {
+            var table = $('.courses-table').DataTable({
+                dom: '<"top-toolbar flex justify-start items-center mb-4">' +
+                    '<"mid-toolbar flex gap-4 items-center mb-4"lf>' +
+                    't' +
+                    '<"bottom-toolbar flex items-center justify-between mt-4 mb-4"<"flex-1"></><"flex justify-center"p><"flex-1 text-right mr-3 text-sm text-gray-500"i>>',
+                pageLength: 100,
+                stateSave: true,
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('course.index') }}"
                 },
-                {
-                    targets:[1],
-                    searchable:true,
-                }
-            ],
-            
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Search here...",
+                    lengthMenu: "_MENU_"
+                },
+                initComplete: function() {
+                    $('.dt-input')
+                        .addClass(
+                            'border border-gray-300 rounded-lg text-[14px] px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm'
+                            )
+                        .css({
+                            'width': '200px',
+                            'padding': '6px 10px',
+                        });
+                    $('.dt-length select')
+                        .addClass(
+                            'border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm'
+                            )
+                        .css({
+                            'width': '80px',
+                            'padding': '6px 10px'
+                        });
+                    $('.dt-length').addClass(
+                        'px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm');
+                },
 
-        })
-        // Save last searched word in sessionStorage
-        $('.dt-input').on('keyup change', function () {
-            sessionStorage.setItem('datatableSearch', $(this).val());
+                columns: [{
+                        data: 'id',
+                        name: 'id'
+                    },
+                    {
+                        data: 'courseName',
+                        name: 'courseName',
+                        className: 'text-center dt-head-center'
+                    },
+                    {
+                        data: 'actions',
+                        name: 'actions',
+                        className: 'text-center dt-head-center',
+                        searchable: false,
+                        orderable: false
+                    },
+                ]
+
+
+            })
+            // Save last searched word in sessionStorage
+            $('.dt-input').on('keyup change', function() {
+                sessionStorage.setItem('datatableSearch', $(this).val());
+            });
+
+            // Restore old searched word (if any)
+            var oldSearch = sessionStorage.getItem('datatableSearch');
+            if (oldSearch) {
+                table.search(oldSearch).draw();
+                $('.dt-input').val(oldSearch);
+            }
+
+            // Clear sessionStorage when leaving/reloading the page
+            window.addEventListener('beforeunload', function() {
+                sessionStorage.clear();
+            });
         });
-
-        // Restore old searched word (if any)
-        var oldSearch = sessionStorage.getItem('datatableSearch');
-        if (oldSearch) {
-            table.search(oldSearch).draw();
-            $('.dt-input').val(oldSearch);
-        }
-
-        // Clear sessionStorage when leaving/reloading the page
-        window.addEventListener('beforeunload', function () {
-            sessionStorage.clear();
-        });
-    });
     </script>
 
 @endsection

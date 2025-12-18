@@ -46,7 +46,7 @@
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         <!-- Empty state for now -->
-                        @foreach ($students as $student)
+                        {{-- @foreach ($students as $student)
                             <tr>
                                 <td class="px-6 py-3 text-left text-[14px] font-medium text-gray-600 tracking-wider">
                                     {{ $student['id'] }}</td>
@@ -78,7 +78,7 @@
                                     </a>
                                 </td>
                             </tr>
-                        @endforeach
+                        @endforeach --}}
                     </tbody>
                 </table>
             </div>
@@ -94,6 +94,11 @@
             '<"bottom-toolbar flex items-center justify-between mt-4"<"flex-1"></><"flex justify-center"><"flex-1 text-right text-sm text-gray-500">>',
             pageLength: 100,
             stateSave: true,
+            serverSide:true,
+            processing:true,
+            ajax:{
+                url: "{{ route('student.index') }}"
+            },
             language: {
                 search: "_INPUT_",
                 searchPlaceholder: "Search here...",
@@ -113,17 +118,14 @@
                     });
                 $('.dt-length').addClass('px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm');
             },
-            columnDefs: [
-                {
-                    targets: [2], 
-                    orderable: false,
-                    searchable: false
-                },
-                {
-                    targets:[1],
-                    searchable:true,
-                }
-            ],
+            columns: [
+                {data:'id', name:'id'},
+                {data:'name', name:'name'},
+                {data:'fatherName', name:'fatherName'},
+                {data:'email', name:'email'},
+                {data:'phone', name:'phone'},
+                {data:'actions', name:'actions', orderable:false, searchable:false},
+            ]
             
 
         })

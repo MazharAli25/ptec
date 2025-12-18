@@ -56,7 +56,7 @@
                         <!-- Admin Name -->
                         <div>
                             <label for="name" class="block text-sm font-medium text-gray-700 mb-1">
-                                Admin Name
+                                User Name
                             </label>
                             <input type="text" id="name" name="name" maxlength="30" value="{{ old('name') }}"
                                 class="w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
@@ -66,7 +66,7 @@
                         <!-- Admin Email -->
                         <div>
                             <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
-                                Admin Email
+                                User Email
                             </label>
                             <input type="email" id="email" name="email" maxlength="50" value="{{ old('email') }}"
                                 class="w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
@@ -154,34 +154,7 @@
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        <!-- Empty state for now -->
-                        @foreach ($admins as $admin)
-                            <tr>
-                                <td class="px-6 py-3 text-left text-[14px] font-medium text-gray-600 tracking-wider">
-                                    {{ $admin->id ?? 'N/A' }}</td>
-                                <td class="px-6 py-3 text-left text-[14px] font-medium text-gray-600 tracking-wider">
-                                    {{ $admin->institute->institute_name ?? 'N/A' }}</td>
-                                <td class="px-6 py-3 text-left text-[14px] font-medium text-gray-600 tracking-wider">
-                                    {{ $admin['name'] }}</td>
-                                <td class="px-6 py-3 text-left text-[14px] font-medium text-gray-600 tracking-wider">
-                                    {{ $admin['email'] }}</td>
-                                <td class="px-6 py-3 text-left text-[14px] font-medium text-gray-600 tracking-wider">
-                                    {{ $admin['status'] }}</td>
-                                <td
-                                    class="px-6 py-3 w-[35%] text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    <a href="#"
-                                        class="inline-flex items-center px-2 py-1.5 bg-blue-500 text-white text-sm font-medium rounded hover:bg-blue-600 transition-colors">
-                                        <i class="fas fa-edit text-base"></i>
-                                    </a>
-
-                                    <!-- Delete Link -->
-                                    <a href="#"
-                                        class="inline-flex items-center px-2 py-1.5 bg-red-500 text-white text-sm font-medium rounded hover:bg-red-600 transition-colors">
-                                        <i class="fas fa-trash text-base"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        @endforeach
+                        
                     </tbody>
                 </table>
             </div>
@@ -192,28 +165,52 @@
     <script>
         $(document).ready(function() {
             var table = $('.admins-table').DataTable({
-                dom: '<"mid-toolbar flex justify-between items-center mb-4 mr-3"lf>' +
-                    't' +
-                    '<"bottom-toolbar flex items-center justify-between mt-4"<"flex-1"></><"flex justify-center"><"flex-1 text-right text-sm text-gray-500">>',
+                dom: '<"top-toolbar flex justify-start items-center mb-4">' + 
+                '<"mid-toolbar flex gap-4 items-center mb-4"lf>' + 
+                't' + 
+                '<"bottom-toolbar flex items-center justify-between mt-4"<"flex-1"></><"flex justify-center"p><"flex-1 text-right text-sm text-gray-500"i>>',
 
                 pageLength: 10,
+                serverSide:true,
+                processing:true,
+                ajax:{
+                    url:"{{ route('viewAdmins') }}"
+                },
                 language: {
                     search: "_INPUT_",
                     searchPlaceholder: "Search here..."
                 },
-                initComplete: function() {
+                // initComplete: function() {
+                //     $('.dt-input')
+                //         .addClass(
+                //             'border border-gray-300 rounded-lg text-[14px] px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm'
+                //         )
+                //         .css('width', '200px');
+                //     $('.dt-length').addClass(
+                //         'px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm');
+                // },
+                initComplete: function () {
                     $('.dt-input')
-                        .addClass(
-                            'border border-gray-300 rounded-lg text-[14px] px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm'
-                        )
-                        .css('width', '200px');
-                    $('.dt-length').addClass(
-                        'px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm');
+                        .addClass('border border-gray-300 rounded-lg text-[14px] px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm')
+                        .css({
+                            'width': '200px',
+                            'padding': '6px 10px',}); 
+                    $('.dt-length select')
+                        .addClass('border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm')
+                        .css({
+                            'width': '80px',
+                            'padding': '6px 10px'
+                        });
+                    $('.dt-length').addClass('px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm');
                 },
-                // columnDefs: [
-                //     { targets: [3, 4, 5, 6], searchable: false } 
-                //     // 3 = Theory Marks, 4 = Practical Marks, 5 = Obtained Theory, 6 = Obtained Practical
-                // ],
+                columns: [
+                    {data:'id', name:'id', className: 'dt-head-center dt-body-center'},
+                    {data:'institute_name', name:'institute_name'},
+                    {data:'name', name:'name'},
+                    {data:'phone', name:'phone', searchable:false, orderable:false},
+                    {data:'status', name:'status', searchable:false, orderable:false},
+                    {data:'actions', name:'actions', searchable:false, orderable:false},
+                ]
 
 
             })

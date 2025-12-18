@@ -38,14 +38,34 @@ class CertificateController extends Controller
             ->addColumn('id', function ($row){
                 return $row->student->id;
             })
+            ->filterColumn('id', function ($query, $keyword) {
+                $query->whereHas('student', function ($q) use ($keyword) {
+                    $q->where('id', 'like', "%{$keyword}%");
+                });
+            })
             ->addColumn('student_name', function ($row){
                 return $row->student->name;
+            })
+            ->filterColumn('student_name', function ($query, $keyword) {
+                $query->whereHas('student', function ($q) use ($keyword) {
+                    $q->where('name', 'like', "%{$keyword}%");
+                });
             })
             ->addColumn('father_name', function ($row){
                 return $row->student->fatherName;
             })
+            ->filterColumn('father_name', function ($query, $keyword) {
+                $query->whereHas('student', function ($q) use ($keyword) {
+                    $q->where('fatherName', 'like', "%{$keyword}%");
+                });
+            })
             ->addColumn('diploma', function ($row){
                 return $row->diploma->DiplomaName;
+            })
+            ->filterColumn('diploma', function ($query, $keyword) {
+                $query->whereHas('diploma', function ($q) use ($keyword) {
+                    $q->where('DiplomaName', 'like', "%{$keyword}%");
+                });
             })
             ->addColumn('session', function ($row){
                 return $row->session->session;

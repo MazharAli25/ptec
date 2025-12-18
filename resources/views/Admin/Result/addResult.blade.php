@@ -100,15 +100,6 @@
                     $('.dt-length').addClass(
                         'px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm');
                 },
-                columnDefs: [{
-                    targets: [6, 7],
-                    searchable: false,
-                    orderable: false
-                }, {
-                    targets: [4, 5],
-                    searchable: false,
-                    orderable: false
-                }, ],
                 columns: [{
                         data: 'student_id',
                         name: 'studentDiploma.student.id'

@@ -75,7 +75,7 @@
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         <!-- Empty state for now -->
-                        @foreach ($sessions as $session)
+                        {{-- @foreach ($sessions as $session)
                             <tr>
                                 <td class="px-6 py-3 text-left text-[14px] font-medium text-gray-600 tracking-wider">
                                     {{ $session['id'] }}</td>
@@ -95,7 +95,7 @@
                                     </a>
                                 </td>
                             </tr>
-                        @endforeach
+                        @endforeach --}}
                     </tbody>
                 </table>
             </div>
@@ -105,12 +105,17 @@
     <script>
         $(document).ready(function () {
         var table = $('.sessions-table').DataTable({
-            dom:  
-            '<"mid-toolbar flex gap-4 items-center mb-4 mr-3"lf>' + 
-            't' + 
-            '<"bottom-toolbar flex items-center justify-between mt-4"<"flex-1"></><"flex justify-center"><"flex-1 text-right text-sm text-gray-500">>',
+             dom: '<"top-toolbar flex justify-start items-center mb-4">' + 
+                '<"mid-toolbar flex gap-4 items-center mb-4"lf>' + 
+                't' + 
+                '<"bottom-toolbar flex items-center justify-between mt-4 mb-4"<"flex-1"></><"flex justify-center"p><"flex-1 text-right mr-3 text-sm text-gray-500"i>>',
             pageLength: 100,
             stateSave: true,
+            serverSide:true,
+            processing:true,
+            ajax: {
+                url: "{{ route('session.create') }}"
+            },
             language: {
                 search: "_INPUT_",
                 searchPlaceholder: "Search here...",
@@ -141,6 +146,11 @@
                     searchable:true,
                 }
             ],
+            columns: [
+                {data:'id', name:'id'},
+                {data:'session', name:'session', className:'dt-head-center dt-body-center'},
+                {data:'actions', name:'actions', className:'dt-head-center dt-body-center'},
+            ]
             
 
         })

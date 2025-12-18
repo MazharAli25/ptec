@@ -68,19 +68,21 @@
                 2. Removed 'print:' prefixes so image loads immediately.
                 3. Changed z-100 to z-20 (valid tailwind class).
             --}}
-            <img src="{{ asset('storage/' . $card->student->image) }}" alt="Student Photo"
-                class="student-photo opacity-0 absolute object-cover border-2 border-gray-300
-            top-[260px] left-[740px] print:left-[720px] w-[294px] h-[330px]">
+            @if(!empty($card->student->image))
+                <img src="{{ asset('storage/' . $card->student->image) }}" alt="Student Photo"
+                    class="student-photo opacity-0 absolute object-cover 
+                top-[260px] print:left-[740px] w-[294px] h-[330px]">
+            @endif
 
             {{-- Student Name --}}
             <p
-                class="print:absolute print:top-[39vh] print:w-[200px] print:left-[27vw] print:text-white print:text-[30px]">
+                class="print:absolute print:top-[40vh] print:w-[500px] print:left-[27vw] print:text-white print:text-[30px]">
                 {{ $card->student->name }}
             </p>
 
             {{-- Father’s Name --}}
             <p
-                class="print:absolute print:top-[47.6vh] print:w-[500px] print:left-[27vw] print:text-white print:text-[30px]">
+                class="print:absolute print:top-[48.6vh] print:w-[500px] print:left-[27vw] print:text-white print:text-[30px]">
                 {{ $card->student->fatherName }}
             </p>
 
@@ -90,11 +92,11 @@
             </p> --}}
             {{-- Diploma --}}
             <p
-                class="print:absolute print:top-[56vh] print:w-[400px] print:left-[27vw] print:text-white print:text-[30px]">
+                class="print:absolute print:top-[57.5vh] print:w-[400px] print:left-[27vw] print:text-white print:text-[30px]">
                 {{ $card->diploma->studentDiplomas[0]->diploma->DiplomaName }}
             </p>
 
-            <p class="print:absolute print:top-[64vh] print:left-[35vw] print:text-white print:text-[34px]">
+            <p class="print:absolute print:top-[65.5vh] print:left-[35vw] print:text-white print:text-[34px]">
                 {{ $card->student->id }}
             </p>
 

@@ -24,10 +24,10 @@ class ExaminationCriteria extends Model
 
     public function session()
     {
-        return $this->belongsTo(mysession::class, 'sessionID', 'id');
+        return $this->belongsTo(mysession::class, 'sessionID', 'ID');
     }
 
     public function result(){   
-        return $this->hasOne(Result::class, 'ExaminationCriteriaID', 'ID');
+        return $this->hasMany(Result::class, 'ExaminationCriteriaID', 'ID');
     }
 }

@@ -33,6 +33,8 @@
                             <th class="px-6 py-3 text-left text-[14px] text-gray-800 uppercase tracking-wider">
                                 ID</th>
                             <th class="px-6 py-3 text-center text-[14px] text-gray-800 uppercase tracking-wider">
+                                Std ID</th>
+                            <th class="px-6 py-3 text-center text-[14px] text-gray-800 uppercase tracking-wider">
                                 Student Name</th>
                             <th class="px-6 py-3 text-center text-[14px] text-gray-800 uppercase tracking-wider">
                                 Institute Name</th>
@@ -48,7 +50,7 @@
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         @php $i=1; @endphp
-                        @foreach ($results as $group)
+                        {{-- @foreach ($results as $group)
                             @php
                                 $first = $group->first();
                             @endphp
@@ -75,7 +77,7 @@
                             @php
                                 $i++;
                             @endphp
-                        @endforeach
+                        @endforeach --}}
                     </tbody>
                 </table>
             </div>
@@ -86,11 +88,57 @@
     <script>
         $(document).ready(function() {
             var table = $('.students-table').DataTable({
-                dom: '<"mid-toolbar flex gap-4 items-center mb-4 mr-3"lf>' +
+                dom: '<"top-toolbar flex justify-start items-center mb-4">' +
+                    '<"mid-toolbar flex gap-4 items-center mb-4"lf>' +
                     't' +
-                    '<"bottom-toolbar flex items-center justify-between mt-4"<"flex-1"></><"flex justify-center"><"flex-1 text-right text-sm text-gray-500">>',
-                pageLength: 100,
+                    '<"bottom-toolbar flex items-center justify-between mt-4 mb-4"<"flex-1"></><"flex justify-center"p><"flex-1 text-right mr-3 text-sm text-gray-500"i>>',
                 stateSave: true,
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('superAdmin.studentsResults') }}",
+                    dataSrc: "data"
+                },
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                    },
+                    {
+                        data: 'id',
+                        name: 'id',
+                        className: 'text-center',
+                    },
+                    {
+                        data: 'name',
+                        name: 'name'
+                    },
+                    {
+                        data: 'institute_name',
+                        name: 'institute_name'
+                    },
+                    {
+                        data: 'diploma_name',
+                        name: 'diploma_name'
+                    },
+                    {
+                        data: 'semester',
+                        name: 'semester',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'session',
+                        name: 'session',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'actions',
+                        name: 'actions',
+                        orderable: false,
+                        searchable: false
+                    },
+                ],
                 language: {
                     search: "_INPUT_",
                     searchPlaceholder: "Search here...",
@@ -115,19 +163,9 @@
                         });
                     $('.dt-length').addClass(
                         'px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm');
-                },
-                columnDefs: [{
-                        targets: [3],
-                        orderable: false,
-                    },
-                    {
-                        targets: [5],
-                        searchable: true,
-                    }
-                ],
+                }
+            });
 
-
-            })
             // Save last searched word in sessionStorage
             $('.dt-input').on('keyup change', function() {
                 sessionStorage.setItem('datatableSearch', $(this).val());

@@ -45,22 +45,22 @@
         <div class="content print:absolute font-serif text-[16px] leading-tight text-black z-10">
 
             {{-- Roll No --}}
-            <p class="print:absolute print:top-[28vh] print:text-[18px] print:left-[210px]">
+            <p class="print:absolute print:top-[28.2vh]  print:text-[18px] print:left-[200px]">
                 {{ $certificate->student->id }}
             </p>
 
             {{-- Student Name --}}
-            <p class="print:absolute print:top-[39vh] print:w-[200px] print:left-[22vw]">
+            <p class="print:absolute print:top-[39.5vh] print:text-[18px] print:w-[200px] print:left-[21vw]">
                 {{ $certificate->student->name }}
             </p>
 
             {{-- Father’s Name --}}
-            <p class="print:absolute print:top-[39vh] print:w-[200px] print:left-[60vw]">
+            <p class="print:absolute print:top-[39.5vh] print:text-[18px] print:w-[200px] print:left-[59vw]">
                 {{ $certificate->student->fatherName }}
             </p>
 
             {{-- Roll No --}}
-            <p class="print:absolute print:text-[18px] print:top-[44.3vh] print:w-[200px] print:left-[26vw]">
+            <p class="print:absolute print:text-[18px] print:top-[45vh] print:w-[200px] print:left-[24vw]">
                 @php
                     // Get first letters of each word in institute name
                     $instituteInitials = collect(
@@ -80,20 +80,20 @@
                 EDX/{{ $instituteInitials }}/{{ $diplomaInitials }}-{{ $certificate->student->id }}
             </p>
             {{-- Diploma --}}
-            <p class="print:absolute print:top-[49vh] print:w-[400px] print:left-[45vw]">
+            <p class="print:absolute print:top-[50vh] print:text-[18px] print:w-[400px] print:left-[45vw]">
                 {{ $certificate->diploma->studentDiplomas[0]->diploma->DiplomaName }}
             </p>
             {{--  From Date --}}
-            <p class="print:absolute print:top-[53.5vh] print:w-[200px] print:left-[16vw] text-[16px]">
+            <p class="print:absolute print:top-[54.5vh] print:text-[18px] print:w-[200px] print:left-[16vw] text-[16px]">
                 {{ \Carbon\Carbon::parse($certificate->student->from)->format('d M Y') }}
             </p>
             {{-- To Date --}}
-            <p class="print:absolute print:top-[53.5vh] print:w-[200px] print:left-[30vw] text-[16px]">
+            <p class="print:absolute print:top-[54.5vh] print:text-[18px] print:w-[200px] print:left-[30vw] text-[16px]">
                 {{ \Carbon\Carbon::parse($certificate->student->to)->format('d M Y') }}
             </p>
 
             {{-- Institute Name --}}
-            <p class="print:absolute print:top-[58.5vh] print:w-[200px] print:left-[220px] text-[16px]">
+            <p class="print:absolute print:top-[59.8vh] print:text-[18px] print:w-[800px] print:left-[220px] text-[16px]">
                 {{ $certificate->student->certificateInstitute->institute_name }}
             </p>
 
@@ -115,13 +115,13 @@
             @endphp
 
             {{-- Issued On --}}
-            <p class="print:absolute print:top-[64.5vh] print:w-[200px] print:left-[56vw] text-[16px]">
+            <p class="print:absolute print:top-[66.5vh] print:w-[200px] print:left-[53vw] text-[18px]">
                 {{ ordinal((int) \Carbon\Carbon::parse($certificate->student->joiningDate)->format('d')) }}
             </p>
 
 
             {{-- Issued On --}}
-            <p class="print:absolute print:top-[64.5vh] print:w-[200px] print:left-[68vw] text-[16px]">
+            <p class="print:absolute print:top-[66.5vh] print:w-[200px] print:left-[68vw] text-[18px]">
                 {{ \Carbon\Carbon::parse($certificate->student->joiningDate)->format('M Y') }}
             </p>
 

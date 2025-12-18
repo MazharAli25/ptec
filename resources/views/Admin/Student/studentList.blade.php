@@ -19,7 +19,7 @@
             <table class="min-w-full border border-gray-200 rounded-lg overflow-hidden students-table">
                 <thead class="bg-cyan-600 text-white">
                     <tr>
-                        <th class="py-2.5 px-4 text-center font-semibold">ID</th>
+                        <th class="py-2.5 w-[5px] px-4 text-center font-semibold">ID</th>
                         <th class="py-2.5 px-4 text-center font-semibold">Student Name</th>
                         <th class="py-2.5 px-4 text-center font-semibold">Father Name</th>
                         <th class="py-2.5 px-4 text-center font-semibold">Phone</th>
@@ -164,7 +164,7 @@
                     {data: 'id', name: 'id'},
                     {data: 'name', name: 'name'},
                     {data: 'fatherName', name: 'fatherName'},
-                    {data: 'phone', name: 'phone'},
+                    {data: 'phone', name: 'phone', searchable:false, orderable:false},
                     {data: 'email', name: 'email'},
                     {data: 'actions', name: 'actions', searchable:false, orderable:false},
                 ]

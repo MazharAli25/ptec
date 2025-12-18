@@ -14,9 +14,76 @@ class ResultController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $adminInstituteId = auth('admin')->user()->institute_id;
+        if ($request->ajax()) {
+            $results = Result::with([
+                'student',
+                'ExaminationCriteria.diplomawiseCourse.course',
+                'ExaminationCriteria.diplomawiseCourse.diploma',
+            ])->whereHas('student', function ($query) use ($adminInstituteId) {
+                $query->where('instituteId', $adminInstituteId);
+            });
+
+            return DataTables::eloquent($results)
+                ->addColumn('std_id', function ($row) {
+                    return $row->student->id ?? '';
+                })
+                ->addColumn('name', function ($row) {
+                    return $row->student->name ?? '';
+                })
+                ->addColumn('course', function ($row) {
+                    return $row->ExaminationCriteria->diplomawiseCourse->course->courseName ?? '';
+                })
+                ->addColumn('diploma', function ($row) {
+                    return $row->ExaminationCriteria->diplomawiseCourse->diploma->DiplomaName ?? '';
+                })
+                ->addColumn('TheoryTotalMarks', function ($row) {
+                    return $row->TheoryTotalMarks ?? '';
+                })
+                ->addColumn('PracticalTotalMarks', function ($row) {
+                    return $row->PracticalTotalMarks ?? '';
+                })
+                ->addColumn('TheoryMarks', function ($row) {
+                    return $row->TheoryMarks ?? '';
+                })
+                ->addColumn('PracticalMarks', function ($row) {
+                    return $row->PracticalMarks ?? '';
+                })
+
+                // Filter for student id (related model)
+                ->filterColumn('std_id', function ($query, $keyword) {
+                    $query->whereHas('student', function ($q) use ($keyword) {
+                        $q->where('id', 'like', "%{$keyword}%");
+                    });
+                })
+
+                // Filter for student name (related model)
+                ->filterColumn('name', function ($query, $keyword) {
+                    $query->whereHas('student', function ($q) use ($keyword) {
+                        $q->where('name', 'like', "%{$keyword}%");
+                    });
+                })
+                
+                // Filter for Course (related model)
+                ->filterColumn('course', function ($query, $keyword) {
+                    $query->whereHas('ExaminationCriteria.diplomawiseCourse.course', function ($q) use ($keyword) {
+                        $q->where('courseName', 'like', "%{$keyword}%");
+                    });
+                })
+
+                // Filter for Diploma (related model)
+                ->filterColumn('diploma', function ($query, $keyword) {
+                    $query->whereHas('ExaminationCriteria.diplomawiseCourse.diploma', function ($q) use ($keyword) {
+                        $q->where('DiplomaName', 'like', "%{$keyword}%");
+                    });
+                })
+
+                ->make(true);
+        }
+
+        return view('Admin.Result.resultsList');
     }
 
     /**
@@ -34,9 +101,9 @@ class ResultController extends Controller
                 'diplomawiseCourse.semester',
                 'diplomawiseCourse.examinationCriteria',
             ])
-            ->whereHas('studentDiploma.student', function ($query) use ($adminInstituteId) {
-                $query->where('instituteId', $adminInstituteId);
-            });                                                                                                            
+                ->whereHas('studentDiploma.student', function ($query) use ($adminInstituteId) {
+                    $query->where('instituteId', $adminInstituteId);
+                });
 
             return DataTables::eloquent($students)
                 ->addIndexColumn()

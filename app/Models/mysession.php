@@ -24,7 +24,7 @@ class mysession extends Model
 
     public function examinationCriterias()
     {
-        return $this->hasMany(ExaminationCriteria::class, 'sessionID');
+        return $this->hasMany(ExaminationCriteria::class, 'sessionID', 'ID');
     }
 
     public function certificates()

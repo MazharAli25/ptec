@@ -16,11 +16,39 @@ class StudentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $students = Student::with('studentDiplomas')->whereDoesntHave('studentDiplomas')->get();
+        if ($request->ajax()) {
+            $students = Student::with('studentDiplomas')->whereDoesntHave('studentDiplomas');
 
-        return view('SuperAdmin.registeredStudents', compact('students'));
+            return DataTables::eloquent($students)
+                ->addColumn('actions', function ($row) {
+                    return '
+                    <div class="flex items-center justify-center gap-1">
+                    <a href="#"
+                        class="inline-flex items-center px-2 py-1.5 bg-blue-500 text-white text-sm font-medium rounded hover:bg-blue-600 transition-colors">
+                        <i class="fas fa-edit text-base"></i>
+                    </a>
+
+                    <!-- View Link -->
+                    <a href="#"
+                        class="inline-flex items-center px-2 py-1.5 bg-green-500 text-white text-sm font-medium rounded hover:bg-green-600 transition-colors">
+                        <i class="fas fa-eye text-base"></i>
+                    </a>
+
+                    <!-- Delete Link -->
+                    <a href="#"
+                        class="inline-flex items-center px-2 py-1.5 bg-red-500 text-white text-sm font-medium rounded hover:bg-red-600 transition-colors">
+                        <i class="fas fa-trash text-base"></i>
+                    </a>
+                    </div>
+                ';
+                })
+                ->rawColumns(['actions'])
+                ->make(true);
+        }
+
+        return view('SuperAdmin.registeredStudents');
     }
 
     public function adminIndex()
@@ -42,7 +70,6 @@ class StudentController extends Controller
         $sessions = mysession::get();
         $lastStudentId = Student::max('id');
         $nextStudentId = $lastStudentId ? $lastStudentId + 1 : 1;
-        
 
         return view('Admin.students', compact(['insts', 'courses', 'sessions', 'nextStudentId']));
     }

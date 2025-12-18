@@ -1,26 +1,26 @@
 @extends('layouts.superAdmin')
-@section('page-title', 'Courses List')
+@section('page-title', 'Assigned Subjects List')
 
 @section('main-content')
 
     <x-err></x-err>
     <x-success></x-success>
     @if ($errors->any())
-    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 ml-[20vw]">
-        <strong>Whoops! Something went wrong:</strong>
-        <ul class="mt-2 list-disc list-inside text-sm text-red-600">
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 ml-[20vw]">
+            <strong>Whoops! Something went wrong:</strong>
+            <ul class="mt-2 list-disc list-inside text-sm text-red-600">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
     <!-- Main Content -->
     <div class="flex-1 p-8 ml-[19vw]">
         <div class="mb-6">
-            <h1 class="text-3xl font-bold text-gray-800">Assigned Courses To Diplomas </h1>
-            <p class="text-gray-600 mt-2">View the details of assigned courses to the diplomas</p>
+            <h1 class="text-3xl font-bold text-gray-800">Assigned Subjects To Diplomas </h1>
+            <p class="text-gray-600 mt-2">View the details of assigned subjects to the diplomas</p>
         </div>
 
         <!-- Table Section (Placeholder for future data) -->
@@ -31,11 +31,11 @@
                     <thead class="bg-gray-200">
                         <tr>
                             <th class="px-6 py-3 text-left text-[14px] text-gray-800 uppercase tracking-wider">
-                                ID</th>
+                                #</th>
                             <th class="px-6 py-3 text-left text-[14px] text-gray-800 uppercase tracking-wider">
                                 Diploma Name</th>
                             <th class="px-6 py-3 text-left text-[14px] text-gray-800 uppercase tracking-wider">
-                                Course Name</th>
+                                Subject Name</th>
                             <th class="px-6 py-3 text-left text-[14px] text-gray-800 uppercase tracking-wider">
                                 Semester</th>
                             <th class="px-6 py-3 text-center text-[14px] text-gray-800 uppercase tracking-wider">
@@ -44,7 +44,7 @@
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         <!-- Empty state for now -->
-                        @foreach ($diplomas as $diploma)
+                        {{-- @foreach ($diplomas as $diploma)
                             <tr>
                                 <td class="px-6 py-3 text-left text-[14px] font-medium text-gray-600 tracking-wider">
                                     {{ $diploma['ID'] }}</td>
@@ -67,7 +67,7 @@
                                     </a>
                                 </td>
                             </tr>
-                        @endforeach
+                        @endforeach --}}
                     </tbody>
                 </table>
             </div>
@@ -77,64 +77,91 @@
     </div>
 
     <script>
-        $(document).ready(function () {
-        var table = $('.assigned-courses-table').DataTable({
-            dom:  
-            '<"mid-toolbar flex gap-4 items-center mb-4 mr-3"lf>' + 
-            't' + 
-            '<"bottom-toolbar flex items-center justify-between mt-4"<"flex-1"></><"flex justify-center"><"flex-1 text-right text-sm text-gray-500">>',
-            pageLength: 100,
-            stateSave: true,
-            language: {
-                search: "_INPUT_",
-                searchPlaceholder: "Search here...",
-                lengthMenu: "_MENU_"
-            },
-            initComplete: function () {
-                $('.dt-input')
-                    .addClass('border border-gray-300 rounded-lg text-[14px] px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm')
-                    .css({
-                        'width': '200px',
-                        'padding': '6px 10px',}); 
-                $('.dt-length select')
-                    .addClass('border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm')
-                    .css({
-                        'width': '80px',
-                        'padding': '6px 10px'
-                    });
-                $('.dt-length').addClass('px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm');
-            },
-            columnDefs: [
-                {
-                    targets: [2], 
-                    orderable: false,
-                    searchable: false
+        $(document).ready(function() {
+            var table = $('.assigned-courses-table').DataTable({
+                dom: '<"top-toolbar flex justify-start items-center mb-4">' +
+                    '<"mid-toolbar flex gap-4 items-center mb-4"lf>' +
+                    't' +
+                    '<"bottom-toolbar flex items-center justify-between mt-4 mb-4"<"flex-1"></><"flex justify-center"p><"flex-1 text-right mr-3 text-sm text-gray-500"i>>',
+                pageLength: 100,
+                stateSave: true,
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('diploma.assignedCourses') }}"
                 },
-                {
-                    targets:[1],
-                    searchable:true,
-                }
-            ],
-            
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Search here...",
+                    lengthMenu: "_MENU_"
+                },
+                initComplete: function() {
+                    $('.dt-input')
+                        .addClass(
+                            'border border-gray-300 rounded-lg text-[14px] px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm'
+                            )
+                        .css({
+                            'width': '200px',
+                            'padding': '6px 10px',
+                        });
+                    $('.dt-length select')
+                        .addClass(
+                            'border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm'
+                            )
+                        .css({
+                            'width': '80px',
+                            'padding': '6px 10px'
+                        });
+                    $('.dt-length').addClass(
+                        'px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm');
+                },
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                        className: 'dt-head-center dt-body-center',
+                        searchable: false,
+                        orderable: false
+                    },
+                    {
+                        data: 'diplomaName',
+                        name: 'diplomaName',
+                        searchable: true
+                    },
+                    {
+                        data: 'courseName',
+                        name: 'courseName'
+                    },
+                    {
+                        data: 'semester',
+                        name: 'semester'
+                    },
+                    {
+                        data: 'actions',
+                        name: 'actions',
+                        searchable: false,
+                        orderable: false
+                    }
+                ]
 
-        })
-        // Save last searched word in sessionStorage
-        $('.dt-input').on('keyup change', function () {
-            sessionStorage.setItem('datatableSearch', $(this).val());
+
+            })
+            // Save last searched word in sessionStorage
+            $('.dt-input').on('keyup change', function() {
+                sessionStorage.setItem('datatableSearch', $(this).val());
+            });
+
+            // Restore old searched word (if any)
+            var oldSearch = sessionStorage.getItem('datatableSearch');
+            if (oldSearch) {
+                table.search(oldSearch).draw();
+                $('.dt-input').val(oldSearch);
+            }
+
+            // Clear sessionStorage when leaving/reloading the page
+            window.addEventListener('beforeunload', function() {
+                sessionStorage.clear();
+            });
         });
-
-        // Restore old searched word (if any)
-        var oldSearch = sessionStorage.getItem('datatableSearch');
-        if (oldSearch) {
-            table.search(oldSearch).draw();
-            $('.dt-input').val(oldSearch);
-        }
-
-        // Clear sessionStorage when leaving/reloading the page
-        window.addEventListener('beforeunload', function () {
-            sessionStorage.clear();
-        });
-    });
     </script>
 
 @endsection

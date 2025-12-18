@@ -4,15 +4,34 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 
 class CourseController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $courses= Course::get();
+        if($request->ajax()){
+            $courses= Course::query();
+            return DataTables::eloquent($courses)
+            ->addColumn('actions', function ($course){
+                return'
+                    <a href="#"
+                        class="inline-flex items-center px-2 py-1.5 bg-blue-500 text-white text-sm font-medium rounded hover:bg-blue-600 transition-colors">
+                        <i class="fas fa-edit text-base"></i>
+                    </a>
+
+                    <a href="#"
+                        class="inline-flex items-center px-2 py-1.5 bg-red-500 text-white text-sm font-medium rounded hover:bg-red-600 transition-colors">
+                        <i class="fas fa-trash text-base"></i>
+                    </a>
+                ';
+            })
+            ->rawColumns(['actions'])
+            ->make(true);
+        }
         return view('SuperAdmin.viewCourses', compact('courses'));
     }
 
@@ -38,7 +57,7 @@ class CourseController extends Controller
             'courseName'=> $validated['courseName'],
         ]);
         
-        return redirect()->route('course.create')->with('success', 'course created successfully');
+        return redirect()->route('course.create')->with('success', 'subject added successfully');
     }
 
     /**

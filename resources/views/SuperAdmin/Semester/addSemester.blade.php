@@ -35,7 +35,8 @@
                             <label for="semesterName" class="block text-sm font-medium text-gray-700 mb-1 w-[300px]">
                                 Add Semester
                             </label>
-                            <input type="text" id="semesterName" name="semesterName" placeholder="Enter Semester Here" value="{{ old('semesterName') }}"
+                            <input type="text" id="semesterName" name="semesterName" placeholder="Enter Semester Here"
+                                value="{{ old('semesterName') }}"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                             </input>
                             @error('marks')
@@ -43,10 +44,12 @@
                             @enderror
                         </div>
                         <div>
-                            <label for="semesterDuration" class="ml-4 block text-sm font-medium text-gray-700 mb-1 w-[300px]">
+                            <label for="semesterDuration"
+                                class="ml-4 block text-sm font-medium text-gray-700 mb-1 w-[300px]">
                                 Semester Duration
                             </label>
-                            <input type="text" id="semesterDuration" name="semesterDuration" placeholder="Enter Semester Duration Here" value="{{ old('semesterDuration') }}"
+                            <input type="text" id="semesterDuration" name="semesterDuration"
+                                placeholder="Enter Semester Duration Here" value="{{ old('semesterDuration') }}"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                             </input>
                             @error('semesterDuration')
@@ -90,14 +93,14 @@
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         <!-- Empty state for now -->
-                        @foreach ($semesters as $semester)
+                        {{-- @foreach ($semesters as $semester)
                             <tr>
                                 <td class="px-6 py-3 text-left text-[14px] font-medium text-gray-600  tracking-wider">
                                     {{ $semester->id }}</td>
                                 <td class="px-6 py-3 text-left text-[14px] font-medium text-gray-600  tracking-wider">
                                     {{ $semester['semesterName'] }}</td>
                                 <td class="px-6 py-3 text-left text-[14px] font-medium text-gray-600  tracking-wider">
-                                    {{ $semester['Duration'] ? $semester['Duration'] : 'Nill'}} </td>
+                                    {{ $semester['Duration'] ? $semester['Duration'] : 'Nill' }} </td>
                                 <td
                                     class="px-6 py-3 w-[35%] text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     <a href="#"
@@ -111,71 +114,84 @@
                                     </a>
                                 </td>
                             </tr>
-                        @endforeach
+                        @endforeach --}}
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
     <script>
-        $(document).ready(function () {
-        var table = $('.semesters-table').DataTable({
-            dom:  
-            '<"mid-toolbar flex gap-4 items-center mb-4 mr-3"lf>' + 
-            't' + 
-            '<"bottom-toolbar flex items-center justify-between mt-4"<"flex-1"></><"flex justify-center"><"flex-1 text-right text-sm text-gray-500">>',
-            pageLength: 100,
-            stateSave: true,
-            language: {
-                search: "_INPUT_",
-                searchPlaceholder: "Search here...",
-                lengthMenu: "_MENU_"
-            },
-            initComplete: function () {
-                $('.dt-input')
-                    .addClass('border border-gray-300 rounded-lg text-[14px] px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm')
-                    .css({
-                        'width': '200px',
-                        'padding': '6px 10px',}); 
-                $('.dt-length select')
-                    .addClass('border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm')
-                    .css({
-                        'width': '80px',
-                        'padding': '6px 10px'
-                    });
-                $('.dt-length').addClass('px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm');
-            },
-            columnDefs: [
-                {
-                    targets: [2], 
-                    orderable: false,
-                    searchable: false
+        $(document).ready(function() {
+            var table = $('.semesters-table').DataTable({
+                dom: '<"top-toolbar flex justify-start items-center mb-4">' +
+                    '<"mid-toolbar flex gap-4 items-center mb-4"lf>' +
+                    't' +
+                    '<"bottom-toolbar flex items-center justify-between mt-4 mb-4"<"flex-1"></><"flex justify-center"p><"flex-1 text-right mr-3 text-sm text-gray-500"i>>',
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Search here...",
+                    lengthMenu: "_MENU_"
                 },
-                {
-                    targets:[1],
-                    searchable:true,
-                }
-            ],
-            
+                serverSide:true,
+                processing:true,
+                ajax:{
+                    url: "{{ route('semester.create') }}"
+                },
+                initComplete: function() {
+                    $('.dt-input')
+                        .addClass(
+                            'border border-gray-300 rounded-lg text-[14px] px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm'
+                            )
+                        .css({
+                            'width': '200px',
+                            'padding': '6px 10px',
+                        });
+                    $('.dt-length select')
+                        .addClass(
+                            'border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm'
+                            )
+                        .css({
+                            'width': '80px',
+                            'padding': '6px 10px'
+                        });
+                    $('.dt-length').addClass(
+                        'px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm');
+                },
+                columnDefs: [{
+                        targets: [2],
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        targets: [1],
+                        searchable: true,
+                    }
+                ],
+                columns: [
+                    {data:'id', name:'id'},
+                    {data:'semesterName', name:'semesterName'},
+                    {data:'Duration', name:'Duration'},
+                    {data:'actions', name:'actions'},
+                ],
 
-        })
-        // Save last searched word in sessionStorage
-        $('.dt-input').on('keyup change', function () {
-            sessionStorage.setItem('datatableSearch', $(this).val());
+            })
+            // Save last searched word in sessionStorage
+            $('.dt-input').on('keyup change', function() {
+                sessionStorage.setItem('datatableSearch', $(this).val());
+            });
+
+            // Restore old searched word (if any)
+            var oldSearch = sessionStorage.getItem('datatableSearch');
+            if (oldSearch) {
+                table.search(oldSearch).draw();
+                $('.dt-input').val(oldSearch);
+            }
+
+            // Clear sessionStorage when leaving/reloading the page
+            window.addEventListener('beforeunload', function() {
+                sessionStorage.clear();
+            });
         });
-
-        // Restore old searched word (if any)
-        var oldSearch = sessionStorage.getItem('datatableSearch');
-        if (oldSearch) {
-            table.search(oldSearch).draw();
-            $('.dt-input').val(oldSearch);
-        }
-
-        // Clear sessionStorage when leaving/reloading the page
-        window.addEventListener('beforeunload', function () {
-            sessionStorage.clear();
-        });
-    });
     </script>
 
 @endsection

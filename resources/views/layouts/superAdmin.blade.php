@@ -161,7 +161,7 @@
                             {{-- COURSES --}}
                             <button type="button" onclick="toggleDropdown('courses-dropdown')"
                                 class="w-full flex items-center justify-between p-2 hover:bg-[#2d2e2d] rounded">
-                                Courses
+                                Subjects
                                 <i id="courses-dropdown-icon" class="fa-solid fa-angle-down transition-transform"></i>
                             </button>
                             <ul id="courses-dropdown"
@@ -170,7 +170,7 @@
                                     class="p-2 hover:bg-[#2d2e2d] rounded text-sm
                         {{ request()->routeIs('course.create') ? 'bg-[#2d2e2d]' : 'hover:bg-[#2d2e2d]' }}">
                                     <a href="{{ route('course.create') }}" class="block focus:bg-[#2d2e2d]">Add
-                                        Courses</a>
+                                        Subjects</a>
                                 </li>
                                 {{-- <li
                             class="p-2 hover:bg-[#2d2e2d] rounded text-sm 
@@ -198,14 +198,14 @@
                         {{ request()->routeIs('diplomawiseCourse.create') ? 'bg-[#2d2e2d]' : 'hover:bg-[#2d2e2d]' }}">
                                     <a href="{{ route('diplomawiseCourse.create') }}"
                                         class="block focus:bg-[#2d2e2d]">Assign
-                                        Courses</a>
+                                        Subjects</a>
                                 </li>
                                 <li
                                     class="p-2 hover:bg-[#2d2e2d] rounded text-sm
                         {{ request()->routeIs('diploma.assignedCourses') ? 'bg-[#2d2e2d]' : 'hover:bg-[#2d2e2d]' }}">
                                     <a href="{{ route('diploma.assignedCourses') }}"
                                         class="block focus:bg-[#2d2e2d]">Assigned
-                                        Courses</a>
+                                        Subjects List</a>
                                 </li>
                             </ul>
 
@@ -231,7 +231,7 @@
                                 {{ request()->routeIs('examination-criteria.index') ? 'bg-[#2d2e2d]' : 'hover:bg-[#2d2e2d]' }}">
                                     <a href="{{ route('examination-criteria.index') }}"
                                         class="block focus:bg-[#2d2e2d]">Examination
-                                        Criterias</a>
+                                        Criterias List</a>
                                 </li>
                             </ul>
                         </ul>
@@ -241,7 +241,7 @@
                     <button type="button" onclick="toggleDropdown('student-dropdown')"
                         class="w-full flex items-center justify-between p-2 hover:bg-[#2d2e2d] rounded focus:bg-[#2d2e2d]">
                         Student
-                        <i id="student-dropdown-icon" class="fa-solid fa-angle-down transition-transform"></i>
+                        <i id="student-dropdown-icon" class="fa-solid fa-angle-up transition-transform"></i>
                     </button>
                     <ul id="student-dropdown"
                         class="ml-4 mt-1 space-y-1 {{ request()->routeIs('student.index')  ? '' : 'hidden' }}">
@@ -293,8 +293,7 @@
                                 class="p-2 hover:bg-[#2d2e2d] rounded text-sm
                               {{ request()->routeIs('superAdmin.studentsResults') ? 'bg-[#2d2e2d]' : 'hover:bg-[#2d2e2d]' }}">
                                 <a href="{{ route('superAdmin.studentsResults') }}" class="block focus:bg-[#2d2e2d]">
-                                    Students
-                                    Results</a>
+                                    Students Results</a>
                             </li>
                         </ul>
                     </li>

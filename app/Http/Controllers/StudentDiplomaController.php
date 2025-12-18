@@ -134,13 +134,13 @@ class StudentDiplomaController extends Controller
             // Student already has all courses for this diploma
             return redirect()
                 ->back()
-                ->with('error', 'No further courses are assigned to the selected semester.');
+                ->with('error', 'No further subjects are assigned to the selected semester.');
         }
         if (empty($missingCourses)) {
             // Student already has all courses for this diploma
             return redirect()
                 ->back()
-                ->with('error', 'Student is already enrolled in all courses of this diploma.');
+                ->with('error', 'Student is already enrolled in all subjects of this diploma.');
         }
         $diplomaID = $validated['diploma_id'];
         $session_id = $validated['session_id'];
@@ -164,7 +164,7 @@ class StudentDiplomaController extends Controller
 
         return redirect()
             ->back()
-            ->with('success', count($missingCourses).' new courses assigned to the student for this diploma.');
+            ->with('success', count($missingCourses).' new subjects assigned to the student for this diploma.');
     }
 
     /**

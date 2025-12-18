@@ -49,12 +49,12 @@ class AdminController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'institute_id' => 'required',
-            'name' => 'required',
-            'password' => 'required',
-            'email' => 'required',
-            'phone' => ['required', 'unique:students,phone'],
-            'status' => 'required',
+            'institute_id' => 'required|exists:institutes,id',
+            'name' => 'required|string|max:30',
+            'email' => 'required|email|unique:admins,email',
+            'phone' => 'required|digits:11|unique:admins,phone',
+            'password' => 'required|min:8',
+            'status' => 'required|in:active,inactive',
         ]);
 
         Admin::create([
@@ -66,7 +66,9 @@ class AdminController extends Controller
             'status' => $validated['status'],
         ]);
 
-        return redirect()->route('admin.create')->with('success', 'Admin created successfully');
+        return redirect()
+            ->route('admin.create')
+            ->with('success', 'Admin created successfully');
     }
 
     /**
@@ -74,7 +76,9 @@ class AdminController extends Controller
      */
     public function show(Admin $admin)
     {
-        //
+        $admin = $admin;
+
+        return view('SuperAdmin.showAdmin', compact(['admin']));
     }
 
     /**
@@ -82,7 +86,10 @@ class AdminController extends Controller
      */
     public function edit(Admin $admin)
     {
-        //
+        $admin = $admin;
+        $insts = institute::get();
+
+        return view('SuperAdmin.editAdmin', compact(['admin', 'insts']));
     }
 
     /**
@@ -90,7 +97,25 @@ class AdminController extends Controller
      */
     public function update(Request $request, Admin $admin)
     {
-        //
+        $validated = $request->validate([
+            'institute_id' => 'required',
+            'name' => 'required',
+            'password' => 'required',
+            'email' => 'required',
+            'phone' => ['required', 'unique:students,phone'],
+            'status' => 'required',
+        ]);
+
+        $admin->update([
+            'institute_id' => $validated['institute_id'],
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'phone' => $validated['phone'],
+            'password' => Hash::make($validated['password']),
+            'status' => $validated['status'],
+        ]);
+
+        return redirect()->route('admin.create')->with('success', 'Admin Updated Successfully');
     }
 
     /**
@@ -98,7 +123,9 @@ class AdminController extends Controller
      */
     public function destroy(Admin $admin)
     {
-        //
+        $admin->delete($admin);
+
+        return redirect()->back()->with('success', 'institute Deleted Successfully');
     }
 
     // public function requestCertificate(Request $request)
@@ -123,7 +150,7 @@ class AdminController extends Controller
 
     public function requestedCertificates(Request $request)
     {
-        $adminId = Auth::guard('admin')->user()->id;
+        $adminId = Auth::guard('admin')->user()->institute_id;
         if ($request->ajax()) {
             $requests = Certificate::with(['student'])
                 ->whereHas('student', function ($query) use ($adminId) {
@@ -134,14 +161,34 @@ class AdminController extends Controller
                 ->addColumn('id', function ($row) {
                     return $row->student->id;
                 })
+                ->filterColumn('id', function ($query, $keyword) {
+                    $query->whereHas('student', function ($q) use ($keyword) {
+                        $q->where('id', 'like', "%{$keyword}%");
+                    });
+                })
                 ->addColumn('student_name', function ($row) {
                     return $row->student->name;
+                })
+                ->filterColumn('student_name', function ($query, $keyword) {
+                    $query->whereHas('student', function ($q) use ($keyword) {
+                        $q->where('name', 'like', "%{$keyword}%");
+                    });
                 })
                 ->addColumn('father_name', function ($row) {
                     return $row->student->fatherName;
                 })
+                ->filterColumn('father_name', function ($query, $keyword) {
+                    $query->whereHas('student', function ($q) use ($keyword) {
+                        $q->where('fatherName', 'like', "%{$keyword}%");
+                    });
+                })
                 ->addColumn('diploma_name', function ($row) {
                     return $row->diploma->DiplomaName;
+                })
+                ->filterColumn('diploma_name', function ($query, $keyword) {
+                    $query->whereHas('diploma', function ($q) use ($keyword) {
+                        $q->where('DiplomaName', 'like', "%{$keyword}%");
+                    });
                 })
                 ->addColumn('session_name', function ($row) {
                     return $row->session->session;
@@ -223,20 +270,34 @@ class AdminController extends Controller
 
         if ($request->ajax()) {
             $students = StudentDiploma::with(['student', 'diploma', 'session'])
-                ->whereHas('student', function ($query) use ($instituteID){
+                ->whereHas('student', function ($query) use ($instituteID) {
                     $query->where('instituteId', $instituteID);
-                })
-                ->get(); // or add filtering for institute if needed
+                }); // or add filtering for institute if needed
 
             return DataTables::of($students)
                 ->addColumn('id', function ($row) {
                     return $row->student->id;
                 })
+                ->filterColumn('id', function ($query, $keyword) {
+                    $query->whereHas('student', function ($q) use ($keyword) {
+                        $q->where('id', 'like', "%{$keyword}%");
+                    });
+                })
                 ->addColumn('student_name', function ($row) {
                     return $row->student->name;
                 })
+                ->filterColumn('student_name', function ($query, $keyword) {
+                    $query->whereHas('student', function ($q) use ($keyword) {
+                        $q->where('name', 'like', "%{$keyword}%");
+                    });
+                })
                 ->addColumn('diploma_name', function ($row) {
                     return $row->diploma->DiplomaName;
+                })
+                ->filterColumn('diploma_name', function ($query, $keyword) {
+                    $query->whereHas('diploma', function ($q) use ($keyword) {
+                        $q->where('DiplomaName', 'like', "%{$keyword}%");
+                    });
                 })
                 ->addColumn('session_name', function ($row) {
                     return $row->session->session;
@@ -254,7 +315,7 @@ class AdminController extends Controller
                     <div class="flex justify-center gap-2">
                         <a href="'.route('studentDiploma.edit', encrypt($row->ID)).'" class="px-2 py-1.5 bg-blue-500 text-white rounded">
                             <i class="fa-solid fa-pen-to-square text-[16px]"></i>
-                        </a>
+                        <a>
                         <a href="'.route('studentDiploma.show', encrypt($row->ID)).'" class="px-2 py-1.5 bg-green-500 text-white rounded">
                             <i class="fas fa-eye text-base"></i>
                         </a>

@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\Diploma;
-use App\Models\StudentCourse;
 use App\Models\DiplomawiseCourses;
 use App\Models\Semester;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\Facades\DataTables;
 
 class DiplomawiseCoursesController extends Controller
 {
@@ -23,16 +23,32 @@ class DiplomawiseCoursesController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
-        $courses = Course::all();
+        if ($request->ajax()) {
+            $courses = Course::select('id', 'courseName');
+
+            return DataTables::of($courses)
+                ->addColumn('checkbox', function ($course) {
+                    return '
+                    <input type="checkbox"
+                           name="courseIDs[]" 
+                           value="'.$course->id.'" 
+                           class="course-checkbox cursor-pointer">
+                ';
+                })
+                ->rawColumns(['checkbox'])
+                ->make(true);
+        }
+
         $diplomas = Diploma::select(DB::raw('MIN(id) as id'), 'DiplomaName')
             ->groupBy('DiplomaName')
             ->orderBy('DiplomaName', 'asc')
             ->get();
+
         $semesters = Semester::all();
-        $assignedCourses = DiplomawiseCourses::with(['diploma', 'course', 'semester'])->get();
-        return view('SuperAdmin.diplomawiseCourse.assignCourse', compact(['assignedCourses', 'courses', 'diplomas', 'semesters']));
+
+        return view('SuperAdmin.diplomawiseCourse.assignCourse', compact('diplomas', 'semesters'));
     }
 
     /**
@@ -60,7 +76,6 @@ class DiplomawiseCoursesController extends Controller
     //         'semesterID' => $validated['semesterID'],
     //     ]);
 
-
     //     return redirect()->route('diplomawiseCourse.create')->with('success', 'Course assigned to diploma successfully.');
     // }
 
@@ -68,7 +83,7 @@ class DiplomawiseCoursesController extends Controller
     {
         $validated = $request->validate([
             'diplomaID' => 'required|exists:diplomas,id',
-            'session_id'=> 'required',
+            'session_id' => 'required',
             'semesterID' => 'required|exists:semesters,id',
             'courseIDs' => 'required|array|min:1',
             'courseIDs.*' => 'exists:courses,id',
@@ -93,6 +108,7 @@ class DiplomawiseCoursesController extends Controller
                 // Store the course name instead of just the ID
                 $courseName = Course::where('id', $courseId)->value('courseName');
                 $duplicates[] = $courseName;
+
                 continue;
             }
 
@@ -100,29 +116,28 @@ class DiplomawiseCoursesController extends Controller
                 'diplomaID' => $diplomaID,
                 'courseID' => $courseId,
                 'semesterID' => $semesterID,
-                'sessionID'=> $sessionID,
+                'sessionID' => $sessionID,
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
         }
 
-        if (!empty($data)) {
+        if (! empty($data)) {
             DiplomawiseCourses::insert($data);
         }
 
         // Build success message
-      $message = '<span class="font-semibold"> Selected courses assigned successfully.</span>';
+        $message = '<span class="font-semibold"> Selected courses assigned successfully.</span>';
 
-        if (!empty($duplicates)) {
+        if (! empty($duplicates)) {
             $message .= '<br><span class="text-yellow-600"> These courses were already assigned in the selected session and skipped:</span> <br> <strong class="text-yellow-600">'
-                . implode(', ', $duplicates) . '</strong>';
+                .implode(', ', $duplicates).'</strong>';
         }
 
         return redirect()
             ->route('diplomawiseCourse.create')
             ->with('success', $message);
     }
-
 
     /**
      * Display the specified resource.
@@ -171,8 +186,8 @@ class DiplomawiseCoursesController extends Controller
 
         $formatted = $diplomas->map(function ($diploma) {
             return [
-                'id'   => $diploma->session->id,
-                'name' => $diploma->DiplomaName . ' - ' . $diploma->session->session,
+                'id' => $diploma->session->id,
+                'name' => $diploma->DiplomaName.' - '.$diploma->session->session,
             ];
         });
 

@@ -26,15 +26,35 @@ class StudentCardController extends Controller
                 ->addColumn('id', function ($row) {
                     return $row->student->id;
                 })
+                ->filterColumn('id', function ($query, $keyword) {
+                $query->whereHas('student', function ($q) use ($keyword) {
+                    $q->where('id', 'like', "%{$keyword}%");
+                });
+            })
                 ->addColumn('student_name', function ($row) {
                     return $row->student->name;
                 })
+                ->filterColumn('student_name', function ($query, $keyword) {
+                $query->whereHas('student', function ($q) use ($keyword) {
+                    $q->where('name', 'like', "%{$keyword}%");
+                });
+            })
                 ->addColumn('father_name', function ($row) {
                     return $row->student->fatherName;
                 })
+                ->filterColumn('father_name', function ($query, $keyword) {
+                $query->whereHas('student', function ($q) use ($keyword) {
+                    $q->where('fatherName', 'like', "%{$keyword}%");
+                });
+            })
                 ->addColumn('diploma_name', function ($row) {
                     return $row->diploma->DiplomaName;
                 })
+                ->filterColumn('diploma_name', function ($query, $keyword) {
+                $query->whereHas('student', function ($q) use ($keyword) {
+                    $q->where('DiplomaName', 'like', "%{$keyword}%");
+                });
+            })
                 ->addColumn('session_name', function ($row) {
                     return $row->session->session;
                 })
@@ -57,7 +77,7 @@ class StudentCardController extends Controller
                 })
                 ->addColumn('actions', function ($row) {
                     return '
-                        <button type="button" data-modal-target="deleteModal" data-id="'.$row->id .'"
+                        <button type="button" data-modal-target="deleteModal" data-id="'.$row->id.'"
                                         class="inline-flex items-center px-2 no-underline py-1.5 bg-red-500 text-white text-sm font-medium rounded hover:bg-red-600 transition-colors">
                                         Cancel
                                     </button>
@@ -91,14 +111,34 @@ class StudentCardController extends Controller
                 ->addColumn('id', function ($row) {
                     return $row->student->id;
                 })
+                ->filterColumn('id', function ($query, $keyword) {
+                    $query->whereHas('student', function ($q) use ($keyword) {
+                        $q->where('id', 'like', "%{$keyword}%");
+                    });
+                })
                 ->addColumn('student_name', function ($row) {
                     return $row->student->name;
+                })
+                ->filterColumn('student_name', function ($query, $keyword) {
+                    $query->whereHas('student', function ($q) use ($keyword) {
+                        $q->where('name', 'like', "%{$keyword}%");
+                    });
                 })
                 ->addColumn('father_name', function ($row) {
                     return $row->student->fatherName;
                 })
+                ->filterColumn('father_name', function ($query, $keyword) {
+                    $query->whereHas('student', function ($q) use ($keyword) {
+                        $q->where('fatherName', 'like', "%{$keyword}%");
+                    });
+                })
                 ->addColumn('diploma_name', function ($row) {
                     return $row->diploma->DiplomaName;
+                })
+                ->filterColumn('diploma_name', function ($query, $keyword) {
+                    $query->whereHas('diploma', function ($q) use ($keyword) {
+                        $q->where('DiplomaName', 'like', "%{$keyword}%");
+                    });
                 })
                 ->addColumn('session_name', function ($row) {
                     return $row->session->session;
@@ -207,11 +247,50 @@ class StudentCardController extends Controller
             ->with('success', 'Student Card request cancelled successfully.');
     }
 
-    public function printCards()
+    public function printCards(Request $request)
     {
-        $cards = StudentCard::where('status', 'approved ')->get();
+        if ($request->ajax()) {
+            $cards = StudentCard::where('status', 'approved ');
 
-        return view('SuperAdmin.Student.printCards', compact('cards'));
+            return DataTables::eloquent($cards)
+                ->addColumn('id', function ($card) {
+                    return $card->student->id;
+                })
+                ->addColumn('name', function ($card) {
+                    return $card->student->name;
+                })
+                ->addColumn('diploma_name', function ($card) {
+                    return $card->diploma->DiplomaName;
+                })
+                ->addColumn('session', function ($card) {
+                    return $card->session->session;
+                })
+                ->addColumn('actions', function ($card) {
+                    return '
+                        <form action="'.route('card.printFront', encrypt($card->id)).'" class="inline-block" method="Post">
+                                '.csrf_field().method_field('POST').'
+                                <input type="hidden" name="diplomaID" value="'.$card->diplomaID.'">
+                                <input type="hidden" name="sessionID" value="'.$card->sessionID.'">
+                                <button type="submit" class="text-[14px] bg-blue-500 text-white px-3 py-1 rounded">
+                                    Print Front
+                                </button>
+                            </form>
+                            
+                            <form action="'.route('card.printBack', encrypt($card->id)).'" class="inline-block" method="POST">
+                                '.csrf_field().method_field('POST').'
+                                <input type="hidden" name="diplomaID" value="'.$card->diplomaID.'">
+                                <input type="hidden" name="sessionID" value="'.$card->sessionID.'">
+                                <button type="submit" class="text-[14px] bg-blue-500 text-white px-3 py-1 rounded">
+                                    Print Back
+                                </button>
+                            </form>
+                    ';
+                })
+                ->rawColumns(['actions'])
+                ->make(true);
+        }
+
+        return view('SuperAdmin.Student.printCards');
     }
 
     public function printFront(Request $request, $id)

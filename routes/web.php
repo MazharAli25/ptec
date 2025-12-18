@@ -68,7 +68,9 @@ Route::prefix('super-admin')
         Route::put('/student-card/request/{studentCard}', [StudentCardController::class, 'update'])->name('card.update');
         Route::get('/student-cards/print-cards', [StudentCardController::class, 'printCards'])->name('card.printCards');
         Route::post('/student-cards/print-front/{id}', [StudentCardController::class, 'printFront'])->name('card.printFront');
+        Route::get('/student-cards/print-front/{id}', [StudentCardController::class, 'printFront'])->name('card.printFront');
         Route::post('/student-cards/print-back/{id}', [StudentCardController::class, 'printBack'])->name('card.printBack');
+        Route::get('/student-cards/print-back/{id}', [StudentCardController::class, 'printBack'])->name('card.printBack');
         Route::get('/get-super-sessions/{diplomaName}', [DiplomawiseCoursesController::class, 'getSessions']);
     });
 

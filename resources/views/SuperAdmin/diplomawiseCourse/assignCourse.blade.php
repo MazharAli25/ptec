@@ -71,7 +71,7 @@
                             <option value="">Select Session</option>
                         </select>
                     </div>
-                
+
                     <!-- Semester -->
                     <div class="flex-1 min-w-[30%]">
                         <label for="semesterID" class="block text-sm font-medium text-gray-700 mb-1">
@@ -96,21 +96,17 @@
                         <thead class="bg-gray-200">
                             <tr>
                                 <th
-                                    class="px-6 py-3 text-left text-sm font-semibold text-gray-800 uppercase tracking-wider w-12">
+                                    class="px-6 py-3 text-left text-sm font-semibold text-gray-800 uppercase tracking-wider w-[100px]">
                                     <input type="checkbox" id="selectAll" class="cursor-pointer">
                                 </th>
                                 <th
                                     class="px-6 py-3 text-left text-sm font-semibold text-gray-800 uppercase tracking-wider">
                                     Course Name
                                 </th>
-                                <th
-                                    class="px-6 py-3 text-left text-sm font-semibold text-gray-800 uppercase tracking-wider">
-                                    Course Code
-                                </th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
-                            @foreach ($courses as $course)
+                            {{-- @foreach ($courses as $course)
                                 <tr>
                                     <td class="px-6 py-3 text-center">
                                         <input type="checkbox" name="courseIDs[]" value="{{ $course->id }}"
@@ -123,7 +119,7 @@
                                         {{ $course->courseCode ?? '—' }}
                                     </td>
                                 </tr>
-                            @endforeach
+                            @endforeach --}}
                         </tbody>
                     </table>
                 </div>
@@ -142,23 +138,45 @@
     </div>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        // CheckBoxes
+        function bindSelectAll() {
             const selectAll = document.getElementById("selectAll");
-            const checkboxes = document.querySelectorAll(".course-checkbox");
+            if (!selectAll) return;
+
+            // Only bind if not already bound
+            if (selectAll.dataset.bound) return;
+            selectAll.dataset.bound = "true";
 
             selectAll.addEventListener("change", function() {
-                checkboxes.forEach(cb => cb.checked = this.checked);
+                document.querySelectorAll(".course-checkbox").forEach(cb => {
+                    cb.checked = this.checked;
+                });
             });
-        });
-    </script>
-    <script>
+
+            // Listen for changes on individual checkboxes
+            document.querySelectorAll(".course-checkbox").forEach(cb => {
+                cb.addEventListener("change", function() {
+                    const allChecked = document.querySelectorAll(".course-checkbox:not(:checked)")
+                        .length === 0;
+                    selectAll.checked = allChecked;
+                });
+            });
+        }
+
+        // Yajra Datatables
         $(document).ready(function() {
             var table = $('.assign-course-table').DataTable({
-                dom: '<"mid-toolbar flex gap-4 items-center mb-4 mr-3"lf>' +
+                dom: '<"top-toolbar flex justify-start items-center mb-4">' +
+                    '<"mid-toolbar flex gap-4 items-center mb-4"lf>' +
                     't' +
-                    '<"bottom-toolbar flex items-center justify-between mt-4"<"flex-1"></><"flex justify-center"><"flex-1 text-right text-sm text-gray-500">>',
+                    '<"bottom-toolbar flex items-center justify-between mt-4 mb-4"<"flex-1"></><"flex justify-center"p><"flex-1 text-right mr-3 text-sm text-gray-500"i>>',
                 pageLength: 100,
                 stateSave: true,
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('diplomawiseCourse.create') }}"
+                },
                 language: {
                     search: "_INPUT_",
                     searchPlaceholder: "Search here...",
@@ -184,19 +202,24 @@
                     $('.dt-length').addClass(
                         'px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm');
                 },
-                columnDefs: [{
-                        targets: [2],
+                columns: [{
+                        data: 'checkbox',
                         orderable: false,
-                        searchable: false
+                        searchable: false,
+                        className: 'dt-head-center dt-body-center'
                     },
                     {
-                        targets: [1],
-                        searchable: true,
+                        data: 'courseName',
+                        name: 'courseName',
+                        className: 'dt-head-center dt-body-center'
                     }
                 ],
+                drawCallback: function() {
+                    // Re-bind the select all logic every time the table is redrawn
+                    bindSelectAll();
+                }
+            });
 
-
-            })
             // Save last searched word in sessionStorage
             $('.dt-input').on('keyup change', function() {
                 sessionStorage.setItem('datatableSearch', $(this).val());
@@ -213,9 +236,12 @@
             window.addEventListener('beforeunload', function() {
                 sessionStorage.clear();
             });
+
+            // Initial bind
+            bindSelectAll();
         });
-    </script>
-    <script>
+
+        // Dynamic Inputs
         $(document).ready(function() {
             $('.select2').select2({
                 placeholder: "Please select",
@@ -231,7 +257,8 @@
 
                 if (diplomaId) {
                     $.ajax({
-                        url: '/super-admin/get-super-sessions/' + $('#diplomaID option:selected').text(),
+                        url: '/super-admin/get-super-sessions/' + $('#diplomaID option:selected')
+                            .text(),
                         type: 'GET',
                         success: function(data) {
                             sessionDropdown.empty().append(
@@ -241,7 +268,7 @@
                                 $.each(data, function(index, item) {
                                     sessionDropdown.append(
                                         `<option value="${item.id}">${item.name}</option>`
-                                    );
+                                        );
                                 });
                             } else {
                                 sessionDropdown.append(
@@ -262,5 +289,6 @@
             });
         });
     </script>
+
 
 @endsection

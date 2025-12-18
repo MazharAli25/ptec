@@ -27,52 +27,52 @@
         <!-- Form Section -->
         <div class="bg-white rounded-lg form-shadow p-6 mb-8 flex justify-center">
             <form class="flex flex-col w-[70%]" method="POST" action="{{ route('diploma.store') }}">
-    @csrf
-    <div class="space-y-4">
-        <h2 class="text-lg font-semibold text-gray-700 border-b pb-2">Subject Information</h2>
+                @csrf
+                <div class="space-y-4">
+                    <h2 class="text-lg font-semibold text-gray-700 border-b pb-2">Subject Information</h2>
 
-        <!-- Inputs side by side -->
-        <div class="flex flex-wrap justify-center gap-6 mt-4">
-            <!-- Diploma Name -->
-            <div class="w-[45%]">
-                <label for="diplomaName" class="block text-sm font-medium text-gray-700 mb-1">
-                    Diploma Name
-                </label>
-                <input type="text" id="diplomaName" name="diplomaName" placeholder="Enter Diploma Here"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                @error('diplomaName')
-                    <p class="text-red-500 text-[14px] font-semibold">{{ $message }}</p>
-                @enderror
-            </div>
+                    <!-- Inputs side by side -->
+                    <div class="flex flex-wrap justify-center gap-6 mt-4">
+                        <!-- Diploma Name -->
+                        <div class="w-[45%]">
+                            <label for="diplomaName" class="block text-sm font-medium text-gray-700 mb-1">
+                                Diploma Name
+                            </label>
+                            <input type="text" id="diplomaName" name="diplomaName" placeholder="Enter Diploma Here"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            @error('diplomaName')
+                                <p class="text-red-500 text-[14px] font-semibold">{{ $message }}</p>
+                            @enderror
+                        </div>
 
-            <!-- Session -->
-            <div class="w-[45%]">
-                <label for="sessionID" class="block text-sm font-medium text-gray-700 mb-1">
-                    Session
-                </label>
-                
-                <select id="sessionID" name="sessionID"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    <option value="">Select Session</option>
-                    @foreach ($sessions as $session)
-                        <option value="{{ $session->id }}">{{ $session->session }}</option>
-                    @endforeach
-                </select>
-                @error('sessionID')
-                    <p class="text-red-500 text-[14px] font-semibold">{{ $message }}</p>
-                @enderror
-            </div>
-        </div>
-    </div>
+                        <!-- Session -->
+                        <div class="w-[45%]">
+                            <label for="sessionID" class="block text-sm font-medium text-gray-700 mb-1">
+                                Session
+                            </label>
 
-    <!-- Submit Button Centered Below -->
-    <div class="flex justify-center mt-8">
-        <button type="submit"
-            class="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
-            Save
-        </button>
-    </div>
-</form>
+                            <select id="sessionID" name="sessionID"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">Select Session</option>
+                                @foreach ($sessions as $session)
+                                    <option value="{{ $session->id }}">{{ $session->session }}</option>
+                                @endforeach
+                            </select>
+                            @error('sessionID')
+                                <p class="text-red-500 text-[14px] font-semibold">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button Centered Below -->
+                <div class="flex justify-center mt-8">
+                    <button type="submit"
+                        class="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                        Save
+                    </button>
+                </div>
+            </form>
 
         </div>
 
@@ -83,7 +83,7 @@
 
             </div>
 
-             <div class="border border-gray-200 rounded-lg overflow-hidden">
+            <div class="border border-gray-200 rounded-lg overflow-hidden">
                 <table class="min-w-full divide-y divide-gray-200 diplomas-table">
                     <thead class="bg-gray-200">
                         <tr>
@@ -99,7 +99,7 @@
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         <!-- Empty state for now -->
-                        @foreach ($diplomas as $diploma)
+                        {{-- @foreach ($diplomas as $diploma)
                             <tr>
                                 <td class="px-6 py-3 text-left text-[14px] font-medium text-gray-600  tracking-wider">
                                     {{ $diploma->id }}</td>
@@ -120,7 +120,7 @@
                                     </a>
                                 </td>
                             </tr>
-                        @endforeach
+                        @endforeach --}}
                     </tbody>
                 </table>
             </div>
@@ -129,66 +129,84 @@
     </div>
 
     <script>
-        $(document).ready(function () {
-        var table = $('.diplomas-table').DataTable({
-            dom:  
-            '<"mid-toolbar flex gap-4 items-center mb-4 mr-3"lf>' + 
-            't' + 
-            '<"bottom-toolbar flex items-center justify-between mt-4"<"flex-1"></><"flex justify-center"><"flex-1 text-right text-sm text-gray-500">>',
-            pageLength: 100,
-            stateSave: true,
-            language: {
-                search: "_INPUT_",
-                searchPlaceholder: "Search here...",
-                lengthMenu: "_MENU_"
-            },
-            initComplete: function () {
-                $('.dt-input')
-                    .addClass('border border-gray-300 rounded-lg text-[14px] px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm')
-                    .css({
-                        'width': '200px',
-                        'padding': '6px 10px',}); 
-                $('.dt-length select')
-                    .addClass('border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm')
-                    .css({
-                        'width': '80px',
-                        'padding': '6px 10px'
-                    });
-                $('.dt-length').addClass('px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm');
-            },
-            columnDefs: [
-                {
-                    targets: [2], 
-                    orderable: false,
-                    searchable: false
+        $(document).ready(function() {
+            var table = $('.diplomas-table').DataTable({
+                dom: '<"top-toolbar flex justify-start items-center mb-4">' +
+                    '<"mid-toolbar flex gap-4 items-center mb-4"lf>' +
+                    't' +
+                    '<"bottom-toolbar flex items-center justify-between mt-4 mb-4"<"flex-1"></><"flex justify-center"p><"flex-1 text-right mr-3 text-sm text-gray-500"i>>',
+                stateSave: true,
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('diploma.create') }}"
                 },
-                {
-                    targets:[1],
-                    searchable:true,
-                }
-            ],
-            
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Search here...",
+                    lengthMenu: "_MENU_"
+                },
+                initComplete: function() {
+                    $('.dt-input')
+                        .addClass(
+                            'border border-gray-300 rounded-lg text-[14px] px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm'
+                            )
+                        .css({
+                            'width': '200px',
+                            'padding': '6px 10px',
+                        });
+                    $('.dt-length select')
+                        .addClass(
+                            'border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm'
+                            )
+                        .css({
+                            'width': '80px',
+                            'padding': '6px 10px'
+                        });
+                    $('.dt-length').addClass(
+                        'px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm');
+                },
+                columns: [{
+                        data: 'id',
+                        name: 'id',
+                        className: 'dt-body-center dt-head-center'
+                    },
+                    {
+                        data: 'DiplomaName',
+                        name: 'DiplomaName'
+                    },
+                    {
+                        data: 'session',
+                        name: 'session'
+                    },
+                    {
+                        data: 'actions',
+                        name: 'actions',
+                        orderable: false,
+                        searchable: false,
+                        className: 'text-center dt-head-center'
+                    }
+                ]
 
-        })
-        // Save last searched word in sessionStorage
-        $('.dt-input').on('keyup change', function () {
-            sessionStorage.setItem('datatableSearch', $(this).val());
+
+            })
+            // Save last searched word in sessionStorage
+            $('.dt-input').on('keyup change', function() {
+                sessionStorage.setItem('datatableSearch', $(this).val());
+            });
+
+            // Restore old searched word (if any)
+            var oldSearch = sessionStorage.getItem('datatableSearch');
+            if (oldSearch) {
+                table.search(oldSearch).draw();
+                $('.dt-input').val(oldSearch);
+            }
+
+            // Clear sessionStorage when leaving/reloading the page
+            window.addEventListener('beforeunload', function() {
+                sessionStorage.clear();
+            });
         });
-
-        // Restore old searched word (if any)
-        var oldSearch = sessionStorage.getItem('datatableSearch');
-        if (oldSearch) {
-            table.search(oldSearch).draw();
-            $('.dt-input').val(oldSearch);
-        }
-
-        // Clear sessionStorage when leaving/reloading the page
-        window.addEventListener('beforeunload', function () {
-            sessionStorage.clear();
-        });
-    });
     </script>
 
 @endsection
-
-
