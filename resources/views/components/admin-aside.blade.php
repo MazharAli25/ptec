@@ -17,6 +17,12 @@
             <i class="fa-solid fa-home text-[#666a85] text-[18px]"></i>
             <span class="font-medium text-[#666a85]">Dashboard</span>
         </a>
+        <!-- Home -->
+        <a href="{{ route('welcome') }}"
+            class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-green-100 transition text-black no-underline">
+            <i class="fa-solid fa-home text-[#666a85] text-[18px]"></i>
+            <span class="font-medium text-[#666a85]">Home</span>
+        </a>
 
         <!-- Student -->
         <div x-data="{ open: {{ request()->routeIs('student.create') || request()->routeIs('admin.studentList') || request()->routeIs('admin.registeredStudentList')  ? 'true' : 'false' }} }" class="relative">
