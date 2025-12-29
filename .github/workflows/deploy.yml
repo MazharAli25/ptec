@@ -1,0 +1,28 @@
+name: FTP Deploy
+
+on:
+  push:
+    branches:
+      - main # or your branch name
+
+jobs:
+  ftp-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: FTP Deploy
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ftp.project2.arifmashalfoundation.org
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./ # Adjust as necessary
+          # server-dir: /home/u358729433/domains/aptechmedia.com/public_html/hrmis/
+          state-name: .ftp-deploy-sync-state.json
+          exclude: |
+            */vendor/*
+            */node_modules/*
+            .env
+            */.git/*
