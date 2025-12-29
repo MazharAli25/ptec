@@ -17,7 +17,7 @@ jobs:
         with:
           server: ftp.project2.arifmashalfoundation.org
           username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
+          password: ${{ secrets.FTP_PASSWORD }} 
           local-dir: ./ # Adjust as necessary
           # server-dir: /home/u358729433/domains/aptechmedia.com/public_html/hrmis/
           state-name: .ftp-deploy-sync-state.json
