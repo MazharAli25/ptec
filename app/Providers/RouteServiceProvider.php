@@ -15,6 +15,14 @@ class RouteServiceProvider extends ServiceProvider
             return Crypt::decrypt($value);
         });
 
+        Route::bind('quiz', function ($value) {
+            return Crypt::decrypt($value);
+        });
+
+        Route::bind('question', function ($value) {
+            return Crypt::decrypt($value);
+        });
+
         Route::bind('studentDiploma', function ($value) {
             return Crypt::decrypt($value);
         });

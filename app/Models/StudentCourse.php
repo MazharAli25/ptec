@@ -19,7 +19,7 @@ class StudentCourse extends Model
     }
 
     public function diplomawiseCourse(){
-        return $this->belongsTo(DiplomawiseCourses::class, 'DiplomawiseCourseID');
+        return $this->belongsTo(DiplomawiseCourses::class, 'DiplomawiseCourseID', 'ID');
     }
 
     public function semester(){

@@ -97,8 +97,80 @@
             
         </div>
 
-        {{-- Add Result --}}
+        {{-- Accounts --}}
+        <div x-data="{ open: {{request()->routeIs('student.changePassword') || request()->routeIs('student.accountsList') ? 'true' : 'false' }} }" class="relative">
 
+            <button @click="open = !open"
+                class="flex items-center justify-between w-full px-3 py-2 rounded-lg hover:bg-green-100 transition">
+                <div class="flex items-center gap-3">
+                    <svg class="w-5 h-5 text-[#666a85]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 14l9-5-9-5-9 5 9 5z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 14l6.16-3.422A12.083 12.083 0 0112 20.944a12.083 12.083 0 01-6.16-10.366L12 14z" />
+                    </svg>
+                    <span class="font-medium text-[#666a85]">Accounts</span>
+                </div>
+                <svg :class="{ 'rotate-180': open }" class="w-4 h-4 ml-1 text-gray-600 transition-transform"
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+
+            </button>
+
+            <div x-show="open" x-transition class="mt-1 space-y-1overflow-hidden">
+                <a href="{{ route('student.changePassword') }}"
+                    class="flex items-center w-full gap-3 text-[15px] px-4 py-2 rounded-none text-[#666a85] font-medium hover:bg-green-100 hover:text-green-700 transition no-underline
+                    {{ request()->routeIs('student.changePassword') ? 'bg-green-100 text-green-700 font-semibold' : '' }}">
+                    Change Password
+                </a>
+                <a href="{{ route('student.accountsList') }}"
+                    class="flex items-center w-full gap-3 text-[15px] px-4 py-2 rounded-none text-[#666a85] font-medium hover:bg-green-100 hover:text-green-700 transition no-underline
+                    {{ request()->routeIs('student.accountsList') ? 'bg-green-100 text-green-700 font-semibold' : '' }}">
+                    Students Accounts List
+                </a>
+            </div>
+        </div>
+
+        {{-- Quizzes --}}
+        <div x-data="{ open: {{request()->routeIs('admin.quiz.list') || request()->routeIs('admin.quiz.view') || request()->routeIs('admin.quiz.assign') ? 'true' : 'false' }} }" class="relative">
+
+            <button @click="open = !open"
+                class="flex items-center justify-between w-full px-3 py-2 rounded-lg hover:bg-green-100 transition">
+                <div class="flex items-center gap-3">
+                    <svg class="w-5 h-5 text-[#666a85]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 14l9-5-9-5-9 5 9 5z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 14l6.16-3.422A12.083 12.083 0 0112 20.944a12.083 12.083 0 01-6.16-10.366L12 14z" />
+                    </svg>
+                    <span class="font-medium text-[#666a85]">Quizzes</span>
+                </div>
+                <svg :class="{ 'rotate-180': open }" class="w-4 h-4 ml-1 text-gray-600 transition-transform"
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+
+            </button>
+
+            <div x-show="open" x-transition class="mt-1 space-y-1overflow-hidden">
+                <a href="{{ route('admin.quiz.list') }}"
+                    class="flex items-center w-full gap-3 text-[15px] px-4 py-2 rounded-none text-[#666a85] font-medium hover:bg-green-100 hover:text-green-700 transition no-underline
+                    {{ request()->routeIs('admin.quiz.list') || request()->routeIs('admin.quiz.view') ? 'bg-green-100 text-green-700 font-semibold' : '' }}">
+                    Quizzes List
+                </a>
+            </div>
+
+            <div x-show="open" x-transition class="mt-1 space-y-1overflow-hidden">
+                <a href="{{ route('admin.quiz.assign') }}"
+                    class="flex items-center w-full gap-3 text-[15px] px-4 py-2 rounded-none text-[#666a85] font-medium hover:bg-green-100 hover:text-green-700 transition no-underline
+                    {{ request()->routeIs('admin.quiz.assign') ? 'bg-green-100 text-green-700 font-semibold' : '' }}">
+                    Assign Quiz
+                </a>
+            </div>
+        </div>
+
+        {{-- Accounts --}}
         <div x-data="{ open: {{ request()->routeIs('result.*') ? 'true' : 'false' }} }" class="relative">
             <button @click="open = !open"
                 class="flex items-center justify-between w-full px-3 py-2 rounded-lg hover:bg-green-100 transition">

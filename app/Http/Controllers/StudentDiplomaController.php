@@ -40,7 +40,7 @@ class StudentDiplomaController extends Controller
             $student = Student::where('id', $request->id)
                 ->where('instituteId', $adminInstituteId)
                 ->first();
-            if ($student) {
+            if ($student) { 
                 $student = collect([$student]);
             } else {
                 return back()->with('error', 'No student with this ID exists in your institute.');

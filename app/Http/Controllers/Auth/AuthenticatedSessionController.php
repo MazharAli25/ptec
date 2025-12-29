@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use App\Models\Admin;
+use App\Models\Student;
 use App\Models\SuperAdmin;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Cookie;
@@ -47,6 +48,15 @@ class AuthenticatedSessionController extends Controller
             Auth::guard('admin')->login($admin);
             $request->session()->regenerate();
             return redirect()->route('admin.dashboard');
+        }
+
+        // Student LOGIN
+        $student = Student::where('email', $request->email)->first();
+        // dd($student);
+        if ($student && Hash::check($request->password, $student->password)) {
+            Auth::guard('student')->login($student);
+            $request->session()->regenerate();
+            return redirect()->route('student.dashboard');
         }
 
         return back()->withErrors(['email' => 'Invalid email or password.']);

@@ -131,7 +131,7 @@
                                     <td class="py-2 px-4">
                                         {{ $sc->diplomawiseCourse->course->courseName }} -
                                         {{ $sc->diplomawiseCourse->session->session }}
-                                    </td>
+                                    </td>   
                                 </tr>
                             @endforeach
                         </tbody>

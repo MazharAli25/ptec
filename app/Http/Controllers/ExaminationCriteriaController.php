@@ -120,7 +120,7 @@ class ExaminationCriteriaController extends Controller
                 ->exists();
 
             if ($exists) {
-                $course = \App\Models\DiplomawiseCourses::with('course')->find($courseId);
+                $course = DiplomawiseCourses::with('course')->find($courseId);
                 $skippedCourses[] = $course?->course?->courseName ?? 'Unknown Course';
 
                 continue;

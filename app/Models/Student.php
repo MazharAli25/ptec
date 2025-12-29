@@ -3,14 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Certificate;
-use App\Models\mysession;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Student extends Model
+// Change from extending Model to extending Authenticatable
+class Student extends Authenticatable
 {
     protected $table = 'students';
 
-    protected $fillable=[
+    protected $fillable = [
         'image',
         'instituteId',
         'certificateInstituteId',
@@ -20,31 +20,37 @@ class Student extends Model
         'cnic',
         'dob',
         'email',
+        'password',
         'phone',
         // 'sessionId',
         'address',
         'joiningDate',
         'from',
-        'to'
+        'to',
     ];
 
-    public function institute() {
+    public function institute()
+    {
         return $this->belongsTo(Institute::class, 'instituteId', 'id');
     }
 
-    public function session() {
+    public function session()
+    {
         return $this->belongsTo(mysession::class, 'sessionId', 'id');
     }
 
-    public function certificates() {
+    public function certificates()
+    {
         return $this->hasMany(Certificate::class, 'student_id', 'id');
     }
 
-     public function course() {
+    public function course()
+    {
         return $this->belongsTo(Course::class, 'courseId', 'id');
     }
 
-    public function certificateRequests() {
+    public function certificateRequests()
+    {
         return $this->hasMany(Certificate::class);
     }
 
@@ -58,15 +64,23 @@ class Student extends Model
         return $this->hasMany(StudentDiploma::class, 'student_id', 'id');
     }
 
-    public function result(){
+    public function result()
+    {
         return $this->hasMany(Result::class, 'StudentID', 'id');
     }
 
-    public function studentCard(){
+    public function studentCard()
+    {
         return $this->hasMany(StudentCard::class);
     }
 
-    public function certificateInstitute(){
+    public function certificateInstitute()
+    {
         return $this->belongsTo(Institute::class, 'certificateInstituteId', 'id');
+    }
+
+    public function studentQuizzes()
+    {
+        return $this->hasMany(StudentQuiz::class, 'studentId', 'id');
     }
 }

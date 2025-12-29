@@ -237,14 +237,38 @@
                         </ul>
                     </li>
 
+                    {{-- Quiz --}}
+                    <button type="button" onclick="toggleDropdown('quiz-dropdown')"
+                        class="w-full flex items-center justify-between p-2  hover:bg-[#2d2e2d] rounded focus:bg-[#2d2e2d]">
+                        Quiz
+                        <i id="quiz-dropdown-icon" class="fa-solid fa-angle-up transition-transform"></i>
+                    </button>
+                    <ul id="quiz-dropdown"
+                        class="ml-4 space-y-1 {{ request()->routeIs('quiz.create') || request()->routeIs('question.create') || request()->routeIs('question.index') ? '' : 'hidden' }}">
+                        <li
+                            class="p-2 hover:bg-[#2d2e2d] rounded text-sm
+                              {{ request()->routeIs('quiz.create') ? 'bg-[#2d2e2d]' : 'hover:bg-[#2d2e2d]' }}">
+                            <a href="{{ route('quiz.create') }}" class="block focus:bg-[#2d2e2d]">Add Quiz</a>
+                        </li>
+                        <li
+                            class="p-2 hover:bg-[#2d2e2d] rounded text-sm
+                              {{ request()->routeIs('question.create') ? 'bg-[#2d2e2d]' : 'hover:bg-[#2d2e2d]' }}">
+                            <a href="{{ route('question.create') }}" class="block focus:bg-[#2d2e2d]">Add Questions</a>
+                        </li>
+                        <li
+                            class="p-2 hover:bg-[#2d2e2d] rounded text-sm
+                              {{ request()->routeIs('question.index') ? 'bg-[#2d2e2d]' : 'hover:bg-[#2d2e2d]' }}">
+                            <a href="{{ route('question.index') }}" class="block focus:bg-[#2d2e2d]">Questions List</a>
+                        </li>
+                    </ul>
                     {{-- STUDENT --}}
                     <button type="button" onclick="toggleDropdown('student-dropdown')"
                         class="w-full flex items-center justify-between p-2 hover:bg-[#2d2e2d] rounded focus:bg-[#2d2e2d]">
                         Student
-                        <i id="student-dropdown-icon" class="fa-solid fa-angle-up transition-transform"></i>
+                        <i id="student-dropdown-icon" class="fa-solid fa-angle-down transition-transform"></i>
                     </button>
                     <ul id="student-dropdown"
-                        class="ml-4 mt-1 space-y-1 {{ request()->routeIs('student.index')  ? '' : 'hidden' }}">
+                        class="ml-4 mt-1 space-y-1 {{ request()->routeIs('student.index') ? '' : 'hidden' }}">
                         <li
                             class="p-2 hover:bg-[#2d2e2d] rounded text-sm
                               {{ request()->routeIs('student.index') ? 'bg-[#2d2e2d]' : 'hover:bg-[#2d2e2d]' }}">
@@ -348,7 +372,18 @@
     </aside>
     {{-- </div> --}}
 
-
+    <x-success />
+    <x-err />
+    @if ($errors->any())
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 ml-[20vw]">
+            <strong>Whoops! Something went wrong:</strong>
+            <ul class="mt-2 list-disc list-inside text-sm text-red-600">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
     @yield('main-content')
 
     <style>

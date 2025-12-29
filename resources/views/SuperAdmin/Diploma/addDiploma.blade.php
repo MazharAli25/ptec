@@ -26,10 +26,10 @@
 
         <!-- Form Section -->
         <div class="bg-white rounded-lg form-shadow p-6 mb-8 flex justify-center">
-            <form class="flex flex-col w-[70%]" method="POST" action="{{ route('diploma.store') }}">
+            <form class="flex flex-col w-[100%]" method="POST" action="{{ route('diploma.store') }}">
                 @csrf
                 <div class="space-y-4">
-                    <h2 class="text-lg font-semibold text-gray-700 border-b pb-2">Subject Information</h2>
+                    <h2 class="text-lg font-semibold text-gray-700 border-b pb-2">Diploma Information</h2>
 
                     <!-- Inputs side by side -->
                     <div class="flex flex-wrap justify-center gap-6 mt-4">

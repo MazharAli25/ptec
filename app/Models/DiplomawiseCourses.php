@@ -30,7 +30,7 @@ class DiplomawiseCourses extends Model
     
     public function studentCourses()
     {
-        return $this->hasMany(StudentCourse::class, 'DiplomawiseCourseID');
+        return $this->hasMany(StudentCourse::class, 'DiplomawiseCourseID', 'ID');
     }
     public function session()
     {

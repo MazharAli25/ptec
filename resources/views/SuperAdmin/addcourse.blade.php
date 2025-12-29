@@ -26,12 +26,12 @@
 
         <!-- Form Section -->
         <div class="bg-white rounded-lg form-shadow p-6 mb-8 flex justify-center">
-            <form class="flex flex-col w-[70%]" method="POST" action="{{ route('course.store') }}">
+            <form class="flex flex-col w-[100%]" method="POST" action="{{ route('course.store') }}">
                 @csrf
                 <div class="space-y-4">
                     <h2 class="text-lg font-semibold text-gray-700 border-b pb-2">Subject Information</h2>
                     <div class="flex justify-evenly">
-                        <div>
+                        <div class="w-[70%]">
                             <label for="courseName" class="block text-sm font-medium text-gray-700 mb-1">
                                 Subject Name
                             </label>

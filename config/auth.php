@@ -36,21 +36,24 @@ return [
     */
 
     'guards' => [
-    'web' => [
-        'driver' => 'session',
-        'provider' => 'users',
-    ],
-    'super_admin' => [
-        'driver' => 'session',
-        'provider' => 'super_admin',
-    ],
-    'admin' => [
-        'driver' => 'session',
-        'provider' => 'admin',
-    ],
-],
+        'web' => [
+            'driver' => 'session',
+            'provider' => 'users',
+        ],
+        'super_admin' => [
+            'driver' => 'session',
+            'provider' => 'super_admin',
+        ],
+        'admin' => [
+            'driver' => 'session',
+            'provider' => 'admin',
+        ],
+        'student' => [
+            'driver' => 'session',
+            'provider' => 'student',
+        ],
 
-
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -70,21 +73,23 @@ return [
     */
 
     'providers' => [
-    'users' => [
-        'driver' => 'eloquent',
-        'model' => App\Models\User::class,
+        'users' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\User::class,
         ],
-    'super_admin' => [
-        'driver' => 'eloquent',
-        'model' => App\Models\SuperAdmin::class,
+        'super_admin' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\SuperAdmin::class,
+        ],
+        'admin' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Admin::class,
+        ],
+        'student' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Student::class,
+        ],
     ],
-    'admin' => [
-        'driver' => 'eloquent',
-        'model' => App\Models\Admin::class,
-    ],
-],
-
-
 
     /*
     |--------------------------------------------------------------------------

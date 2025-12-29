@@ -45,7 +45,7 @@
 
 <body>
 
-    <body>
+    <body class="@yield('body-classes')">
         <!-- SIDEBAR -->
         <x-admin-aside />
 

@@ -6,8 +6,10 @@ use App\Models\Course;
 use App\Models\Institute;
 use App\Models\mysession;
 use App\Models\Student;
+use App\Models\StudentCourse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -276,5 +278,109 @@ class StudentController extends Controller
         // dd($students);
 
         return view('Admin.Student.studentList');
+    }
+
+    // ######## Students Accounts Management ########
+
+
+
+    public function changeStudentPassword(Request $request)
+    {
+        $adminInstituteId = Auth::guard('admin')->user()->institute_id;
+        $student = collect();
+
+        if ($request->filled('id')) {
+            $student = Student::where('id', $request->id)
+                ->where('instituteId', $adminInstituteId)
+                ->first();
+            if ($student) {
+                $student = collect([$student]);
+            } else {
+                return back()->with('error', 'No student with this ID exists in your institute.');
+            }
+        }
+
+        return view('Admin.accounts.students.changePassword', compact('student'));
+    }
+
+    public function updateStudentPassword(Request $request, Student $student)
+    {
+        $validated = $request->validate([
+            'password' => 'nullable|string|confirmed',
+        ]);
+        // Only update password if provided
+        if (!empty($validated['password'])) {
+            $student->update([
+                'password' => Hash::make($validated['password']),
+            ]);
+        }
+
+        return back()->with('success', 'Password updated successfully');
+    }
+
+    public function studentAccountsList(Request $request)
+    {
+        $adminId = Auth::guard('admin')->user()->institute_id;
+        if ($request->ajax()) {
+            $students = Student::with('studentDiplomas')->where('password', '!=', null)->where('instituteId', $adminId);
+
+            return DataTables::eloquent($students)
+                ->addColumn('actions', function ($row) {
+                    return '
+                    <div class="flex items-center justify-center gap-1">
+                    <a href="'.route('student.editStudentAccount', encrypt($row->id)).'"
+                        class="inline-flex items-center px-2 py-1.5 bg-blue-500 text-white text-sm font-medium rounded hover:bg-blue-600 transition-colors">
+                        <i class="fas fa-edit text-base"></i>
+                    </a>
+
+                    <!-- View Link -->
+                    <a href="#"
+                        class="inline-flex items-center px-2 py-1.5 bg-green-500 text-white text-sm font-medium rounded hover:bg-green-600 transition-colors">
+                        <i class="fas fa-eye text-base"></i>
+                    </a>
+
+                    <!-- Delete Link -->
+                    <a href="#"
+                        class="inline-flex items-center px-2 py-1.5 bg-red-500 text-white text-sm font-medium rounded hover:bg-red-600 transition-colors">
+                        <i class="fas fa-trash text-base"></i>
+                    </a>
+                    </div>
+                ';
+                })
+                ->rawColumns(['actions'])
+                ->make(true);
+        }
+
+        return view('admin.accounts.students.accountsList');
+    }
+
+    public function editStudentAccount(Student $student){
+        $student= $student;
+        return view('admin.accounts.students.updateAccount', compact('student'));
+    }
+
+    public function updateStudentAccount(Request $request, Student $student){
+
+        $validated = $request->validate([
+            'password' => 'nullable|string|confirmed',
+        ]);
+        // Only update password if provided
+        if (!empty($validated['password'])) {
+            $student->update([
+                'password' => Hash::make($validated['password']),
+            ]);
+        }
+
+        return back()->with('success', 'Password updated successfully');
+    }
+
+    public function studentDashboard(){
+        return view('Student.home');
+    }
+
+    public function studentCourses(Request $request){
+        $studentId = Auth::guard('student')->user()->id;
+        $courses =  StudentCourse::with(['studentDiploma', 'diplomawiseCourse.course'])->get();
+        return view('Student.myCourses', compact('courses'));
     }
 }
