@@ -27,9 +27,13 @@ use App\Models\Certificate;
 use App\Models\Quiz;
 use Illuminate\Support\Facades\Route;
 
+
 Route::get('/', [SuperAdminController::class, 'welcome'])->name('welcome');
 Route::get('/course/{course}', [CourseController::class, 'userViewCourse'])->name('userViewCourse');
 Route::get('/online-tests', [QuizController::class, 'userViewQuizzes'])->name('userViewQuiz');
+// Route::get('/', function () {
+//     return view('welcome');
+// })->name('welcome');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
