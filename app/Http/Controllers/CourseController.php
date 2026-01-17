@@ -13,25 +13,38 @@ class CourseController extends Controller
      */
     public function index(Request $request)
     {
-        if($request->ajax()){
-            $courses= Course::query();
-            return DataTables::eloquent($courses)
-            ->addColumn('actions', function ($course){
-                return'
-                    <a href="#"
-                        class="inline-flex items-center px-2 py-1.5 bg-blue-500 text-white text-sm font-medium rounded hover:bg-blue-600 transition-colors">
-                        <i class="fas fa-edit text-base"></i>
-                    </a>
+        if ($request->ajax()) {
+            $courses = Course::query();
 
-                    <a href="#"
-                        class="inline-flex items-center px-2 py-1.5 bg-red-500 text-white text-sm font-medium rounded hover:bg-red-600 transition-colors">
-                        <i class="fas fa-trash text-base"></i>
-                    </a>
-                ';
-            })
-            ->rawColumns(['actions'])
-            ->make(true);
+            return DataTables::eloquent($courses)
+                ->addColumn('level', function ($course) {
+                    return $course->courseLevel ?? '-';
+                })
+                ->addColumn('fees', function ($course) {
+                    return $course->courseFees ?? '-';
+                })
+                ->addColumn('thumbnail', function ($course) {
+                    if ($course->courseThumbnail) {
+                        return '<img src="'.asset('storage/photos/'.$course->courseThumbnail).'" alt="Thumbnail" class="w-16 h-16 object-cover rounded">';
+                    } else {
+                        return 'No Image';
+                    }
+                })
+                ->addColumn('actions', function ($course) {
+                    $edit = '<a href="'.route('course.update', encrypt($course->id)).'" class="bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700"><i class="fas fa-edit"></i></a>';
+                    $delete = '<form action="'.route('course.destroy', encrypt($course->id)).'" method="POST" class="inline-block ml-2" onsubmit="return confirm(\'Delete this course?\')">'
+                            .csrf_field()
+                            .method_field('DELETE')
+                            .'<button type="submit" class="bg-red-600 text-white px-3 py-2 rounded hover:bg-red-700"><i class="fas fa-trash"></i></button>'
+                            .'</form>';
+
+                    return $edit.$delete;
+
+                })
+                ->rawColumns(['actions', 'thumbnail'])
+                ->make(true);
         }
+
         return view('SuperAdmin.viewCourses', compact('courses'));
     }
 
@@ -40,7 +53,8 @@ class CourseController extends Controller
      */
     public function create()
     {
-        $courses= Course::get();
+        $courses = Course::get();
+
         return view('SuperAdmin.addcourse', compact('courses'));
     }
 
@@ -50,13 +64,35 @@ class CourseController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'courseName'=> ['required', 'string', 'unique:courses,courseName'],
+            'courseName' => ['required', 'string', 'unique:courses,courseName'],
+            'description' => ['nullable', 'string'],
+            'courseLevel' => ['nullable', 'string'],
+            'courseFees' => ['nullable', 'numeric'],
+            'courseThumbnail' => ['nullable', 'image', 'max:2048'],
+            'currency' => ['nullable'],
         ]);
 
+        if ($request->hasFile('courseThumbnail')) {
+            $file = $request->file('courseThumbnail');
+            $filename = time().'.'.$file->getClientOriginalName();
+            $file->move(public_path('storage/photos'), $filename);
+            $validated['courseThumbnail'] = $filename;
+        }
+
+        if (! empty($validated['courseFees'])) {
+            $price = $validated['courseFees'].' '.$validated['currency'];
+        } else {
+            $price = null;
+        }
+
         Course::create([
-            'courseName'=> $validated['courseName'],
+            'courseName' => $validated['courseName'],
+            'description' => $validated['description'],
+            'courseLevel' => $validated['courseLevel'],
+            'courseFees' => $price,
+            'courseThumbnail' => $filename ?? null,
         ]);
-        
+
         return redirect()->route('course.create')->with('success', 'subject added successfully');
     }
 
@@ -73,7 +109,8 @@ class CourseController extends Controller
      */
     public function edit(Course $course)
     {
-        $course= $course;
+        $course = $course;
+
         return view('SuperAdmin.editCourses', compact('course'));
     }
 
@@ -83,13 +120,13 @@ class CourseController extends Controller
     public function update(Request $request, Course $course)
     {
         $validated = $request->validate([
-            'edit_courseName'=> ['required', 'string'],
+            'edit_courseName' => ['required', 'string'],
         ]);
 
         $course->update([
-            'courseName'=> $validated['edit_courseName'],
+            'courseName' => $validated['edit_courseName'],
         ]);
-        
+
         return redirect()->route('course.index')->with('success', 'course updated successfully');
     }
 
@@ -98,6 +135,12 @@ class CourseController extends Controller
      */
     public function destroy(Course $course)
     {
-        //
+        $course->delete();
+        return redirect()->back()->with('success', 'Course Deleted Successfully');
+    }
+
+    public function userViewCourse(Course $course){
+        $course= $course;
+        return view('User.Courses.viewCourse', compact(['course']));
     }
 }

@@ -11,6 +11,15 @@ class RouteServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
+
+        Route::bind('course', function ($value) {
+            return Crypt::decrypt($value);
+        });
+
+        Route::bind('carousel', function ($value) {
+            return Crypt::decrypt($value);
+        });
+
         Route::bind('student', function ($value) {
             return Crypt::decrypt($value);
         });

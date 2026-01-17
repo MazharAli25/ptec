@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin;
+use App\Models\CarouselImage;
 use App\Models\Certificate;
+use App\Models\Course;
 use App\Models\Result;
 use App\Models\StudentCard;
 use App\Models\SuperAdmin;
@@ -87,7 +89,7 @@ class SuperAdminController extends Controller
             $admins = Admin::query();
 
             return DataTables::eloquent($admins)
-                ->addColumn('institute_name', function ($row) {
+                ->addColumn('instituteName', function ($row) {
                     return $row->institute->institute_name ?? 'N/A';
                 })
                 ->addColumn('actions', function ($row) {
@@ -114,17 +116,17 @@ class SuperAdminController extends Controller
                     </form>
                 ';
                 })
-                ->addColumn('status', function ($row){
-                    $status= strtolower($row->status);
-                    $class = match ($status){
-                        'active'=> 'bg-green-500 hover:bg-green-600',
-                        'inactive'=> 'bg-red-500 hover:bg-red-600',
-                    };
+                ->addColumn('status', function ($row) {
+                    $status = $row->status;
+                    $encryptedId = $row->id;
+
                     return '
-                        <span
-                            class="inline-flex items-center px-2 py-1.5 text-white text-sm font-medium rounded transition-colors '.$class.'">
-                            '.ucfirst($status).'
-                        </span>
+                        <select class="status-dropdown px-2 border-2 border-gray-300 py-1 text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none cursor-pointer transition-all duration-200" 
+                                data-id="'.$encryptedId.'" 
+                                data-current="'.$status.'">
+                            <option value="active" '.($status === 'active' ? 'selected' : '').'>Active</option>
+                            <option value="inactive" '.($status === 'inactive' ? 'selected' : '').'>Inactive</option>
+                        </select>
                     ';
                 })
                 ->rawColumns(['actions', 'institute_name', 'status'])
@@ -133,47 +135,6 @@ class SuperAdminController extends Controller
 
         return view('SuperAdmin.viewAdmins', compact('admins'));
     }
-
-    // public function printcer(){
-    //     return view('SuperAdmin.printCertificate');
-    // }
-
-    // public function studentsResults(Request $request)
-    // {
-    //     if ($request->ajax()) {
-    //         $results = Result::with(['student.institute', 'ExaminationCriteria.diplomawiseCourse.diploma', 'semester', 'session'])
-    //             ->get()
-    //             ->groupBy(function ($item) {
-    //                 return $item->StudentID.'-'.
-    //                     $item->ExaminationCriteria->diplomawiseCourse->diploma->id.'-'.
-    //                     $item->sessionID.'-'.
-    //                     $item->semesterID;
-    //             });
-
-    //         $data = [];
-    //         foreach ($results as $group) {
-    //             $first = $group->first();
-    //             $encryptedResultId = encrypt($first->id);
-    //             $data[] = [
-    //                 'id' => $first->student->id,
-    //                 'name' => $first->student->name,
-    //                 'institute_name' => $first->student->institute->institute_name ?? 'N/A',
-    //                 'diploma_name' => $first->ExaminationCriteria->diplomawiseCourse->diploma->DiplomaName,
-    //                 'semester' => $first->semester->semesterName,
-    //                 'session' => $first->session->session,
-    //                 'actions' => '<a href="'.route('result.show', $encryptedResultId).'" class="inline-flex items-center px-2 py-1.5 bg-green-500 text-white rounded hover:bg-green-600"><i class="fas fa-eye"></i></a>',
-    //             ];
-    //         }
-
-    //         return DataTables::of($data)
-    //             ->addIndexColumn()
-    //             ->rawColumns(['actions'])
-    //             ->addIndexColumn()
-    //             ->make(true);
-    //     }
-
-    //     return view('SuperAdmin.Student.studentsResults');
-    // }
 
     public function studentsResults(Request $request)
     {
@@ -491,7 +452,7 @@ class SuperAdminController extends Controller
                         $q->where('DiplomaName', 'like', "%{$keyword}%");
                     });
                 })
-                ->addColumn('institute_name', function($card){
+                ->addColumn('institute_name', function ($card) {
                     return $card->student->certificateInstitute->institute_name;
                 })
                 ->filterColumn('institute_name', function ($query, $keyword) {
@@ -561,5 +522,59 @@ class SuperAdminController extends Controller
         }
 
         return view('SuperAdmin.Student.cardsRequests');
+    }
+
+    public function welcome()
+    {
+        $slider = CarouselImage::where('status', 'active')->first();
+        $courses = Course::whereNotNull('courseThumbnail')->get();
+
+        return view('welcome', compact(['slider', 'courses']));
+    }
+
+    public function updateStatus(Request $request)
+    {
+        try {
+
+            $request->validate([
+                'admin_id' => 'required',
+                'status' => 'required|in:active,inactive',
+            ]);
+
+            $adminId = $request->admin_id;
+
+            $admin = Admin::findOrFail($adminId);
+            $admin->status = $request->status;
+            $admin->save();
+
+            // \Log::info('Status updated successfully for admin: '.$adminId);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Status updated successfully',
+                'status' => $request->status,
+            ]);
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            // \Log::error('Decryption failed: '.$e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid admin ID',
+            ], 400);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            // \Log::error('Admin not found: '.$e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Admin not found',
+            ], 404);
+        } catch (\Exception $e) {
+            // \Log::error('Status update error: '.$e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update status: '.$e->getMessage(),
+            ], 500);
+        }
     }
 }

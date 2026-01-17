@@ -11,6 +11,10 @@ class Course extends Model
     protected $fillable=[
         'courseName',
         'edit_courseName',
+        'courseLevel',
+        'description',
+        'courseFees',
+        'courseThumbnail'
     ];
 
     public function diplomawiseCourses()

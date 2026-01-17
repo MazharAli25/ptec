@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\CarouselImageController;
 use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\DiplomaController;
@@ -21,13 +22,14 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\StudentDiplomaController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\StudentQuizController;
+use App\Models\CarouselImage;
 use App\Models\Certificate;
 use App\Models\Quiz;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [SuperAdminController::class, 'welcome'])->name('welcome');
+Route::get('/course/{course}', [CourseController::class, 'userViewCourse'])->name('userViewCourse');
+Route::get('/online-tests', [QuizController::class, 'userViewQuizzes'])->name('userViewQuiz');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -58,6 +60,8 @@ Route::prefix('super-admin')
         // Route::get('/dashboard', [SuperAdminController::class, 'index'])->name('super_admin.dashboard');
         Route::resource('/institute', InstituteController::class);
         Route::get('student/', [StudentController::class, 'index'])->name('student.index');
+        Route::get('students-list/', [StudentController::class, 'superStudentIndex'])->name('super.studentList');
+        Route::post('/student/update-status', [SuperAdminController::class, 'updateStatus'])->name('student.updateStatus');
 
         Route::resource('/session', SessionController::class);
         Route::resource('/course', CourseController::class);
@@ -69,6 +73,7 @@ Route::prefix('super-admin')
         Route::resource('/diploma', DiplomaController::class);
         Route::resource('/quiz', QuizController::class);
         Route::resource('/question', QuestionsController::class);
+        Route::resource('/carousel', CarouselImageController::class);
         Route::get('/view-admins', [SuperAdminController::class, 'viewAdmins'])->name('viewAdmins');
         Route::get('/print-certificate', [SuperAdminController::class, 'printcer'])->name('printcer');
         Route::get('/assigned-courses', [DiplomaController::class, 'assignedCourses'])->name('diploma.assignedCourses');
@@ -85,12 +90,14 @@ Route::prefix('super-admin')
         Route::post('/student-cards/print-back/{id}', [StudentCardController::class, 'printBack'])->name('card.printBack');
         Route::get('/student-cards/print-back/{id}', [StudentCardController::class, 'printBack'])->name('card.printBack');
         Route::get('/get-super-sessions/{diplomaName}', [DiplomawiseCoursesController::class, 'getSessions']);
+        Route::post('/update-status/{id}', [CarouselImageController::class, 'toggleStatus'])->name('carousel.toggleStatus');
     });
 
 Route::middleware(['web', 'admin'])->group(function () {
     Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 
     Route::get('student/change-password', [StudentController::class, 'changeStudentPassword'])->name('student.changePassword');
+    Route::post('toggle-status', [StudentController::class, 'adminStudentListStatus'])->name('student.toggleStatus');
     Route::post('student/update-password/{student}', [StudentController::class, 'updateStudentPassword'])->name('student.updatePassword');
     Route::resource('/admin', AdminController::class)->names([
         'index' => 'admin.index',

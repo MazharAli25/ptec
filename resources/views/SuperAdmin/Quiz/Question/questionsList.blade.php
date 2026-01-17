@@ -1,7 +1,7 @@
 @extends('layouts.superAdmin')
 @section('page-title', 'Questions List')
 
-@section('main-content')    
+@section('main-content')
 
     <!-- Main Content -->
     <div class="flex-1 p-8 ml-[19vw]">
@@ -67,10 +67,47 @@
     <script>
         $(document).ready(function() {
             var table = $('.quiz-table').DataTable({
-                dom: '<"top-toolbar flex justify-start items-center mb-4">' +
+                dom: '<"top-toolbar flex justify-start items-center mb-4 mt-4 ml-4"B>' +
                     '<"mid-toolbar flex gap-4 items-center mb-4"lf>' +
                     't' +
-                    '<"bottom-toolbar flex items-center justify-between mt-4 mb-4"<"flex-1"></><"flex justify-center"p><"flex-1 text-right mr-3 text-sm text-gray-500"i>>',
+                    '<"bottom-toolbar flex items-center justify-between mt-4"<"flex-1"></><"flex justify-center"p><"flex-1 text-right text-sm text-gray-500"i>>',
+
+                buttons: [{
+                        extend: 'copy',
+                        className: 'bg-green-600 hover:bg-green-700 text-white text-[14px] px-3 py-1.5 rounded mr-2',
+                        exportOptions: {
+                            columns: [0, 1, 2]
+                        } // only ID, Name, Address
+                    },
+                    {
+                        extend: 'excel',
+                        className: 'bg-green-600 hover:bg-green-700 text-white text-[14px] px-3 py-1.5 rounded mr-2',
+                        exportOptions: {
+                            columns: [0, 1, 2]
+                        }
+                    },
+                    {
+                        extend: 'csv',
+                        className: 'bg-blue-500 hover:bg-blue-700 text-white text-[14px] px-3 py-1.5 rounded mr-2',
+                        exportOptions: {
+                            columns: [0, 1, 2]
+                        }
+                    },
+                    {
+                        extend: 'pdf',
+                        className: 'bg-red-600 hover:bg-red-700 text-white text-[14px] px-3 py-1.5 rounded mr-2',
+                        exportOptions: {
+                            columns: [0, 1, 2]
+                        }
+                    },
+                    {
+                        extend: 'print',
+                        className: 'bg-yellow-500 hover:bg-yellow-600 text-white text-[14px] px-3 py-1.5 rounded mr-2',
+                        exportOptions: {
+                            columns: [0, 1, 2]
+                        } //  exclude Actions column
+                    }
+                ],
                 pageLength: 100,
                 stateSave: true,
                 processing: true,
@@ -79,11 +116,27 @@
                     url: "{{ route('question.index') }}",
                     dataSrc: "data"
                 },
-                columns: [
-                    { data: 'id', name: 'id', className: 'dt-head-center dt-body-center'},
-                    { data: 'quiz_name', name: 'quiz_name', className:"w-70" },
-                    { data: 'question_text', name: 'question_text' },
-                    { data: 'actions', name: 'actions', orderable: false, searchable: false, className: 'dt-head-center dt-body-center'},
+                columns: [{
+                        data: 'id',
+                        name: 'id',
+                        className: 'dt-head-center dt-body-center'
+                    },
+                    {
+                        data: 'quiz_name',
+                        name: 'quiz_name',
+                        className: "w-70"
+                    },
+                    {
+                        data: 'question_text',
+                        name: 'question_text'
+                    },
+                    {
+                        data: 'actions',
+                        name: 'actions',
+                        orderable: false,
+                        searchable: false,
+                        className: 'dt-head-center dt-body-center'
+                    },
                 ],
                 language: {
                     search: "_INPUT_",

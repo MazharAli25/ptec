@@ -77,7 +77,7 @@ class StudentCardController extends Controller
                 })
                 ->addColumn('actions', function ($row) {
                     return '
-                        <button type="button" data-modal-target="deleteModal" data-id="'.$row->id.'"
+                        <button type="button" data-modal-target="deleteModal" data-id="'.encrypt($row->id).'"
                                         class="inline-flex items-center px-2 no-underline py-1.5 bg-red-500 text-white text-sm font-medium rounded hover:bg-red-600 transition-colors">
                                         Cancel
                                     </button>

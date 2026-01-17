@@ -4,146 +4,327 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Institute Management</title>
-    <script src="https://unpkg.com/alpinejs" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <title>@yield('page-title') | CourseEdx</title>
+
+    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@800;900&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-        crossorigin="anonymous" />
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
-    <!-- DataTables CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
-
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-
-    <!-- DataTables JS -->
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-
-
-
+    <!-- Swiper -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 </head>
 
-<body>
-    <header class="flex justify-center py-6 bg-white shadow">
-        <img src="https://ptec.com.pk/images/letter-head-h.png" alt="Logo" class="w-1/2 md:w-1/3 h-auto" />
-    </header>
-    <nav class="bg-[#0d6b61] text-white">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="flex flex-wrap justify-center space-x-6 md:space-x-8 py-3 text-sm md:text-base font-medium">
-                <a href="" class="hover:text-gray-300">Home</a>
-
-                <!-- About Us dropdown -->
-                <div class="relative group">
-                    <button class="flex items-center hover:text-gray-300">
-
-
-                    </button>
-                    <div class="absolute  hidden group-hover:block bg-white z-1 text-black rounded shadow-md mt-2 w-40">
-
-                    </div>
-                </div>
-
-
-                <div class="relative">
-                    <!-- Button -->
-                    <button id="dropdownAbout" class="flex items-center hover:text-gray-300">
-                        About Us
-                        <svg class="ml-1 w-3 h-3 fill-current" viewBox="0 0 20 20">
-                            <path
-                                d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.25a.75.75 0 01-1.06 0L5.25 8.29a.75.75 0 01-.02-1.08z" />
-                        </svg>
-                    </button>
-
-                    <!-- Dropdown -->
-                    <div id="dropdownAbout_US"
-                        class="absolute hidden z-10 bg-white text-black rounded shadow-md mt-2 w-48">
-                        <a href="#" class="block px-4 py-2 hover:bg-gray-100">Our Mission</a>
-                        <a href="#" class="block px-4 py-2 hover:bg-gray-100">Team</a>
-                        <a href="#" class="block px-4 py-2 hover:bg-gray-100">History</a>
-                    </div>
-                </div>
-                <!-- Trades dropdown -->
-                <div class="relative group">
-                    <a href="" class="flex items-center hover:text-gray-300">
-                        Trades
-                    </a>
-
-                </div>
-
-                <!-- E-Services dropdown -->
-                <div class="relative">
-
-                    <button id="dropdownButton" class="flex items-center hover:text-gray-300">
-                        E-Services
-                        <svg class="ml-1 w-3 h-3 fill-current" viewBox="0 0 20 20">
-                            <path
-                                d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.25a.75.75 0 01-1.06 0L5.25 8.29a.75.75 0 01-.02-1.08z" />
-                        </svg>
-                    </button>
-
-                    <!-- Dropdown -->
-                    <div id="dropdownMenu" class="absolute hidden z-10 bg-white text-black rounded shadow-md mt-2 w-48">
-                        <a href="" class="block px-4 py-2 hover:bg-gray-100">Info-E-Services</a>
-                        <a href="#" class="block px-4 py-2 hover:bg-gray-100">Online Verification</a>
-                        <a href="#" class="block px-4 py-2 hover:bg-gray-100">Payment</a>
-                    </div>
-                </div>
-
-
-                <a href="" class="hover:text-gray-300">Apply Online</a>
-                <a href="" class="hover:text-gray-300">Verification</a>
-                <a href="" class="hover:text-gray-300">Challan</a>
-                <a href="" class="hover:text-gray-300">Downloads</a>
-                <a href="" class="font-semibold hover:text-gray-300">Contact</a>
-                <a href="" class="font-semibold hover:text-gray-300">Login</a>
+<body class="bg-slate-50 text-gray-800">
+    <!-- ================= NAVBAR ================= -->
+    <!-- ================= TOP ICON BAR ================= -->
+    <div class="bg-teal-600 text-white">
+        <div class="max-w-7xl mx-auto flex items-center justify-between px-4 py-2 text-sm">
+            <!-- Left Menu Icons -->
+            <div class="flex items-center gap-6">
+                <a class="flex flex-col items-center text-md cursor-pointer"
+                    href="{{ route('welcome') }}"
+                >
+                    <i class="fa-solid fa-house text-lg"></i>
+                    Home
+                </a>
+                <a class="flex flex-col items-center text-md cursor-pointer">
+                    <i class="fa-solid fa-blog text-lg"></i>
+                    Blogs
+                </a>
+                <a class="flex flex-col items-center text-md cursor-pointer">
+                    <i class="fa-solid fa-building-columns text-lg"></i>
+                    Institutions
+                </a>
+                <a class="flex flex-col items-center text-md cursor-pointer">
+                    <i class="fa-solid fa-file-lines text-lg"></i>
+                    Past Papers
+                </a>
+                <a class="flex flex-col items-center text-md cursor-pointer">
+                    <i class="fa-solid fa-book-open text-lg"></i>
+                    Courses
+                </a>
+                <a class="flex flex-col items-center text-md cursor-pointer">
+                    <i class="fa-solid fa-user-graduate text-lg"></i>
+                    Admissions
+                </a>
+                <a class="flex flex-col items-center text-md cursor-pointer">
+                    <i class="fa-solid fa-video text-lg"></i>
+                    Lectures
+                </a>
+                <a class="flex flex-col items-center text-md cursor-pointer"
+                    href="{{ route('userViewQuiz') }}"
+                >
+                    <i class="fa-solid fa-clipboard-list text-lg"></i>
+                    Online Test
+                </a>
+                <a class="flex flex-col items-center text-md cursor-pointer">
+                    <i class="fa-solid fa-calendar-days text-lg"></i>
+                    Date Sheets
+                </a>
+                <a class="flex flex-col items-center text-md cursor-pointer">
+                    <i class="fa-solid fa-circle-check text-lg"></i>
+                    Verification
+                </a>
+                <a class="flex flex-col items-center text-md cursor-pointer">
+                    <i class="fa-solid fa-briefcase text-lg"></i>
+                    Jobs
+                </a>
+                <a class="flex flex-col items-center text-md cursor-pointer">
+                    <i class="fa-solid fa-chalkboard-user text-lg"></i>
+                    Tutor
+                </a>
+                <a class="flex flex-col items-center text-md cursor-pointer">
+                    <i class="fa-solid fa-earth-asia text-lg"></i>
+                    Study Abroad
+                </a>
+                <a class="flex flex-col items-center text-md cursor-pointer">
+                    <i class="fa-solid fa-book text-lg"></i>
+                    Books
+                </a>
+                <a class="flex flex-col items-center text-md cursor-pointer">
+                    <i class="fa-solid fa-download text-lg"></i>
+                    Software
+                </a>
             </div>
         </div>
-    </nav>
+    </div>
 
+    <!-- ================= MAIN NAVBAR ================= -->
+    <div class="bg-white border-b">
+        <div class="max-w-7xl mx-auto flex items-center gap-6 px-4 py-4">
+            <!-- Logo -->
+            <div class="flex items-center text-2xl font-bold">
+                <span class="text-blue-900">Course</span>
+                <span class="text-pink-600 text-sm ml-1">edx</span>
+            </div>
+
+            <!-- Search -->
+            <div class="flex-1 relative">
+                <input type="text" placeholder="Search Courses"
+                    class="w-full border rounded-full px-5 py-2 pl-12 focus:outline-none" />
+                <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            </div>
+
+            <!-- Right Links -->
+            <div class="flex items-center gap-6 text-sm font-medium">
+                <div class="flex items-center gap-1 cursor-pointer">
+                    Categories
+                    <i class="fa-solid fa-caret-down text-xs"></i>
+                </div>
+
+                <span>CourseEdx Business</span>
+                @if (auth('super_admin')->check())
+                    <!-- Super Admin Navbar -->
+                    <span class="font-semibold">Super Admin Panel</span>
+
+                    <!-- Profile Dropdown -->
+                    <div class="relative">
+                        <!-- Trigger -->
+                        <button id="profileBtn" class="flex items-center gap-2 focus:outline-none">
+                            <img src="{{ auth()->user()->photo ?? asset('images/logo.png') }}"
+                                class="w-9 h-9 rounded-full object-cover" />
+                            <i class="fa-solid fa-chevron-down text-xs text-gray-600"></i>
+                        </button>
+
+                        <!-- Dropdown Menu -->
+                        <div id="profileDropdown"
+                            class="hidden absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg overflow-hidden z-50">
+                            <a href="{{ route('superAdmin.index') }}"
+                                class="block px-4 py-2 text-sm hover:bg-gray-100">Dashboard</a>
+                            <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-100">
+                                <i class="fa-solid fa-user mr-2"></i> Profile
+                            </a>
+                            <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-100">
+                                <i class="fa-solid fa-gear mr-2"></i> Settings
+                            </a>
+                            <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-100">
+                                <i class="fa-solid fa-book mr-2"></i> My Courses
+                            </a>
+                            <hr />
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit"
+                                    class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                    <i class="fa-solid fa-right-from-bracket mr-2"></i> Logout
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                @elseif(auth('admin')->check())
+                    <!-- Admin Navbar -->
+                    <span class="font-semibold">Admin Panel</span>
+                    <!-- Profile Dropdown -->
+                    <div class="relative">
+                        <!-- Trigger -->
+                        <button id="profileBtn" class="flex items-center gap-2 focus:outline-none">
+                            <img src="{{ auth()->user()->photo ?? asset('images/logo.png') }}"
+                                class="w-9 h-9 rounded-full object-cover" />
+                            <i class="fa-solid fa-chevron-down text-xs text-gray-600"></i>
+                        </button>
+
+                        <!-- Dropdown Menu -->
+                        <div id="profileDropdown"
+                            class="hidden absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg overflow-hidden z-50">
+                            <a href="{{ route('admin.dashboard') }}"
+                                class="block px-4 py-2 text-sm hover:bg-gray-100">Dashboard</a>
+
+                            <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-100">
+                                <i class="fa-solid fa-user mr-2"></i> Profile
+                            </a>
+                            <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-100">
+                                <i class="fa-solid fa-gear mr-2"></i> Settings
+                            </a>
+                            <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-100">
+                                <i class="fa-solid fa-book mr-2"></i> My Courses
+                            </a>
+                            <hr />
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit"
+                                    class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                    <i class="fa-solid fa-right-from-bracket mr-2"></i> Logout
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                @elseif(auth('student')->check())
+                    <!-- Student Navbar -->
+                    <span>Teach on CourseEdx</span>
+
+                    <div class="relative cursor-pointer">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        <span class="absolute -top-2 -right-2 bg-black text-white text-xs rounded-full px-1">
+                            {{ $cartCount ?? 0 }}
+                        </span>
+                    </div>
+
+                    <!-- Profile Dropdown -->
+                    <div class="relative">
+                        <!-- Trigger -->
+                        <button id="profileBtn" class="flex items-center gap-2 focus:outline-none">
+                            <img src="{{ auth()->user()->photo ?? asset('images/logo.png') }}"
+                                class="w-9 h-9 rounded-full object-cover" />
+                            <i class="fa-solid fa-chevron-down text-xs text-gray-600"></i>
+                        </button>
+
+                        <!-- Dropdown Menu -->
+                        <div id="profileDropdown"
+                            class="hidden absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg overflow-hidden z-50">
+                            <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-100">
+                                <i class="fa-solid fa-user mr-2"></i> Profile
+                            </a>
+                            <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-100">
+                                <i class="fa-solid fa-gear mr-2"></i> Settings
+                            </a>
+                            <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-100">
+                                <i class="fa-solid fa-book mr-2"></i> My Courses
+                            </a>
+                            <hr />
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit"
+                                    class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                    <i class="fa-solid fa-right-from-bracket mr-2"></i> Logout
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                @else
+                    <!-- Guest -->
+                    <a href="{{ route('login') }}" class="hover:text-teal-600">Login</a>
+                    <a href="{{ route('register') }}" class="bg-teal-600 text-white px-4 py-2 rounded-full">Sign
+                        Up</a>
+                @endif
+
+            </div>
+        </div>
+    </div>
     @yield('main-content')
 
+    <!-- ================= FOOTER ================= -->
+    <footer class="bg-slate-900 text-gray-300 mt-20">
+        <div class="max-w-7xl mx-auto px-6 py-14 grid md:grid-cols-4 gap-10">
+            <!-- Brand -->
+            <div>
+                <h3 class="text-2xl font-bold text-white">
+                    Course<span class="text-teal-400">Edx</span>
+                </h3>
+                <p class="text-sm mt-4 text-gray-400">
+                    Your success story begins here. Learn, grow, and build your future
+                    with industry-ready courses.
+                </p>
+            </div>
+
+            <!-- Links -->
+            <div>
+                <h4 class="font-semibold text-white mb-4">Explore</h4>
+                <ul class="space-y-2 text-sm">
+                    <li>Courses</li>
+                    <li>Institutions</li>
+                    <li>Admissions</li>
+                    <li>Jobs</li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="font-semibold text-white mb-4">Company</h4>
+                <ul class="space-y-2 text-sm">
+                    <li>About Us</li>
+                    <li>Contact</li>
+                    <li>Privacy Policy</li>
+                    <li>Terms</li>
+                </ul>
+            </div>
+
+            <!-- Social -->
+            <div>
+                <h4 class="font-semibold text-white mb-4">Follow Us</h4>
+                <div class="flex gap-4 text-lg">
+                    <i class="fa-brands fa-facebook cursor-pointer"></i>
+                    <i class="fa-brands fa-twitter cursor-pointer"></i>
+                    <i class="fa-brands fa-linkedin cursor-pointer"></i>
+                    <i class="fa-brands fa-instagram cursor-pointer"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="border-t border-gray-700 text-center py-4 text-sm text-gray-400">
+            © 2025 CourseEdx. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- ================= SWIPER JS ================= -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script>
-        const button = document.getElementById('dropdownButton');
-        const menu = document.getElementById('dropdownMenu');
-
-        button.addEventListener('click', () => {
-            menu.classList.toggle('hidden');
+        new Swiper(".heroSwiper", {
+            loop: true,
+            speed: 1000,
+            autoplay: {
+                delay: 4000,
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: ".swiper-pagination",
+                clickable: true,
+            },
+            navigation: {
+                nextEl: ".swiper-button-next",
+                prevEl: ".swiper-button-prev",
+            },
         });
 
+        const profileBtn = document.getElementById("profileBtn");
+        const dropdown = document.getElementById("profileDropdown");
 
-        window.addEventListener('click', (e) => {
-            if (!button.contains(e.target) && !menu.contains(e.target)) {
-                menu.classList.add('hidden');
-            }
-        });
-        //  About Us Dropdown
-        const button_About = document.getElementById('dropdownAbout');
-        const menu_About = document.getElementById('dropdownAbout_US');
-
-        // Toggle dropdown on click
-        button_About.addEventListener('click', () => {
-            menu_About.classList.toggle('hidden');
+        profileBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            dropdown.classList.toggle("hidden");
         });
 
-        // Optional: Close dropdown if clicked outside
-        window.addEventListener('click', (e) => {
-            if (!button_About.contains(e.target) && !menu_About.contains(e.target)) {
-                menu_About.classList.add('hidden');
-            }
+        document.addEventListener("click", () => {
+            dropdown.classList.add("hidden");
         });
     </script>
 </body>

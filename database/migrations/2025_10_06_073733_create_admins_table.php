@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('phone');
             $table->string('password');
             $table->string('role')->default('admin');
-            $table->enum('status',['active', 'unactive']);
+            $table->enum('status',['active', 'inactive']);
             $table->timestamps();
         });
     }

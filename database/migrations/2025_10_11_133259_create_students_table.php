@@ -30,6 +30,7 @@ return new class extends Migration
             $table->enum('status', ['Active', 'Inactive'])->default('Active');
             // $table->string('sessionId');
             $table->string('address')->nullable();
+            $table->string('password')->nullable();
             $table->timestamps();
         });
     }

@@ -15,18 +15,19 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     {{-- JQUERY CDN --}}
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script> 
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <!-- Add in your Blade layout or at the top of this file -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    {{-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script> --}}
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-    {{-- DATA TABLES CSS--}}
+    {{-- DATA TABLES CSS --}}
     <link rel="stylesheet" href="https://cdn.datatables.net/2.3.4/css/dataTables.dataTables.min.css">
     <script>
         function toggleDropdown(id) {
-            const dropdown = document.getElementById(id); 
+            const dropdown = document.getElementById(id);
             const icon = document.getElementById(`${id}-icon`);
             dropdown.classList.toggle('hidden');
             icon.classList.toggle('rotate-180');
@@ -56,14 +57,14 @@
 
 
         @if ($errors->any())
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 ml-[20vw]">
-            <strong>Whoops! Something went wrong:</strong>
-            <ul class="mt-2 list-disc list-inside text-sm text-red-600">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 ml-[20vw]">
+                <strong>Whoops! Something went wrong:</strong>
+                <ul class="mt-2 list-disc list-inside text-sm text-red-600">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
         @endif
 
 
@@ -71,14 +72,22 @@
         <script>
             const toggleSidebar = document.getElementById('toggleSidebar');
             const sidebar = document.getElementById('sidebar');
-            toggleSidebar.addEventListener('click', () => {
-                sidebar.classList.toggle('hidden');
-            });
-            document.addEventListener('click', (e) => {
-                if (!sidebar.contains(e.target) && !toggleSidebar.contains(e.target) && window.innerWidth < 768) {
-                    sidebar.classList.add('hidden');
-                }
-            });
+
+            if (toggleSidebar && sidebar) {
+                toggleSidebar.addEventListener('click', () => {
+                    sidebar.classList.toggle('hidden');
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (
+                        !sidebar.contains(e.target) &&
+                        !toggleSidebar.contains(e.target) &&
+                        window.innerWidth < 768
+                    ) {
+                        sidebar.classList.add('hidden');
+                    }
+                });
+            }
         </script>
         <style>
             .transition-transform {
@@ -89,8 +98,8 @@
                 transform: rotate(180deg);
             }
         </style>
-            {{-- DATA TABLE JS --}}
-            <script src="https://cdn.datatables.net/2.3.4/js/dataTables.min.js"></script>
+        {{-- DATA TABLE JS --}}
+        <script src="https://cdn.datatables.net/2.3.4/js/dataTables.min.js"></script>
 
 
     </body>

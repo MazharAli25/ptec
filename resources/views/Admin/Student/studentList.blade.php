@@ -20,10 +20,11 @@
                 <thead class="bg-cyan-600 text-white">
                     <tr>
                         <th class="py-2.5 w-[5px] px-4 text-center font-semibold">ID</th>
-                        <th class="py-2.5 px-4 text-center font-semibold">Student Name</th>
-                        <th class="py-2.5 px-4 text-center font-semibold">Father Name</th>
+                        <th class="py-2.5 px-4 text-center font-semibold">Std Name</th>
+                        <th class="py-2.5 px-4 text-center font-semibold">F.Name</th>
                         <th class="py-2.5 px-4 text-center font-semibold">Phone</th>
                         <th class="py-2.5 px-4 text-center font-semibold">Email</th>
+                        <th class="py-2.5 px-4 text-center font-semibold">Status</th>
                         <th class="py-2.5 px-4 text-center font-semibold">Actions</th>
                     </tr>
                 </thead>
@@ -62,33 +63,6 @@
             </table>
         </div>
     </div>
-    <!-- Modal 1 -->
-    <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="bg-white rounded-lg shadow-lg w-96 p-6 relative">
-            <form action="" method="POST">
-                <div class="flex flex-col">
-                    <h1 class="font-bold text-[20px] text-center">Edit Student Details</h1>
-                    <label for="studentName" class="mt-3">Student Name:</label>
-                    <input type="text"
-                        class="border border-gray-300 rounded-lg text-[14px] px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm"
-                        id="studentName" name="studentName">
-                </div>
-                <button data-close-modal="editModal"
-                    class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 transition mt-2">Close</button>
-            </form>
-        </div>
-    </div>
-    <!-- Modal 2 -->
-    <div id="modal2" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="bg-white rounded-lg shadow-lg w-96 p-6 relative">
-            <h2 class="text-xl font-semibold mb-4">Modal 2</h2>
-            <p class="text-gray-600 mb-6">This is another modal instance.</p>
-            <div class="flex justify-end">
-                <button data-close-modal="modal2"
-                    class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 transition">Close</button>
-            </div>
-        </div>
-    </div>
     <script>
         // Open modals
         document.querySelectorAll('[data-modal-target]').forEach(btn => {
@@ -115,8 +89,7 @@
                 }
             });
         });
-    </script>
-    <script>
+
         $(document).ready(function() {
             var table = $('.students-table').DataTable({
                 dom: '<"mid-toolbar flex gap-4 items-center mb-2 mr-3"lf>' +
@@ -166,6 +139,7 @@
                     {data: 'fatherName', name: 'fatherName'},
                     {data: 'phone', name: 'phone', searchable:false, orderable:false},
                     {data: 'email', name: 'email'},
+                    {data: 'status', name: 'status'},
                     {data: 'actions', name: 'actions', searchable:false, orderable:false},
                 ]
             })
@@ -183,6 +157,42 @@
             window.addEventListener('beforeunload', function() {
                 sessionStorage.clear();
             });
+
+
+            // Toggle Status
+            $(document).on('click', '.status-btn', function() {
+                const button = $(this);
+                const id = button.data('id');
+                const badge = button.find('span');
+
+                $.ajax({
+                    url : "{{ route('student.toggleStatus') }}",
+                    type : 'POST',
+                    data : {
+                        _token: "{{ csrf_token() }}",
+                        id: id,
+                    },
+                    success: function(response) {
+                    if (response.success) {
+                        // Use response.status, not undefined status
+                        if (response.status === "Active") {
+                            badge.text("Active")
+                                .removeClass()
+                                .addClass(
+                                    "px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800"
+                                );
+                        } else {
+                            badge.text("Inactive")
+                                .removeClass()
+                                .addClass(
+                                    "px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800"
+                                );
+                        }
+                    }
+                }
+                })
+            })
+
         });
     </script>
 @endsection

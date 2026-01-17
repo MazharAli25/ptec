@@ -53,7 +53,7 @@ class AdminController extends Controller
             'name' => 'required|string|max:30',
             'email' => 'required|email|unique:admins,email',
             'phone' => 'required|digits:11|unique:admins,phone',
-            'password' => 'required|min:8',
+            'password' => 'required',
             'status' => 'required|in:active,inactive',
         ]);
 
@@ -306,7 +306,7 @@ class AdminController extends Controller
                     $status = $row->student->status;
                     $color = $status === 'Active' ? 'bg-green-100 text-green-800' : ($status === 'Inactive' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800');
 
-                    return '<button class="status-btn" data-id="'.$row->student->id.'">
+                    return '<button class="status-btn" data-id="'.encrypt($row->student->id).'">
                             <span class="px-3 py-1 rounded-full text-sm font-medium '.$color.'">'.$status.'</span>
                         </button>';
                 })
@@ -334,4 +334,6 @@ class AdminController extends Controller
 
         return view('Admin.Student.assignedDiplomas');
     }
+
+
 }

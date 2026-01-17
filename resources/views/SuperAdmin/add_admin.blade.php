@@ -3,19 +3,6 @@
 
 @section('main-content')
 
-    <x-err></x-err>
-    <x-success></x-success>
-    @if ($errors->any())
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 ml-[20vw]">
-            <strong>Whoops! Something went wrong:</strong>
-            <ul class="mt-2 list-disc list-inside text-sm text-red-600">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
     <!-- Main Content -->
     <div class="flex-1 p-8 ml-[19vw]">
         <div class="mb-6">
@@ -41,7 +28,7 @@
                             {{-- <span class="text-red-500">(Choose an institute before filling credentials)</span> --}}
                         </label>
                         <select id="institute_id" name="institute_id"
-                            class="block w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            class="block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
                             <option value="">Select an option</option>
                             @foreach ($insts as $inst)
                                 <option value="{{ $inst->id }}"
@@ -59,7 +46,7 @@
                                 User Name
                             </label>
                             <input type="text" id="name" name="name" maxlength="30" value="{{ old('name') }}"
-                                class="w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
                                 placeholder="Enter Admin name">
                         </div>
 
@@ -69,7 +56,7 @@
                                 User Email
                             </label>
                             <input type="email" id="email" name="email" maxlength="50" value="{{ old('email') }}"
-                                class="w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
                                 placeholder="Enter Admin email">
                         </div>
                     </div>
@@ -83,7 +70,7 @@
                             </label>
                             <input type="tel" id="phone" name="phone" maxlength="11" id="phone"
                                 value="{{ old('phone') }}"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
                                 placeholder="Enter phone number">
                         </div>
                         <!-- Password -->
@@ -93,7 +80,7 @@
                             </label>
                             <input type="password" id="password" name="password" maxlength="25"
                                 value="{{ old('password') }}"
-                                class="w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
                                 placeholder="Enter Password">
                         </div>
 
@@ -104,7 +91,7 @@
                             Status
                         </label>
                         <select id="status" name="status"
-                            class="w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
                             <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Active</option>
                             <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
                         </select>
@@ -154,7 +141,7 @@
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        
+
                     </tbody>
                 </table>
             </div>
@@ -165,18 +152,56 @@
     <script>
         $(document).ready(function() {
             var table = $('.admins-table').DataTable({
-                dom: '<"top-toolbar flex justify-start items-center mb-4">' + 
-                '<"mid-toolbar flex gap-4 items-center mb-4"lf>' + 
-                't' + 
-                '<"bottom-toolbar flex items-center justify-between mt-4"<"flex-1"></><"flex justify-center"p><"flex-1 text-right text-sm text-gray-500"i>>',
+                dom: '<"top-toolbar flex justify-start items-center mb-4 mt-4 ml-4"B>' +
+                    '<"mid-toolbar flex gap-4 items-center mb-4"lf>' +
+                    't' +
+                    '<"bottom-toolbar flex items-center justify-between mt-4"<"flex-1"></><"flex justify-center"p><"flex-1 text-right text-sm text-gray-500"i>>',
+
+                buttons: [{
+                        extend: 'copy',
+                        className: 'bg-green-600 hover:bg-green-700 text-white text-[14px] px-3 py-1.5 rounded mr-2',
+                        exportOptions: {
+                            columns: [0, 1, 2]
+                        } // only ID, Name, Address
+                    },
+                    {
+                        extend: 'excel',
+                        className: 'bg-green-600 hover:bg-green-700 text-white text-[14px] px-3 py-1.5 rounded mr-2',
+                        exportOptions: {
+                            columns: [0, 1, 2]
+                        }
+                    },
+                    {
+                        extend: 'csv',
+                        className: 'bg-blue-500 hover:bg-blue-700 text-white text-[14px] px-3 py-1.5 rounded mr-2',
+                        exportOptions: {
+                            columns: [0, 1, 2]
+                        }
+                    },
+                    {
+                        extend: 'pdf',
+                        className: 'bg-red-600 hover:bg-red-700 text-white text-[14px] px-3 py-1.5 rounded mr-2',
+                        exportOptions: {
+                            columns: [0, 1, 2]
+                        }
+                    },
+                    {
+                        extend: 'print',
+                        className: 'bg-yellow-500 hover:bg-yellow-600 text-white text-[14px] px-3 py-1.5 rounded mr-2',
+                        exportOptions: {
+                            columns: [0, 1, 2]
+                        } //  exclude Actions column
+                    }
+                ],
 
                 pageLength: 10,
-                serverSide:true,
-                processing:true,
-                ajax:{
-                    url:"{{ route('viewAdmins') }}"
+                serverSide: true,
+                processing: true,
+                ajax: {
+                    url: "{{ route('viewAdmins') }}"
                 },
                 language: {
+                    lengthMenu: "_MENU_",
                     search: "_INPUT_",
                     searchPlaceholder: "Search here..."
                 },
@@ -189,27 +214,57 @@
                 //     $('.dt-length').addClass(
                 //         'px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm');
                 // },
-                initComplete: function () {
+                initComplete: function() {
                     $('.dt-input')
-                        .addClass('border border-gray-300 rounded-lg text-[14px] px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm')
+                        .addClass(
+                            'border border-gray-300 rounded-lg text-[14px] px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm'
+                        )
                         .css({
                             'width': '200px',
-                            'padding': '6px 10px',}); 
+                            'padding': '6px 10px',
+                        });
                     $('.dt-length select')
-                        .addClass('border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm')
+                        .addClass(
+                            'border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm'
+                        )
                         .css({
                             'width': '80px',
                             'padding': '6px 10px'
                         });
-                    $('.dt-length').addClass('px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm');
+                    $('.dt-length').addClass(
+                        'px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm');
                 },
-                columns: [
-                    {data:'id', name:'id', className: 'dt-head-center dt-body-center'},
-                    {data:'institute_name', name:'institute_name'},
-                    {data:'name', name:'name'},
-                    {data:'phone', name:'phone', searchable:false, orderable:false},
-                    {data:'status', name:'status', searchable:false, orderable:false},
-                    {data:'actions', name:'actions', searchable:false, orderable:false},
+                columns: [{
+                        data: 'id',
+                        name: 'id',
+                        className: 'dt-head-center dt-body-center'
+                    },
+                    {
+                        data: 'institute_name',
+                        name: 'institute_name'
+                    },
+                    {
+                        data: 'name',
+                        name: 'name'
+                    },
+                    {
+                        data: 'phone',
+                        name: 'phone',
+                        searchable: false,
+                        orderable: false
+                    },
+                    {
+                        data: 'status',
+                        name: 'status',
+                        searchable: false,
+                        orderable: false
+                    },
+                    {
+                        data: 'actions',
+                        name: 'actions',
+                        searchable: false,
+                        orderable: false
+                    },
                 ]
 
 
@@ -226,6 +281,79 @@
                 $('.dt-input').val(oldSearch);
             }
         });
+
+        $(document).on('change', '.status-dropdown', function() {
+            const dropdown = $(this);
+            const adminId = dropdown.data('id');
+            const newStatus = dropdown.val();
+            const currentStatus = dropdown.data('current');
+
+            console.log('Updating status...', {
+                adminId: adminId,
+                newStatus: newStatus,
+                currentStatus: currentStatus
+            });
+
+            // Visual feedback
+            dropdown.prop('disabled', true).addClass('opacity-60 cursor-not-allowed');
+
+            $.ajax({
+                url: "{{ route('student.updateStatus') }}",
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    admin_id: adminId,
+                    status: newStatus
+                },
+                success: function(response) {
+                    console.log('Success response:', response);
+
+                    if (response.success) {
+
+                        // Update current status
+                        dropdown.data('current', newStatus);
+
+                        // Show success message
+                        if (typeof toastr !== 'undefined') {
+                            toastr.success(response.message);
+                        } else {
+                            alert(response.message);
+                        }
+                    } else {
+                        dropdown.val(currentStatus);
+                        if (typeof toastr !== 'undefined') {
+                            toastr.error(response.message);
+                        } else {
+                            alert(response.message);
+                        }
+                    }
+                },
+                error: function(xhr) {
+                    console.error('Error response:', xhr);
+                    console.error('Response text:', xhr.responseText);
+
+                    dropdown.val(currentStatus);
+
+                    let errorMsg = 'An error occurred while updating status';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMsg = xhr.responseJSON.message;
+                        if (xhr.responseJSON.error) {
+                            console.error('Detailed error:', xhr.responseJSON.error);
+                        }
+                    }
+
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error(errorMsg);
+                    } else {
+                        alert(errorMsg);
+                    }
+                },
+                complete: function() {
+                    dropdown.prop('disabled', false).removeClass('opacity-60 cursor-not-allowed');
+                }
+            });
+        });
+
 
         // PHONE NUMBER FORMAT
         const phoneInput = document.getElementById('phone');

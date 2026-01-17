@@ -3,19 +3,6 @@
 
 @section('main-content')
 
-    <x-err></x-err>
-    <x-success></x-success>
-
-    @if ($errors->any())
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 ml-[20vw]">
-            <strong>Whoops! Something went wrong:</strong>
-            <ul class="mt-2 list-disc list-inside text-sm text-red-600">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
 
     <!-- Main Content -->
     <div class="flex-1 p-8 ml-[19vw]">
@@ -174,6 +161,7 @@
                     url: "{{ route('institute.index') }}"
                 },
                 language: {
+                    lengthMenu: "_MENU_",
                     search: "_INPUT_",
                     searchPlaceholder: "Search here...",
                     lengthMenu: "_MENU_"

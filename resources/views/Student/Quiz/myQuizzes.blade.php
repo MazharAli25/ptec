@@ -17,13 +17,19 @@
 
                     <!-- Description -->
                     <p class="text-sm text-gray-500">
-                        {{ $quiz->quiz->description }}
+                        {!! \Illuminate\Support\Str::limit($quiz->quiz->description, 50, '...'.' <b>see more</b>') !!}
                     </p>
 
                     <!-- Status -->
                     <span class="inline-block text-xs font-medium px-3 py-1 rounded-full bg-green-100 text-green-700">
                         In Progress
                     </span>
+
+                    <div class="flex items-center justify-center">
+                        <a href="" class="bg-green-600 text-white text-[14px] px-4 py-1 rounded">
+                            Attend quiz
+                        </a>
+                    </div>
 
                 </div>
             </div>

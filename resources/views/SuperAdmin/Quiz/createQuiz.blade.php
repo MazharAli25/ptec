@@ -26,7 +26,7 @@
                                 Quiz Name
                             </label>
                             <input type="text" id="quizName" name="quizName" value="{{ old('quizName') }}"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                class="w-full px-4 py-2 border border-gray-300 outline-none rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                                 placeholder="Enter quiz name">
                         </div>
 
@@ -36,7 +36,7 @@
                                 Description
                             </label>
                             <input type="text" id="description" name="description" value="{{ old('description') }}"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                class="w-full px-4 py-2 border border-gray-300 outline-none rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                                 placeholder="Enter Description">
                         </div>
                     </div>

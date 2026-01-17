@@ -85,6 +85,8 @@
             <div class="px-4 py-6">
                 <ul class="space-y-2">
 
+                    <li class="pl-2 pt-2 text-[16px] block w-full"><a href="{{ route('welcome') }}">Home</a></li>
+
                     <!-- Institute Dropdown -->
                     <li>
                         <button type="button" onclick="toggleDropdown('institute-dropdown')"
@@ -241,7 +243,7 @@
                     <button type="button" onclick="toggleDropdown('quiz-dropdown')"
                         class="w-full flex items-center justify-between p-2  hover:bg-[#2d2e2d] rounded focus:bg-[#2d2e2d]">
                         Quiz
-                        <i id="quiz-dropdown-icon" class="fa-solid fa-angle-up transition-transform"></i>
+                        <i id="quiz-dropdown-icon" class="fa-solid fa-angle-down transition-transform"></i>
                     </button>
                     <ul id="quiz-dropdown"
                         class="ml-4 space-y-1 {{ request()->routeIs('quiz.create') || request()->routeIs('question.create') || request()->routeIs('question.index') ? '' : 'hidden' }}">
@@ -323,6 +325,23 @@
                     </li>
 
 
+                    {{-- User Interface --}}
+                    <button type="button" onclick="toggleDropdown('user-interface-dropdown')"
+                        class="w-full flex items-center justify-between p-2 hover:bg-[#2d2e2d] rounded focus:bg-[#2d2e2d]">
+                        User Interface
+                        <i id="user-interface-dropdown-icon" class="fa-solid fa-angle-down transition-transform"></i>
+                    </button>
+                    <ul id="user-interface-dropdown"
+                        class="ml-4 mt-1 space-y-1 {{ request()->routeIs('carousel.create') ? '' : 'hidden' }}">
+                        <li
+                            class="p-2 hover:bg-[#2d2e2d] rounded text-sm focus:bg-[#2d2e2d]
+                              {{ request()->routeIs('carousel.create') ? 'bg-[#2d2e2d]' : 'hover:bg-[#2d2e2d]' }}">
+                            <a href="{{ route('carousel.create') }}"
+                                class="block">
+                                Carousel Images</a>
+                        </li>
+
+                    </ul>
                     {{-- PROFILE --}}
                     <button type="button" onclick="toggleDropdown('profile-dropdown')"
                         class="w-full flex items-center justify-between p-2 hover:bg-[#2d2e2d] rounded focus:bg-[#2d2e2d]">

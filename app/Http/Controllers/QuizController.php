@@ -6,7 +6,6 @@ use App\Models\Quiz;
 use App\Models\Student;
 use App\Models\StudentDiploma;
 use App\Models\StudentQuiz;
-use Illuminate\Container\Attributes\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Yajra\DataTables\Facades\DataTables;
@@ -136,19 +135,20 @@ class QuizController extends Controller
     public function viewQuizAdmin(Quiz $quiz)
     {
         $questions = $quiz->questions;
+
         return view('Admin.Quiz.viewQuiz', compact('questions'));
     }
-
 
     // ########### Assign Quiz to Students ############
     public function assignQuizToStudents(Request $request)
     {
         $quizzes = Quiz::all();
-        $adminId= auth()->guard('admin')->user()->institute_id;
-        if($request->all()){
-            $students= StudentDiploma::with('student')->whereHas('student', function($query) use ($adminId) {
+        $adminId = auth()->guard('admin')->user()->institute_id;
+        if ($request->all()) {
+            $students = StudentDiploma::with('student')->whereHas('student', function ($query) use ($adminId) {
                 $query->where('instituteId', $adminId);
             });
+
             return DataTables::eloquent($students)
                 ->addColumn('checkbox', function ($row) {
                     return '
@@ -183,41 +183,43 @@ class QuizController extends Controller
             'fromDate' => 'required|date',
             'toDate' => 'required|date|after_or_equal:fromDate',
         ]);
-        
-        $inserted= 0;
+
+        $inserted = 0;
         $skipped = [];
 
         foreach ($validated['studentIDs'] as $studentId) {
             $student = Student::find($studentId);
-            $exists= StudentQuiz::where('studentId', $studentId)
+            $exists = StudentQuiz::where('studentId', $studentId)
                 ->where('quizId', $validated['quizId'])
                 ->exists();
-            if($exists){
-                $skipped[]= $student->name ?? 'Unknown Student';
+            if ($exists) {
+                $skipped[] = $student->name ?? 'Unknown Student';
+
                 continue;
             }
             if ($student) {
                 StudentQuiz::Create([
                     'studentId' => $student->id,
                     'quizId' => $validated['quizId'],
-                    'from'=> $validated['fromDate'],
-                    'To'=> $validated['toDate']
+                    'from' => $validated['fromDate'],
+                    'To' => $validated['toDate'],
                 ]);
             }
             $inserted++;
         }
-        $message= "<b> $inserted </b> quizzes assigned successfully.";
-        if(!empty($skipped)){
+        $message = "<b> $inserted </b> quizzes assigned successfully.";
+        if (! empty($skipped)) {
             $message .= ' Some Already assigned to:  <b>'.implode(', ', $skipped).'</b>.';
-        }else{
+        } else {
             $message .= ' No quizzes were skipped.';
         }
+
         return redirect()->back()->with('success', $message);
     }
 
     public function assginedQuizzesList(Request $request)
     {
-        if($request->ajax()){
+        if ($request->ajax()) {
             $assignedQuizzes = StudentQuiz::with(['student', 'quiz']);
 
             return DataTables::eloquent($assignedQuizzes)
@@ -238,6 +240,7 @@ class QuizController extends Controller
                 ->rawColumns(['actions'])
                 ->make(true);
         }
+
         return view('Admin.Quiz.assignedQuizList');
     }
 
@@ -247,6 +250,12 @@ class QuizController extends Controller
         $quizzes = StudentQuiz::with(['quiz', 'student'])
             ->where('studentId', $studentId)
             ->get();
+
         return view('student.Quiz.myQuizzes', compact('quizzes'));
+    }
+
+    public function userViewQuizzes(){
+        $quizzes = Quiz::get();
+        return view('User.Quiz.viewQuizzes', compact(['quizzes']));
     }
 }
